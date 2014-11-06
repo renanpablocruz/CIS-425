@@ -33,31 +33,34 @@ using namespace std;
 // Globals
 static float scrW;
 static float scrH;
+static float camX = 100;
+static float camY = 400;
+static float camZ = 500;
 
 void drawWalls(){
-	glColor3f(1.0, 0.0, 0.0);
 	//south wall
-	glPushMatrix();
-	glTranslatef(100, 100, 2);
-	glScalef(1, 1, 2 / 100);
-	glutSolidCube(200);
-	glPopMatrix();
-	//north wall
 	glColor3f(0.0, 1.0, 0.0);
 	glPushMatrix();
 	glTranslatef(100, 100, 198);
 	glScalef(1, 1, 2 / 100);
 	glutSolidCube(200);
 	glPopMatrix();
+	//north wall
+	glColor3f(1.0, 0.0, 0.0);
+	glPushMatrix();
+	glTranslatef(100, 100, 2);
+	glScalef(1, 1, 2 / 100);
+	glutSolidCube(200);
+	glPopMatrix();
 	//west wall
-	glColor3f(0.0, 0.0, 1.0);
+	//glColor3f(0.0, 0.0, 1.0);
 	glPushMatrix();
 	glTranslatef(2, 100, 100);
 	glScalef(2 / 100, 1, 1);
 	glutSolidCube(200);
 	glPopMatrix();
 	//east wall
-	glColor3f(1.0, 1.0, 0.0);
+	//glColor3f(1.0, 1.0, 0.0);
 	glPushMatrix();
 	glTranslatef(198, 100, 100);
 	glScalef(2 / 100, 1, 1);
@@ -71,11 +74,8 @@ void drawScene()
 	glColor3f(0.0, 0.0, 0.0);
 	glLoadIdentity();
 
-	//gluLookAt(camR*sin(camPhi)*cos(camTheta), camR*sin(camPhi)*sin(camTheta), camR*cos(camPhi), 0, 0, 0, 0, 1, 0);
-	gluLookAt(100, 400, 500, 100, 100, 0, 0, 1, 0);
-	//glRotatef(75, 0, 1, 0);
-	//glTranslatef(0, 0, -50);
-	//glutSolidCube(10.f);
+	gluLookAt(camX, camY, camZ, 100, 100, 0, 0, 1, 0);
+
 	drawWalls();
 
 	glFlush();
@@ -88,8 +88,7 @@ void resize(int w, int h)
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.f, (double)w/h, 1.0, 1000.0); //todo: change the coordinates
-	//glOrtho(-10, 210, -10, 210, 210, -10);
+	gluPerspective(60.f, (double)w/h, 1.0, 1000.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -103,7 +102,35 @@ void setup()
 
 void keyInput(unsigned char key, int scrX, int scrY)
 {
-
+	switch (key)
+	{
+		case 'q':
+			camX += 20;
+			glutPostRedisplay();
+			break;
+		case 'a':
+			camX -= 20;
+			glutPostRedisplay();
+			break;
+		case 'w':
+			camY += 20;
+			glutPostRedisplay();
+			break;
+		case 's':
+			camY -= 20;
+			glutPostRedisplay();
+			break;
+		case 'e':
+			camZ += 20;
+			glutPostRedisplay();
+			break;
+		case 'd':
+			camZ -= 20;
+			glutPostRedisplay();
+			break;
+		default:
+			break;
+	}
 }
 
 void mouseControl(int button, int state, int scrX, int scrY)
