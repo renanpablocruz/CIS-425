@@ -1,100 +1,13 @@
-﻿Build started 11/8/2014 5:15:11 PM.
+﻿Build started 11/10/2014 12:13:25 AM.
      1>Project "C:\Users\Renan Cruz\Documents\GitHub\CIS425-Hw04\CIS425\Support\Support.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\..\..\Syracuse\2014-2\CIS 425-625\book-code\GLSL\BumpMappingPerVertexLighting\bumpMappingPerVertexLighting.cpp"
-         bumpMappingPerVertexLighting.cpp
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(29): error C2143: syntax error : missing ';' before '<'
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(29): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(67): error C3861: 'glCreateProgram': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(68): error C2065: 'GL_VERTEX_SHADER' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(68): error C3861: 'glCreateShader': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(69): error C2065: 'GL_FRAGMENT_SHADER' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(69): error C3861: 'glCreateShader': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(71): error C3861: 'glShaderSource': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(72): error C3861: 'glShaderSource': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(74): error C3861: 'glCompileShader': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(75): error C3861: 'glCompileShader': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(77): error C3861: 'glAttachShader': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(78): error C3861: 'glAttachShader': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(80): error C3861: 'glLinkProgram': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(81): error C3861: 'glUseProgram': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(87): error C3861: 'glClearColor': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(88): error C2065: 'GL_DEPTH_TEST' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(88): error C3861: 'glEnable': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(91): error C2065: 'GL_LIGHTING' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(91): error C3861: 'glEnable': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(94): error C2065: 'GL_NORMALIZE' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(94): error C3861: 'glEnable': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(100): warning C4305: 'initializing' : truncation from 'double' to 'float'
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(103): error C2065: 'GL_LIGHT0' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(103): error C2065: 'GL_AMBIENT' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(103): error C3861: 'glLightfv': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(104): error C2065: 'GL_LIGHT0' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(104): error C2065: 'GL_DIFFUSE' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(104): error C3861: 'glLightfv': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(105): error C2065: 'GL_LIGHT0' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(105): error C2065: 'GL_SPECULAR' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(105): error C3861: 'glLightfv': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(106): error C2065: 'GL_LIGHT0' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(106): error C2065: 'GL_POSITION' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(106): error C3861: 'glLightfv': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(108): error C2065: 'GL_LIGHT0' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(108): error C3861: 'glEnable': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(109): error C2065: 'GL_LIGHT_MODEL_AMBIENT' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(109): error C3861: 'glLightModelfv': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(117): error C2065: 'GL_FRONT_AND_BACK' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(117): error C2065: 'GL_AMBIENT_AND_DIFFUSE' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(117): error C3861: 'glMaterialfv': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(118): error C2065: 'GL_FRONT_AND_BACK' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(118): error C2065: 'GL_SPECULAR' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(118): error C3861: 'glMaterialfv': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(119): error C2065: 'GL_FRONT_AND_BACK' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(119): error C2065: 'GL_SHININESS' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(119): error C3861: 'glMaterialfv': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(127): error C2065: 'GL_COLOR_BUFFER_BIT' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(127): error C2065: 'GL_DEPTH_BUFFER_BIT' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(127): error C3861: 'glClear': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(129): error C3861: 'glLoadIdentity': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(130): error C3861: 'gluLookAt': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(135): error C2065: 'GL_TRIANGLE_STRIP' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(135): error C3861: 'glBegin': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(138): error C3861: 'glNormal3f': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(139): error C3861: 'glNormal3f': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(140): error C3861: 'glVertex3f': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(141): error C3861: 'glVertex3f': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(144): error C3861: 'glEnd': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(148): error C3861: 'glutSwapBuffers': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(154): error C2065: 'GLsizei' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(154): error C2146: syntax error : missing ')' before identifier 'w'
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(154): error C2059: syntax error : ')'
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(155): error C2065: 'GL_PROJECTION' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(154): error C3861: 'glViewport': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(155): error C3861: 'glMatrixMode': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(156): error C3861: 'glLoadIdentity': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(157): error C3861: 'glFrustum': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(158): error C2065: 'GL_MODELVIEW' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(158): error C3861: 'glMatrixMode': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(159): error C3861: 'glLoadIdentity': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(173): error C3861: 'glutPostRedisplay': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(183): error C2065: 'cout' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(183): error C2065: 'endl' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(184): error C2065: 'cout' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(184): error C2065: 'endl' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(191): error C3861: 'glutInit': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(192): error C2065: 'GLUT_DOUBLE' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(192): error C2065: 'GLUT_RGB' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(192): error C2065: 'GLUT_DEPTH' : undeclared identifier
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(192): error C3861: 'glutInitDisplayMode': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(193): error C3861: 'glutInitWindowSize': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(194): error C3861: 'glutInitWindowPosition': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(195): error C3861: 'glutCreateWindow': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(197): error C3861: 'glutDisplayFunc': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(198): error C3861: 'glutReshapeFunc': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(199): error C3861: 'glutKeyboardFunc': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(201): error C3861: 'glewInit': identifier not found
-     1>c:\users\renan cruz\documents\syracuse\2014-2\cis 425-625\book-code\glsl\bumpmappingpervertexlighting\bumpmappingpervertexlighting.cpp(204): error C3861: 'glutMainLoop': identifier not found
-     1>Done Building Project "C:\Users\Renan Cruz\Documents\GitHub\CIS425-Hw04\CIS425\Support\Support.vcxproj" (Build target(s)) -- FAILED.
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\..\..\Syracuse\2014-2\CIS 425-625\book-code\ballAndTorusPicking.cpp"
+         ballAndTorusPicking.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Renan Cruz\Documents\GitHub\CIS425-Hw04\CIS425\Debug\Support.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Renan Cruz\Documents\GitHub\CIS425-Hw04\CIS425\Debug\Support.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Renan Cruz\Documents\GitHub\CIS425-Hw04\CIS425\Debug\Support.lib" /MACHINE:X86 Debug\ballAndTorusPicking.obj
+         Support.vcxproj -> C:\Users\Renan Cruz\Documents\GitHub\CIS425-Hw04\CIS425\Debug\Support.exe
+     1>Done Building Project "C:\Users\Renan Cruz\Documents\GitHub\CIS425-Hw04\CIS425\Support\Support.vcxproj" (Build target(s)).
 
-Build FAILED.
+Build succeeded.
 
-Time Elapsed 00:00:01.25
+Time Elapsed 00:00:02.57
