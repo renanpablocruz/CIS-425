@@ -43,10 +43,10 @@ static float ambX = 80;
 static float ambY = 160;
 static float ambZ = 20;
 static bool light0On = true; // White light on?
-float southWallVertices[401][201][3];
-float northWallVertices[401][201][3];
-float eastWallVertices[401][201][3];
-float westWallVertices[401][201][3];
+	// Material property vectors.
+static float matAmbAndDif[] = { 0.0, 0.0, 1.0, 1.0 };
+static float matSpec[] = { 1.0, 1.0, 1, 0, 1.0 };
+static float matShine[] = { 10.0 };
 
 float degToRad(int angInDeg){
 	return PI * angInDeg / 180;
@@ -72,80 +72,60 @@ void drawWalls(){
 	// south wall
 	glBegin(GL_QUADS);
 	glNormal3f(0, 0, -1);
+	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //yellow
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	for (int i = 0; i < 200; i++){
 		for (int j = 0; j < 200; j++){
 			glVertex3f(i, j, 200);
 			glVertex3f(i+1, j, 200);
 			glVertex3f(i+1, j+1, 200);
 			glVertex3f(i, j+1, 200);
-			//glVertex3f(i, j, 200);
 		}
 	}
 	glEnd();
-	//// north wall
-	//glBegin(GL_QUAD_STRIP);
-	//glNormal3f(0, 0, 1);
-	//for (int i = 0; i <= 400; i++){
-	//	for (int j = 0; j <= 200; j++){
-	//		glVertex3f(i, j, 0);
-	//	}
-	//}
-	//glEnd();
-	//// east wall
-	//glBegin(GL_QUAD_STRIP);
-	//glNormal3f(-1, 0, 0);
-	//for (int i = 0; i <= 400; i++){
-	//	for (int j = 0; j <= 200; j++){
-	//		glVertex3f(0, j, i);
-	//	}
-	//}
-	//glEnd();
-	//// west wall
-	//glBegin(GL_QUAD_STRIP);
-	//glNormal3f(1, 0, 0);
-	//for (int i = 0; i <= 400; i++){
-	//	for (int j = 0; j <= 200; j++){
-	//		glVertex3f(400, j, i);
-	//	}
-	//}
-	//glEnd();
+	// north wall
+	glBegin(GL_QUADS);
+	glNormal3f(0, 0, 1);
+	matAmbAndDif[0] = 0.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //blue
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	for (int i = 0; i < 200; i++){
+		for (int j = 0; j < 200; j++){
+			glVertex3f(i, j, 0);
+			glVertex3f(i+1, j, 0);
+			glVertex3f(i+1, j+1, 0);
+			glVertex3f(i, j+1, 0);
+		}
+	}
+	glEnd();
+	// east wall
+	glBegin(GL_QUADS);
+	glNormal3f(-1, 0, 0);
+	matAmbAndDif[0] = 0.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //green
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	for (int i = 0; i < 200; i++){
+		for (int j = 0; j < 200; j++){
+			glVertex3f(200, j, i);
+			glVertex3f(200, j, i+1);
+			glVertex3f(200, j+1, i+1);
+			glVertex3f(200, j+1, i);
+		}
+	}
+	glEnd();
+	// west wall
+	glBegin(GL_QUADS);
+	glNormal3f(1, 0, 0);
+	matAmbAndDif[0] = 0.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //green
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	for (int i = 0; i < 200; i++){
+		for (int j = 0; j < 200; j++){
+			glVertex3f(0, j, i);
+			glVertex3f(0, j, i+1);
+			glVertex3f(0, j+1, i+1);
+			glVertex3f(0, j+1, i);
+		}
+	}
+	glEnd();
 }
-
-void drawWalls_old(){
-	glColor3f(0.0, 0.0, 0.0);
-	// todo material properties
-
-	//south wall
-	//glColor3f(0.0, 1.0, 0.0);
-	glPushMatrix();
-	glTranslatef(100, 100, 198);
-	glScalef(1, 1, 2 / 100);
-	glutSolidCube(200);
-	glPopMatrix();
-	//north wall
-	//glColor3f(1.0, 0.0, 0.0);
-	glPushMatrix();
-	glTranslatef(100, 100, 2);
-	glScalef(1, 1, 2 / 100);
-	glutSolidCube(200);
-	glPopMatrix();
-	//west wall
-	//glColor3f(0.0, 0.0, 1.0);
-	glPushMatrix();
-	glTranslatef(2, 100, 100);
-	glScalef(2 / 100, 1, 1);
-	glutSolidCube(200);
-	glPopMatrix();
-	//east wall
-	//glColor3f(1.0, 1.0, 0.0);
-	glPushMatrix();
-	glTranslatef(198, 100, 100);
-	glScalef(2 / 100, 1, 1);
-	glutSolidCube(200);
-	glPopMatrix();
-}
-
-
 
 void drawScene()
 {
@@ -215,11 +195,6 @@ void setup()
 
 	// Turn on OpenGL lighting.
 	glEnable(GL_LIGHTING);
-
-	// Material property vectors.
-	float matAmbAndDif[] = { 0.0, 0.0, 1.0, 1.0 };
-	float matSpec[] = { 1.0, 1.0, 1, 0, 1.0 };
-	float matShine[] = { 50.0 };
 
 	// Material properties of sphere.
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
