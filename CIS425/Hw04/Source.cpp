@@ -181,30 +181,23 @@ void drawSpheres(){
 }
 
 void drawBulb(){
-
+	glColor3f(1.0, 1.0, 1.0);
+	glPushMatrix();
+	glTranslatef(ambX, ambY, ambZ);
+	glutWireSphere(4, 8, 8);
+	glPopMatrix();
 }
 
 void drawScenario(){
 	gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Turn lights off to draw lamp
 	glDisable(GL_LIGHTING);
-	// draw bulb
-	glPushMatrix();
-			//glTranslatef(ambX, ambY, ambZ);
-	//glLoadIdentity();
-	glTranslatef(100, 100, 100);
-	glColor3f(1.0, 1.0, 1.0);
-	cout << "light0On: " << light0On << endl;
-				//if (light0On) glutWireSphere(50, 8, 8);
-				//if (light0On) glutSolidSphere(20, 8, 8);
-	glutSolidSphere(20, 8, 8);
-	glPopMatrix();
+	drawBulb();
 
-	// Turn lights on again
+	// Turn lights on again to draw the other objects
 	glEnable(GL_LIGHTING);
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	drawWalls();
 	//drawDoor();
 	drawSpheres();
