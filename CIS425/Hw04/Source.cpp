@@ -54,7 +54,12 @@ static bool isSelecting = false; // In selection mode?
 static int hits; // Number of entries in hit buffer.
 static unsigned int buffer[1024]; // Hit buffer.
 static unsigned int closestName = 0; // Name of closest hit.
-static unsigned int frameRate = 100;
+	// animations
+static int frameRate = 100; //control speed of animations
+static bool foundKey = false;
+static bool keyAnimationStarted = false;
+static int smallSphereZ = 120;
+static int smallSphereY = 2.5;
 
 float degToRad(int angInDeg){
 	return PI * angInDeg / 180;
@@ -173,11 +178,14 @@ void drawSpheres(){
 	glPopMatrix();
 
 	if (isSelecting) glLoadName(4);
-	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //yellow
+	if (!foundKey) glColorMask(false, false, false, false);
+	else { matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; } //yellow
+		//matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glPushMatrix();
-	glTranslatef(100, 2.5, 120);
+	glTranslatef(100, smallSphereY, smallSphereZ);
 	glutSolidSphere(2.5, 8, 8);
+	if (!foundKey) glColorMask(true, true, true, true);
 	glPopMatrix();
 }
 
@@ -430,6 +438,8 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			cout << "t = " << t << endl;
 			glutPostRedisplay();
 			break;
+		case 'm':
+			foundKey = !foundKey;
 		default:
 			break;
 	}
@@ -437,8 +447,17 @@ void keyInput(unsigned char key, int scrX, int scrY)
 
 void animate(int value)
 {
-	cout << "hi!" << endl;
+	if (foundKey){
+		if (!keyAnimationStarted){
+			if (smallSphereY < 100) smallSphereY += 1;
+			else if (smallSphereZ > 5) smallSphereZ -= 5;
+		}
+		else{
+
+		}
+	}
 	glutTimerFunc(frameRate, animate, 1);
+	glutPostRedisplay();
 }
 
 void printInteraction()
@@ -463,6 +482,8 @@ void printInteraction()
 	cout << "Press l to increase theta" << endl;
 	cout << "Press Z to increase attenuation" << endl;
 	cout << "Press z to decrease attenuation" << endl;
+
+	cout << "Press m to toggle foundKey" << endl;
 }
 
 // Main routine.
