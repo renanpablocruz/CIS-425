@@ -54,6 +54,7 @@ static bool isSelecting = false; // In selection mode?
 static int hits; // Number of entries in hit buffer.
 static unsigned int buffer[1024]; // Hit buffer.
 static unsigned int closestName = 0; // Name of closest hit.
+static unsigned int frameRate = 100;
 
 float degToRad(int angInDeg){
 	return PI * angInDeg / 180;
@@ -434,14 +435,10 @@ void keyInput(unsigned char key, int scrX, int scrY)
 	}
 }
 
-void mouseControl(int button, int state, int scrX, int scrY)
+void animate(int value)
 {
-
-}
-
-void mouseMotion(int scrX, int scrY)
-{
-
+	cout << "hi!" << endl;
+	glutTimerFunc(frameRate, animate, 1);
 }
 
 void printInteraction()
@@ -482,7 +479,7 @@ int main(int argc, char **argv)
 	glutReshapeFunc(resize);
 	glutKeyboardFunc(keyInput);
 	glutMouseFunc(pickFunction);
-	//	glutMotionFunc(mouseMotion);
+	glutTimerFunc(5, animate, 1); // wait 5 miliseconds and execute this fuction for the first time
 	glutMainLoop();
 
 	return 0;
