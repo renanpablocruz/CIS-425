@@ -143,12 +143,10 @@ void drawWalls(){
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	for (int i = 0; i < 200; i++){
 		for (int j = 0; j < 200; j++){
-			if (i < switchz0 || i >= switchz1 || j < switchy0 || j >= switchy1){
-				glVertex3f(0, j, i);
-				glVertex3f(0, j, i + 1);
-				glVertex3f(0, j + 1, i + 1);
-				glVertex3f(0, j + 1, i);
-			}
+			glVertex3f(0, j, i);
+			glVertex3f(0, j, i + 1);
+			glVertex3f(0, j + 1, i + 1);
+			glVertex3f(0, j + 1, i);
 		}
 	}
 	glEnd();
@@ -211,17 +209,17 @@ void drawBulb(){
 
 void drawSwitch(){
 	if (isSelecting) glLoadName(5);
-	if (closestName == 5) light0On = true;
+	if (closestName == 5) { light0On = !light0On; closestName = 0; }
 	glBegin(GL_QUADS);
 	glNormal3f(1, 0, 0);
 	matAmbAndDif[0] = 0.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //cyan
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	for (int i = switchz0; i < switchz1; i++){
 		for (int j = switchy0; j < switchy1; j++){
-			glVertex3f(0, j, i);
-			glVertex3f(0, j, i + 1);
-			glVertex3f(0, j + 1, i + 1);
-			glVertex3f(0, j + 1, i);
+			glVertex3f(1, j, i);
+			glVertex3f(1, j, i + 1);
+			glVertex3f(1, j + 1, i + 1);
+			glVertex3f(1, j + 1, i);
 		}
 	}
 	glEnd();
