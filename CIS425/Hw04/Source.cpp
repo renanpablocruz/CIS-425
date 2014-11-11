@@ -33,17 +33,22 @@ using namespace std;
 // Globals
 static float scrW;
 static float scrH;
-static float camX = 100;
+static float camX = 145;
 static float camY = 8;
 static float camZ = 300;
 static float camR = 100;
 static int phi = 0;
 static int theta = 0;
-static float ambX = 80;
+static float ambX = 180;
 static float ambY = 100;
 static float ambZ = 20;
+	// object measures
+static int switchz0 = 120;
+static int switchz1 = 170;
+static int switchy0 = 10;
+static int switchy1 = 30;
 	// Light
-static bool light0On = true; // White light on?
+static bool light0On = false; // White light on?
 static float t = 0.0005; // attenuation factor
 	// Material property vectors.
 static float matAmbAndDif[] = { 0.0, 0.0, 1.0, 1.0 };
@@ -138,10 +143,12 @@ void drawWalls(){
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	for (int i = 0; i < 200; i++){
 		for (int j = 0; j < 200; j++){
-			glVertex3f(0, j, i);
-			glVertex3f(0, j, i+1);
-			glVertex3f(0, j+1, i+1);
-			glVertex3f(0, j+1, i);
+			if (i < switchz0 || i >= switchz1 || j < switchy0 || j >= switchy1){
+				glVertex3f(0, j, i);
+				glVertex3f(0, j, i + 1);
+				glVertex3f(0, j + 1, i + 1);
+				glVertex3f(0, j + 1, i);
+			}
 		}
 	}
 	glEnd();
@@ -149,6 +156,7 @@ void drawWalls(){
 
 void drawDoor(){
 	if (isSelecting) glLoadName(2);
+	if (closestName == 2) clickedFrontDoor = true;
 	if (clickedFrontDoor){ glTranslatef(160, 0, 200); glRotatef(-doorAngle, 0, 1, 0); glTranslatef(-160, 0, -200); }
 	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
@@ -201,19 +209,38 @@ void drawBulb(){
 	glPopMatrix();
 }
 
+void drawSwitch(){
+	if (isSelecting) glLoadName(5);
+	if (closestName == 5) light0On = true;
+	glBegin(GL_QUADS);
+	glNormal3f(1, 0, 0);
+	matAmbAndDif[0] = 0.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //cyan
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	for (int i = switchz0; i < switchz1; i++){
+		for (int j = switchy0; j < switchy1; j++){
+			glVertex3f(0, j, i);
+			glVertex3f(0, j, i + 1);
+			glVertex3f(0, j + 1, i + 1);
+			glVertex3f(0, j + 1, i);
+		}
+	}
+	glEnd();
+}
+
 void drawScenario(){
 	gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Turn lights off to draw lamp
 	glDisable(GL_LIGHTING);
-	drawBulb();
+	if(light0On) drawBulb();
 
 	// Turn lights on again to draw the other objects
 	glEnable(GL_LIGHTING);
 	drawWalls();
 	drawDoor();
 	drawSpheres();
+	drawSwitch();
 
 	if (isSelecting) glPopName(); // Clear name stack.
 }
