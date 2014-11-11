@@ -60,6 +60,8 @@ static bool foundKey = false;
 static bool keyAnimationStarted = false;
 static int smallSphereZ = 120;
 static int smallSphereY = 2.5;
+static bool clickedFrontDoor = false;
+static int doorAngle = 0;
 
 float degToRad(int angInDeg){
 	return PI * angInDeg / 180;
@@ -147,6 +149,7 @@ void drawWalls(){
 
 void drawDoor(){
 	if (isSelecting) glLoadName(2);
+	if (clickedFrontDoor){ glTranslatef(160, 0, 200); glRotatef(-doorAngle, 0, 1, 0); glTranslatef(-160, 0, -200); }
 	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glBegin(GL_QUADS);
@@ -161,6 +164,7 @@ void drawDoor(){
 		}
 	}
 	glEnd();
+	if (clickedFrontDoor){ glTranslatef(160, 0, 200); glRotatef(doorAngle, 0, 1, 0); glTranslatef(-160, 0, -200); }
 }
 
 void drawSpheres(){
@@ -208,7 +212,7 @@ void drawScenario(){
 	// Turn lights on again to draw the other objects
 	glEnable(GL_LIGHTING);
 	drawWalls();
-	//drawDoor();
+	drawDoor();
 	drawSpheres();
 
 	if (isSelecting) glPopName(); // Clear name stack.
@@ -440,6 +444,12 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			break;
 		case 'm':
 			foundKey = !foundKey;
+			glutPostRedisplay();
+			break;
+		case 'n':
+			clickedFrontDoor = !clickedFrontDoor;
+			glutPostRedisplay();
+			break;
 		default:
 			break;
 	}
@@ -455,6 +465,10 @@ void animate(int value)
 		else{
 
 		}
+	}
+	if (clickedFrontDoor){
+		if (doorAngle < 120) doorAngle += 5;
+		//else clickedFrontDoor = false;
 	}
 	glutTimerFunc(frameRate, animate, 1);
 	glutPostRedisplay();
@@ -484,6 +498,7 @@ void printInteraction()
 	cout << "Press z to decrease attenuation" << endl;
 
 	cout << "Press m to toggle foundKey" << endl;
+	cout << "Press n to toggle doorAngle" << endl;
 }
 
 // Main routine.
