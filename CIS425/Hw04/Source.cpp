@@ -50,7 +50,7 @@ static float matAmbAndDif[] = { 0.0, 0.0, 1.0, 1.0 };
 static float matSpec[] = { 1.0, 1.0, 1, 0, 1.0 };
 static float matShine[] = { 0.0 };
 	// picking and selecting
-static int isSelecting = 0; // In selection mode?
+static bool isSelecting = false; // In selection mode?
 static int hits; // Number of entries in hit buffer.
 static unsigned int buffer[1024]; // Hit buffer.
 static unsigned int closestName = 0; // Name of closest hit.
@@ -60,19 +60,11 @@ float degToRad(int angInDeg){
 }
 
 void incAng(int& angInDeg){
-	angInDeg = (angInDeg + 5) % 360; // maybe I can optimize this
+	angInDeg = (angInDeg + 5) % 360;
 }
 
 void decAng(int& angInDeg){
 	angInDeg = (angInDeg - 5) % 360;
-}
-
-void drawWallEdges(){
-	glColor3f(1.0, 1.0, 1.0);
-	glPushMatrix();
-	glTranslatef(100, 100, 100);
-	glutWireCube(200);
-	glPopMatrix();
 }
 
 void drawWalls(){
@@ -80,7 +72,12 @@ void drawWalls(){
 	// south wall
 		// draw wall
 	glNormal3f(0, 0, -1);
-	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //yellow
+	if (closestName == 1){
+		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //red
+	}
+	else{
+		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //yellow
+	}
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glBegin(GL_QUADS);
 	for (int i = 0; i < 200; i++){
@@ -144,7 +141,6 @@ void drawWalls(){
 
 void drawDoor(){
 	if (isSelecting) glLoadName(2);
-	// draw door
 	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glBegin(GL_QUADS);
@@ -164,7 +160,7 @@ void drawDoor(){
 void drawSpheres(){
 	if (isSelecting) glLoadName(3);
 	if (closestName == 3){
-		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //magenta
+		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //red
 	}
 	else{
 		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //white
@@ -184,9 +180,33 @@ void drawSpheres(){
 	glPopMatrix();
 }
 
+void drawBulb(){
+
+}
+
 void drawScenario(){
+	gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
+
+	// Turn lights off to draw lamp
+	glDisable(GL_LIGHTING);
+	// draw bulb
+	glPushMatrix();
+			//glTranslatef(ambX, ambY, ambZ);
+	//glLoadIdentity();
+	glTranslatef(100, 100, 100);
+	glColor3f(1.0, 1.0, 1.0);
+	cout << "light0On: " << light0On << endl;
+				//if (light0On) glutWireSphere(50, 8, 8);
+				//if (light0On) glutSolidSphere(20, 8, 8);
+	glutSolidSphere(20, 8, 8);
+	glPopMatrix();
+
+	// Turn lights on again
+	glEnable(GL_LIGHTING);
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	drawWalls();
-	drawDoor();
+	//drawDoor();
 	drawSpheres();
 
 	if (isSelecting) glPopName(); // Clear name stack.
@@ -205,12 +225,14 @@ void drawScene()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDifAndSpec0);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightDifAndSpec0);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+
+	// Light quadratic attenuation factor.
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, t);
 
 		// Turn lights off/on.
 	if (light0On) glEnable(GL_LIGHT0); else glDisable(GL_LIGHT0);
 
-		// Light quadratic attenuation factor.
-	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, t);
 
 	// Draws
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -218,30 +240,15 @@ void drawScene()
 	glLoadIdentity();
 
 	
-	gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
-
-	// Turn lights off to draw lamp and white edges
-	glDisable(GL_LIGHTING);
-	// draw bulb
-	glPushMatrix();
-	//glRotatef(xAngle, 1.0, 0.0, 0.0); // Rotation about x-axis.
-	//glRotatef(yAngle, 0.0, 1.0, 0.0); // Rotation about z-axis.
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
-	glTranslatef(lightPos0[0], lightPos0[1], lightPos0[2]);
-	glColor3f(1.0, 1.0, 1.0);
-	if (light0On) glutWireSphere(5, 8, 8);
-	glPopMatrix();
-
-	// Turn lights on again
-	glEnable(GL_LIGHTING);
 	// Draw ball and torus in rendering mode.
-	isSelecting = 0;
+	isSelecting = false;
 	drawScenario();
+
 	glutSwapBuffers();
 }
 
 // Process hit buffer to find record with smallest min-z value.
-void findClosestHit(int hits)
+void findClosestHit(int hits, unsigned int buffer[])
 {
 	unsigned int *ptr, minZ;
 
@@ -261,6 +268,7 @@ void findClosestHit(int hits)
 		else ptr += 3;
 	}
 	//if (closestName != 0) highlightFrames = 10;
+	cout << "object " << closestName << " was clicked" << endl;
 }
 
 // The mouse callback routine.
@@ -282,7 +290,6 @@ void pickFunction(int button, int state, int x, int y)
 	// Define a viewing volume corresponding to selecting in 3 x 3 region around the cursor.
 	glLoadIdentity();
 	gluPickMatrix((float)x, (float)(viewport[3] - y), 3.0, 3.0, viewport);
-		//glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0); // Copied from the reshape routine.
 	gluPerspective(45.0f, (double)scrW / scrH, 1.0, 1000.0);
 
 	glMatrixMode(GL_MODELVIEW); // Return to modelview mode before drawing.
@@ -292,10 +299,13 @@ void pickFunction(int button, int state, int x, int y)
 	glPushName(0); // Puts name 0 on top of stack.
 
 	// Determine hits by calling drawBallAndTorus() so that names are assigned.
-	isSelecting = 1;
+	isSelecting = true;
 	drawScenario();
 
 	hits = glRenderMode(GL_RENDER); // Return to rendering mode, returning number of hits.
+
+			// debug
+	cout << hits << " hits." << endl;
 
 	// Restore viewing volume of the resize routine and return to modelview mode.
 	glMatrixMode(GL_PROJECTION);
@@ -303,7 +313,7 @@ void pickFunction(int button, int state, int x, int y)
 	glMatrixMode(GL_MODELVIEW);
 
 	// Determine closest of the hit objects (if any).
-	findClosestHit(hits);
+	findClosestHit(hits, buffer);
 
 	glutPostRedisplay();
 }
@@ -339,14 +349,15 @@ void setup()
 	// Cull back faces.
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK);
-
-
 }
 
 void keyInput(unsigned char key, int scrX, int scrY)
 {
 	switch (key)
 	{
+		case 27:
+			exit(0);
+			break;
 		case 'q':
 			camX -= 5;
 			glutPostRedisplay();
@@ -461,7 +472,7 @@ void printInteraction()
 	cout << "Press o to decrease theta" << endl;
 	cout << "Press l to increase theta" << endl;
 	cout << "Press Z to increase attenuation" << endl;
-	cout << "Press z to decrease attenuationz" << endl;
+	cout << "Press z to decrease attenuation" << endl;
 }
 
 // Main routine.
