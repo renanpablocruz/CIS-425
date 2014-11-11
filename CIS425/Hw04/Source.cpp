@@ -34,19 +34,19 @@ using namespace std;
 static float scrW;
 static float scrH;
 static float camX = 145;
-static float camY = 8;
-static float camZ = 300;
+static float camY = 10;
+static float camZ = 180;
 static float camR = 100;
 static int phi = 0;
 static int theta = 0;
 static float ambX = 180;
-static float ambY = 100;
+static float ambY = 50;
 static float ambZ = 20;
 	// object measures
-static int switchz0 = 120;
+static int switchz0 = 165;
 static int switchz1 = 170;
-static int switchy0 = 10;
-static int switchy1 = 30;
+static int switchy0 = 12;
+static int switchy1 = 15;
 	// Light
 static bool light0On = false; // White light on?
 static float t = 0.0005; // attenuation factor
@@ -225,13 +225,41 @@ void drawSwitch(){
 	glEnd();
 }
 
+void drawWindow(){
+	glNormal3f(1, 0, 0);
+	glPushMatrix();
+	glTranslatef(1, 0, 0);
+	glRotatef(-90, 0, 1, 0);
+	glColor3f(0, 0, 0); //backgroung
+	glRectf(120, 12, 80, 42);
+	glColor3f(1.0, 1.0, 1.0); //bright side of moon
+	glBegin(GL_POLYGON);
+	for (int i = 0, R= 5 ; i < 20; i++){
+		glVertex3f(110 + R*cos(2 * PI*i / 20), 30 + R*sin(2 * PI*i / 20), -1);
+	}
+	glEnd();
+	glColor3f(0, 0, 0); //dark side of moon
+	glBegin(GL_POLYGON);
+	for (int i = 0, R = 5; i < 20; i++){
+		glVertex3f(109 + R*cos(2 * PI*i / 20), 29 + R*sin(2 * PI*i / 20), -2);
+	}
+	glEnd();
+	glColor3f(1.0, 1.0, 1.0); // stars
+	glTranslatef(0, 0, -3);
+	glRectf(90, 30, 89, 31);
+	glRectf(92, 24, 91, 25);
+	glRectf(95, 27, 94, 28);
+	glRectf(100, 29, 99, 30);
+	glRectf(105, 28, 104, 29);
+	glPopMatrix();
+	glColor3f(1.0, 0.0, 1.0);
+}
+
 void drawScenario(){
 	gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Turn lights off to draw lamp
-	glDisable(GL_LIGHTING);
-	if(light0On) drawBulb();
+	
 
 	// Turn lights on again to draw the other objects
 	glEnable(GL_LIGHTING);
@@ -239,6 +267,13 @@ void drawScenario(){
 	drawDoor();
 	drawSpheres();
 	drawSwitch();
+
+	// Turn lights off to draw lamp
+	glDisable(GL_LIGHTING);
+	if (light0On) drawBulb();
+	drawWindow();
+
+	glEnable(GL_LIGHTING);
 
 	if (isSelecting) glPopName(); // Clear name stack.
 }
