@@ -10,6 +10,9 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Syracuse\2014-2\CIS 425-625\book-code\ballAndTorus.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{599DDD7C-F488-4DA5-9BFB-3A40E8753804}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
