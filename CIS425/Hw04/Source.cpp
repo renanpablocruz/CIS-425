@@ -74,6 +74,7 @@ static bool chooseSideToTurnKey = false;
 static bool gotAnswer = false;
 static bool clickedOnPumpkin = false;
 static int correctSideToTurnKey;
+static int finalCountdown = 0;
 	//writing
 static long font = (long)GLUT_BITMAP_8_BY_13; // Font selection.
 static double doorknobPos[] = {135, 35, 0};
@@ -560,10 +561,6 @@ void setup()
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpec);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShine);
-
-	// Cull back faces.
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
 }
 
 void keyInput(unsigned char key, int scrX, int scrY)
@@ -709,17 +706,21 @@ void animate(int value)
 		if(gotFlashlight) gotKey = findKey();
 	}
 	if (movFrontDoor){
-		if (frontDoorAngle < 120) frontDoorAngle += 5;
+		if (frontDoorAngle < 175) frontDoorAngle += 5;
 	}
 	if (chooseSideToTurnKey){
 		if (gotAnswer){
-			if (backDoorAngle < 120) backDoorAngle += 5;
+			if (backDoorAngle < 175) backDoorAngle += 5;
 			else exit(0);
 		}
 		else{
-			int coin = rand() % 2;
-			if (coin == 0) theta += rand() % 10;
-			if (coin == 1) phi += rand() % 10;
+			if (finalCountdown < 150){
+				int coin = rand() % 2;
+				if (coin == 0) theta += rand() % 10;
+				if (coin == 1) phi += rand() % 10;
+				finalCountdown += 1;
+			}
+			else exit(0);
 		}
 	}
 	
