@@ -2,16 +2,16 @@
 #include <time.h>
 #include <cmath>
 
-float degToRad(int angInDeg){
+float degToRad(double angInDeg){
 	return PI * angInDeg / 180;
 }
 
-void incAng(int& angInDeg){
-	angInDeg = (angInDeg + 5) % 360;
+void incAng(double& angInDeg){
+	angInDeg = (int)(angInDeg + 5) % 360;
 }
 
-void decAng(int& angInDeg){
-	angInDeg = (angInDeg - 5) % 360;
+void decAng(double& angInDeg){
+	angInDeg = (int)(angInDeg - 5) % 360;
 }
 
 float cosDiffAng(float u[], float v[], int length){

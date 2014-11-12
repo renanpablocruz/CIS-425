@@ -27,22 +27,20 @@
 #endif
 
 // constants
-//#define PI 3.14159265358979324
+#define PI 3.14159265358979324
+#define LEFT 0
+#define RIGHT 1
 
 using namespace std;
 
 // Globals
 static float scrW;
 static float scrH;
-static float camX = 145;
-static float camY = 14;
-static float camZ = 180;
-static float camR = 100;
-static int phi = 0;
-static int theta = 0;
-static float light0_x = 180;
-static float light0_y = 50;
-static float light0_z = 20;
+static float camX = 145, camY = 14, camZ = 180, camR = 100;
+static float camX0 = 145, camY0 = 14, camZ0 = 180;
+static double phi = 0;
+static double theta = 0;
+static float light0_x = 180, light0_y = 50, light0_z = 20;
 	// object measures
 static int switchz0 = 165;
 static int switchz1 = 170;
@@ -66,9 +64,8 @@ static unsigned int closestName = 0; // Name of closest hit.
 static int frameRate = 100; //control speed of animations
 static bool gotKey = false;
 static bool keyAnimationEnded = false;
-static double keyX = 100;
-static double keyZ = 120;
-static double keyY = 2.5;
+static double keyX = 100, keyY = 2.5, keyZ = 120;
+static double keyX0 = 100, keyY0 = 2.5, keyZ0 = 120;
 static bool movFrontDoor = false;
 static int frontDoorAngle = 0;
 static int backDoorAngle = 0;
@@ -76,11 +73,12 @@ static bool gotFlashlight = false;
 static bool chooseSideToTurnKey = false;
 static bool gotAnswer = false;
 static bool clickedOnPumpkin = false;
-static int rightSide;
-
+static int correctSideToTurnKey;
 	//writing
 static long font = (long)GLUT_BITMAP_8_BY_13; // Font selection.
-static double lockPos[] = {135, 35, 0};
+static double doorknobPos[] = {135, 35, 0};
+	//special
+static bool developerMode = false;
 
 void drawWalls(){
 	if (isSelecting) glLoadName(1);
@@ -110,8 +108,8 @@ void drawWalls(){
 	glNormal3f(0, 0, 1);
 	matAmbAndDif[0] = 0.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //blue
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
-	matShine[0] = 50.0;
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShine);
+	//matShine[0] = 20.0;
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 10);
 	glBegin(GL_QUADS);
 	for (int i = 0; i < 200; i++){
 		for (int j = 0; j < 200; j++){
@@ -124,8 +122,9 @@ void drawWalls(){
 		}
 	}
 	glEnd();
-	matShine[0] = 0.0;
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShine);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 128);
+	//matShine[0] = 0.0;
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShine);
 	// east wall
 	glBegin(GL_QUADS);
 	glNormal3f(-1, 0, 0);
@@ -196,10 +195,10 @@ void drawBackDoor(){
 		}
 	}
 	glEnd();
-	// lock
+	// doorknob
 	matAmbAndDif[0] = 0.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //white
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
-	glTranslatef(lockPos[0], lockPos[1], lockPos[2]);
+	glTranslatef(doorknobPos[0], doorknobPos[1], doorknobPos[2]);
 	glutSolidSphere(2, 8, 8); 
 	glPopMatrix();
 }
@@ -207,8 +206,9 @@ void drawBackDoor(){
 void drawKey(){
 	if (isSelecting) glLoadName(4);
 	if (!gotFlashlight) glColorMask(false, false, false, false);
-	else { matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; } //yellow
+	else { matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0;} //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 10);
 	glPushMatrix();
 	if (gotAnswer){ glTranslatef(160, 0, 0); glRotatef(backDoorAngle, 0, 1, 0); glTranslatef(-160, 0, -0); }
 	glTranslatef(keyX, keyY, keyZ);
@@ -217,6 +217,7 @@ void drawKey(){
 	glutSolidCone(1, 3, 8, 8);
 	if (!gotFlashlight) glColorMask(true, true, true, true);
 	glPopMatrix();
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 128);
 }
 
 void drawTable(){
@@ -356,7 +357,7 @@ void drawScenario(){
 
 	// Turn lights off to draw lamp
 	glDisable(GL_LIGHTING);
-	if (light0On) drawBulb();
+	drawBulb();
 	drawWindow();
 
 	glEnable(GL_LIGHTING);
@@ -392,10 +393,6 @@ void writeText(){
 		glRasterPos3f(camX + camR/2*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR/2*sin(degToRad(phi)), camZ - camR/2*cos(degToRad(phi))*cos(degToRad(theta)));
 		writeBitmapString((void*)font, "Oh! Wait!!!");
 	}
-
-	srand(time(NULL));
-	rightSide = rand() % 2;
-	cout << "rightSide: " << rightSide << endl;
 }
 
 void drawScene()
@@ -449,7 +446,7 @@ void drawScene()
 	glColor3f(0.0, 0.0, 0.0);
 	glLoadIdentity();
 
-	// Draw scenario in rendering mode.
+	// ey scenario in rendering mode.
 	isSelecting = false;
 	drawScenario();
 	if (keyAnimationEnded) writeText();
@@ -540,6 +537,12 @@ bool findKey(){
 	return cosDiffAng(sightDir, keyDir, 3) > cos(degToRad(cutoffAng));
 }
 
+void setSideToTurnKey(){
+	srand(time(NULL));
+	correctSideToTurnKey = rand() % 2;
+	cout << "correctSideToTurnKey: " << correctSideToTurnKey << endl;
+}
+
 void resize(int w, int h)
 {
 	scrW = w;
@@ -578,34 +581,6 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		case 27:
 			exit(0);
 			break;
-		case 'q':
-			camX -= 5;
-			glutPostRedisplay();
-			break;
-		case 'a':
-			camX += 5;
-			glutPostRedisplay();
-			break;
-		case 'w':
-			camY += 5;
-			glutPostRedisplay();
-			break;
-		case 's':
-			camY -= 5;
-			glutPostRedisplay();
-			break;
-		case 'e':
-			camZ -= 5;
-			glutPostRedisplay();
-			break;
-		case 'd':
-			camZ += 5;
-			glutPostRedisplay();
-			break;
-		case 'r':
-			light0On = !light0On;
-			glutPostRedisplay();
-			break;
 		case 't':
 			light0_x -= 5;
 			glutPostRedisplay();
@@ -630,22 +605,6 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			light0_z += 5;
 			glutPostRedisplay();
 			break;
-		case 'i':
-			incAng(phi);
-			glutPostRedisplay();
-			break;
-		case 'k':
-			decAng(phi);
-			glutPostRedisplay();
-			break;
-		case 'o':
-			decAng(theta);
-			glutPostRedisplay();
-			break;
-		case 'l':
-			incAng(theta);
-			glutPostRedisplay();
-			break;
 		case 'z':
 			if(t > 0.0) t -= 0.0005;
 			cout << "t = " << t << endl;
@@ -660,20 +619,12 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			gotKey = !gotKey;
 			glutPostRedisplay();
 			break;
-		case 'n':
-			movFrontDoor = !movFrontDoor;
-			glutPostRedisplay();
-			break;
-		case 'b':
+		case 'a':
 			if(ambLight > 0) ambLight -= 0.05;
 			glutPostRedisplay();
 			break;
-		case 'B':
+		case 'A':
 			if (ambLight < 1) ambLight += 0.05;
-			glutPostRedisplay();
-			break;
-		case 'v':
-			gotFlashlight = !gotFlashlight;
 			glutPostRedisplay();
 			break;
 		case 'x':
@@ -682,12 +633,93 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			break;
 		case 'c':
 			chooseSideToTurnKey = true;
-			if (rightSide == 0) gotAnswer = true;
+			if (correctSideToTurnKey == 0) gotAnswer = true;
 			glutPostRedisplay();
 			break;
 		case 'C':
 			chooseSideToTurnKey = true;
-			if (rightSide == 1) gotAnswer = true;
+			if (correctSideToTurnKey == 1) gotAnswer = true;
+			glutPostRedisplay();
+			break;
+		case '*':
+			developerMode = !developerMode;
+			break;
+		case 'D':
+			movFrontDoor = !movFrontDoor;
+			glutPostRedisplay();
+			break;
+		case 'L':
+			light0On = !light0On;
+			glutPostRedisplay();
+			break;
+		case 'P':
+			if (developerMode){
+				clickedOnPumpkin = !clickedOnPumpkin;
+				glutPostRedisplay;
+			}
+			break;
+		case 'F':
+			if (developerMode){
+				gotFlashlight = !gotFlashlight;
+				glutPostRedisplay();
+			}
+			break;
+		case 'K':
+			if (developerMode){
+				bool oldValue = gotKey;
+				gotKey = !gotKey;
+				gotFlashlight = gotKey;
+				if (oldValue){
+					keyX = keyX0;
+					keyY = keyY0;
+					keyZ = keyZ0;
+				}
+				glutPostRedisplay();
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+// Callback routine for non-ASCII key entry.
+void specialKeyInput(int key, int x, int y)
+{
+	int modifier = glutGetModifiers();
+	switch (key)
+	{
+		case GLUT_KEY_LEFT:
+			if (!developerMode) decAng(theta);
+			else if (modifier == GLUT_ACTIVE_ALT){
+				chooseSideToTurnKey = true;
+				if (correctSideToTurnKey == LEFT) gotAnswer = true;
+			}	
+			glutPostRedisplay();
+			break;
+		case GLUT_KEY_RIGHT:
+			if (!developerMode) incAng(theta);
+			else if (modifier == GLUT_ACTIVE_ALT){
+				chooseSideToTurnKey = true;
+				if (correctSideToTurnKey == RIGHT) gotAnswer = true;
+			}
+			glutPostRedisplay();
+			break;
+		case GLUT_KEY_UP:
+			if (modifier == GLUT_ACTIVE_SHIFT) incAng(phi);
+			else{
+				camX += 2 * cos(degToRad(phi)) * sin(degToRad(theta));
+				camY += 2 * sin(degToRad(phi));
+				camZ += 2 * -cos(degToRad(phi))*cos(degToRad(theta));
+			}
+			glutPostRedisplay();
+			break;
+		case GLUT_KEY_DOWN:
+			if (modifier == GLUT_ACTIVE_SHIFT) decAng(phi);
+			else{
+				camX -= 2 * cos(degToRad(phi)) * sin(degToRad(theta));
+				camY -= 2 * sin(degToRad(phi));
+				camZ -= 2 * -cos(degToRad(phi))*cos(degToRad(theta));
+			}
 			glutPostRedisplay();
 			break;
 		default:
@@ -698,16 +730,16 @@ void keyInput(unsigned char key, int scrX, int scrY)
 void animate(int value)
 {
 	if (gotKey){
-		if (!keyAnimationEnded){ // suppose that the key is on front and below the lock; to fix, make the delta global
-			if (keyY < lockPos[1]){
+		if (!keyAnimationEnded){ // suppose that the key is on front and below the doorknob; to fix, make the delta global
+			if (keyY < doorknobPos[1]){
 				keyY += 1;
 				camY += 1;
 			}
-			else if (keyX < lockPos[0]){
+			else if (keyX < doorknobPos[0]){
 				keyX += 1;
 				camX += 1;
 			}
-			else if (keyZ > lockPos[2]+3){
+			else if (keyZ > doorknobPos[2]+3){
 				keyZ -= 2;
 				camZ -= 2;
 			}
@@ -761,6 +793,8 @@ void printInteraction()
 	cout << "Press z to decrease attenuation" << endl;
 	cout << "Press B to increase ambLight" << endl;
 	cout << "Press b to decrease ambLight" << endl;
+	cout << "Press c to turn key left" << endl;
+	cout << "Press B to turn key right" << endl;
 
 	cout << "Press m to toggle gotKey" << endl;
 	cout << "Press n to toggle doorAngle" << endl;
@@ -782,6 +816,8 @@ int main(int argc, char **argv)
 	glutReshapeFunc(resize);
 	glutKeyboardFunc(keyInput);
 	glutMouseFunc(pickFunction);
+	glutSpecialFunc(specialKeyInput);
+	setSideToTurnKey();
 	glutTimerFunc(5, animate, 1); // wait 5 miliseconds and execute this fuction for the first time
 	glutMainLoop();
 
