@@ -36,20 +36,20 @@ using namespace std;
 // Globals
 static float scrW;
 static float scrH;
-static float camX = 145, camY = 14, camZ = 180, camR = 100;
-static float camX0 = 145, camY0 = 14, camZ0 = 180;
+static float camX = 150, camY = 30, camZ = 330, camR = 100;
+static float camX0 = camX, camY0 = camY, camZ0 = camZ;
 static double phi = 0;
 static double theta = 0;
-static float light0_x = 180, light0_y = 50, light0_z = 20;
-	// object measures
+static float light0_x = 180, light0_y = 120, light0_z = 20;
+	// object measures	
 static int switchz0 = 165;
 static int switchz1 = 170;
-static int switchy0 = 12;
-static int switchy1 = 15;
+static int switchy0 = 25;
+static int switchy1 = 30;
 	// Light
 static bool light0On = false; // White light on?
 static float t = 0.0005; // attenuation factor
-static float ambLight = 0.4;
+static float ambLight = 0.1;
 static float cutoffAng = 10;
 	// Material property vectors.
 static float matAmbAndDif[] = { 0.0, 0.0, 1.0, 1.0 };
@@ -85,12 +85,7 @@ void drawWalls(){
 	// south wall
 		// draw wall
 	glNormal3f(0, 0, -1);
-	if (closestName == 1){
-		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //red
-	}
-	else{
-		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //yellow
-	}
+	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glBegin(GL_QUADS);
 	for (int i = 0; i < 200; i++){
@@ -221,6 +216,7 @@ void drawKey(){
 }
 
 void drawTable(){
+	if (isSelecting) glLoadName(8);
 	matAmbAndDif[0] = 0.4; matAmbAndDif[1] = 0.4; matAmbAndDif[2] = 0.5; matAmbAndDif[3] = 1.0; // grey
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);
@@ -278,6 +274,7 @@ void drawPumpkin(){
 }
 
 void drawBulb(){
+	if (isSelecting) glLoadName(9);
 	glColor3f(1.0, 1.0, 1.0);
 	glPushMatrix();
 	glTranslatef(light0_x, light0_y, light0_z);
@@ -304,6 +301,7 @@ void drawSwitch(){
 }
 
 void drawWindow(){
+	if (isSelecting) glLoadName(10);
 	glNormal3f(1, 0, 0);
 	glPushMatrix();
 	glTranslatef(1, 0, 0);
@@ -480,8 +478,6 @@ void findClosestHit(int hits, unsigned int buffer[])
 		}
 		else ptr += 3;
 	}
-	//if (closestName != 0) highlightFrames = 10;
-	cout << "object " << closestName << " was clicked" << endl;
 }
 
 // The mouse callback routine.
@@ -517,9 +513,6 @@ void pickFunction(int button, int state, int x, int y)
 
 	hits = glRenderMode(GL_RENDER); // Return to rendering mode, returning number of hits.
 
-			// debug
-	cout << hits << " hits." << endl;
-
 	// Restore viewing volume of the resize routine and return to modelview mode.
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -540,7 +533,6 @@ bool findKey(){
 void setSideToTurnKey(){
 	srand(time(NULL));
 	correctSideToTurnKey = rand() % 2;
-	cout << "correctSideToTurnKey: " << correctSideToTurnKey << endl;
 }
 
 void resize(int w, int h)
@@ -581,42 +573,12 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		case 27:
 			exit(0);
 			break;
-		case 't':
-			light0_x -= 5;
-			glutPostRedisplay();
-			break;
-		case 'g':
-			light0_x += 5;
-			glutPostRedisplay();
-			break;
-		case 'y':
-			light0_y += 5;
-			glutPostRedisplay();
-			break;
-		case 'h':
-			light0_y -= 5;
-			glutPostRedisplay();
-			break;
 		case 'u':
-			light0_z -= 5;
+			incAng(phi);
 			glutPostRedisplay();
 			break;
-		case 'j':
-			light0_z += 5;
-			glutPostRedisplay();
-			break;
-		case 'z':
-			if(t > 0.0) t -= 0.0005;
-			cout << "t = " << t << endl;
-			glutPostRedisplay();
-			break;
-		case 'Z':
-			t += 0.0005;
-			cout << "t = " << t << endl;
-			glutPostRedisplay();
-			break;
-		case 'm':
-			gotKey = !gotKey;
+		case 'v':
+			decAng(phi);
 			glutPostRedisplay();
 			break;
 		case 'a':
@@ -625,10 +587,6 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			break;
 		case 'A':
 			if (ambLight < 1) ambLight += 0.05;
-			glutPostRedisplay();
-			break;
-		case 'x':
-			gotAnswer = !gotAnswer;
 			glutPostRedisplay();
 			break;
 		case 'c':
@@ -643,6 +601,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			break;
 		case '*':
 			developerMode = !developerMode;
+			cout << "correctSideToTurnKey: " << correctSideToTurnKey << endl;
 			break;
 		case 'D':
 			movFrontDoor = !movFrontDoor;
@@ -655,7 +614,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		case 'P':
 			if (developerMode){
 				clickedOnPumpkin = !clickedOnPumpkin;
-				glutPostRedisplay;
+				glutPostRedisplay();
 			}
 			break;
 		case 'F':
@@ -705,7 +664,7 @@ void specialKeyInput(int key, int x, int y)
 			glutPostRedisplay();
 			break;
 		case GLUT_KEY_UP:
-			if (modifier == GLUT_ACTIVE_SHIFT) incAng(phi);
+			if (modifier == GLUT_ACTIVE_SHIFT) camY += 2;
 			else{
 				camX += 2 * cos(degToRad(phi)) * sin(degToRad(theta));
 				camY += 2 * sin(degToRad(phi));
@@ -714,7 +673,7 @@ void specialKeyInput(int key, int x, int y)
 			glutPostRedisplay();
 			break;
 		case GLUT_KEY_DOWN:
-			if (modifier == GLUT_ACTIVE_SHIFT) decAng(phi);
+			if (modifier == GLUT_ACTIVE_SHIFT) camY -= 2;
 			else{
 				camX -= 2 * cos(degToRad(phi)) * sin(degToRad(theta));
 				camY -= 2 * sin(degToRad(phi));
@@ -751,7 +710,6 @@ void animate(int value)
 	}
 	if (movFrontDoor){
 		if (frontDoorAngle < 120) frontDoorAngle += 5;
-		else movFrontDoor = false;
 	}
 	if (chooseSideToTurnKey){
 		if (gotAnswer){
@@ -771,35 +729,30 @@ void animate(int value)
 
 void printInteraction()
 {
-	cout << "Interactions:" << endl;
-	cout << "Press q to decrease camX" << endl;
-	cout << "Press a to increase camX" << endl;
-	cout << "Press w to increase camY" << endl;
-	cout << "Press s to increase camY" << endl;
-	cout << "Press e to decrease camZ" << endl;
-	cout << "Press d to decrease camZ" << endl;
-	cout << "Press r to turn on/off the ambient light" << endl;
-	cout << "Press t to decrease light0_x" << endl;
-	cout << "Press g to increase light0_x" << endl;
-	cout << "Press y to increase light0_y" << endl;
-	cout << "Press h to decrease light0_y" << endl;
-	cout << "Press u to decrease light0_z" << endl;
-	cout << "Press j to increase light0_z" << endl;
-	cout << "Press i to increase phi" << endl;
-	cout << "Press k to decrease phi" << endl;
-	cout << "Press o to decrease theta" << endl;
-	cout << "Press l to increase theta" << endl;
-	cout << "Press Z to increase attenuation" << endl;
-	cout << "Press z to decrease attenuation" << endl;
-	cout << "Press B to increase ambLight" << endl;
-	cout << "Press b to decrease ambLight" << endl;
+	cout << "Interactions:" << endl << endl;
+	cout << "Press u to look up" << endl;
+	cout << "Press v to look down" << endl;
+	cout << "Press a to decrease ambient light" << endl;
+	cout << "Press A to increase ambient light" << endl;
 	cout << "Press c to turn key left" << endl;
-	cout << "Press B to turn key right" << endl;
+	cout << "Press C to turn key right" << endl;
+	cout << "Press * to toggle developer mode" << endl;
+	cout << "Press left arrow to turn left" << endl;
+	cout << "Press right arrow to turn right" << endl;
+	cout << "Press up to move forward" << endl;
+	cout << "Press down to move backwards" << endl;
+	cout << "Press shift+up to get higher" << endl;
+	cout << "Press shift+down to get smaller" << endl << endl;
+	cout << "Only in Developer Mode" << endl << endl;
+	cout << "Press D to open front door" << endl;
+	cout << "Press L to toggle on and off the bare bulb light" << endl;
+	cout << "Press P to toggle on and off the pumpkin" << endl;
+	cout << "Press F to get and turn on/ tun off and put on table" << endl;
+	cout << "Press K to rise the key and see going to the door" << endl;
+	cout << "Press alt+left to turn key to the left side" << endl;
+	cout << "Press alt+right to turn key to the right side" << endl << endl;
 
-	cout << "Press m to toggle gotKey" << endl;
-	cout << "Press n to toggle doorAngle" << endl;
-	cout << "Press v to toggle gotFlashlightf" << endl;
-	cout << "Press x to toggle gotAnswer" << endl;
+
 }
 
 // Main routine.
