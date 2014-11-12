@@ -34,14 +34,14 @@ using namespace std;
 static float scrW;
 static float scrH;
 static float camX = 145;
-static float camY = 10;
+static float camY = 14;
 static float camZ = 180;
 static float camR = 100;
 static int phi = 0;
 static int theta = 0;
-static float ambX = 180;
-static float ambY = 50;
-static float ambZ = 20;
+static float light0_x = 180;
+static float light0_y = 50;
+static float light0_z = 20;
 	// object measures
 static int switchz0 = 165;
 static int switchz1 = 170;
@@ -50,6 +50,7 @@ static int switchy1 = 15;
 	// Light
 static bool light0On = false; // White light on?
 static float t = 0.0005; // attenuation factor
+static float ambLight = 0.05;
 	// Material property vectors.
 static float matAmbAndDif[] = { 0.0, 0.0, 1.0, 1.0 };
 static float matSpec[] = { 1.0, 1.0, 1, 0, 1.0 };
@@ -63,10 +64,11 @@ static unsigned int closestName = 0; // Name of closest hit.
 static int frameRate = 100; //control speed of animations
 static bool foundKey = false;
 static bool keyAnimationStarted = false;
-static int smallSphereZ = 120;
-static int smallSphereY = 2.5;
+static int keyZ = 120;
+static int keyY = 2.5;
 static bool clickedFrontDoor = false;
 static int doorAngle = 0;
+static bool foundFlashlight = false;
 
 float degToRad(int angInDeg){
 	return PI * angInDeg / 180;
@@ -173,36 +175,65 @@ void drawDoor(){
 	if (clickedFrontDoor){ glTranslatef(160, 0, 200); glRotatef(doorAngle, 0, 1, 0); glTranslatef(-160, 0, -200); }
 }
 
-void drawSpheres(){
-	if (isSelecting) glLoadName(3);
-	if (closestName == 3){
-		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //red
-	}
-	else{
-		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //white
-	}
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
-	glPushMatrix();
-	glTranslatef(100, 4, 100);
-	glutSolidSphere(4, 8, 8);
-	glPopMatrix();
-
+void drawKey(){
 	if (isSelecting) glLoadName(4);
 	if (!foundKey) glColorMask(false, false, false, false);
 	else { matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; } //yellow
-		//matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glPushMatrix();
-	glTranslatef(100, smallSphereY, smallSphereZ);
-	glutSolidSphere(2.5, 8, 8);
+
+	glTranslatef(100, keyY, keyZ);
+	glRotatef(180, 0, 1, 0);
+	glutSolidSphere(1, 8, 8);
+	glutSolidCone(1, 3, 8, 8);
 	if (!foundKey) glColorMask(true, true, true, true);
+	glPopMatrix();
+}
+
+void drawTable(){
+	matAmbAndDif[0] = 0.4; matAmbAndDif[1] = 0.4; matAmbAndDif[2] = 0.5; matAmbAndDif[3] = 1.0; // grey
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	for (int i = 70; i < 120; i++){
+		for (int j = 90; j < 110; j++){
+			glVertex3f(i, 10, j);
+			glVertex3f(i+1, 10, j);
+			glVertex3f(i+1, 10, j + 1);
+			glVertex3f(i, 10, j+1);
+		}
+	}
+	glEnd();
+
+}
+
+void drawFlashlight(){
+	if (isSelecting) glLoadName(6);
+	if (!foundFlashlight){
+		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; // yellow
+
+	}
+}
+
+void drawPumpkin(){
+	if (isSelecting) glLoadName(3);
+	if (closestName == 3){
+		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.4; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; // orange
+	}
+	else{
+		matAmbAndDif[0] = 0.6; matAmbAndDif[1] = 0.2; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; // brown
+	}
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	glPushMatrix();
+	glTranslatef(80, 14, 100);
+	glutSolidSphere(4, 8, 8);
 	glPopMatrix();
 }
 
 void drawBulb(){
 	glColor3f(1.0, 1.0, 1.0);
 	glPushMatrix();
-	glTranslatef(ambX, ambY, ambZ);
+	glTranslatef(light0_x, light0_y, light0_z);
 	glutWireSphere(4, 8, 8);
 	glPopMatrix();
 }
@@ -259,13 +290,14 @@ void drawScenario(){
 	gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	
-
 	// Turn lights on again to draw the other objects
 	glEnable(GL_LIGHTING);
 	drawWalls();
 	drawDoor();
-	drawSpheres();
+	drawTable();
+	drawFlashlight();
+	drawPumpkin();
+	drawKey();
 	drawSwitch();
 
 	// Turn lights off to draw lamp
@@ -285,13 +317,22 @@ void drawScene()
 		// Light property vectors.
 	float lightAmb[] = { 0.0, 0.0, 0.0, 1.0 };
 	float lightDifAndSpec0[] = { 1.0, 1.0, 1.0, 1.0 };
-	float lightPos0[] = { ambX, ambY, ambZ, 1.0 };
+	float lightPos0[] = { light0_x, light0_y, light0_z, 1.0 };
 
 		// Light0 properties.
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDifAndSpec0);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightDifAndSpec0);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+
+	// make looks like a flashlight
+	float lightDir[] = { cos(degToRad(phi))*sin(degToRad(theta)), sin(degToRad(phi)), - cos(degToRad(phi))*cos(degToRad(theta)) };
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDir);
+	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.f);
+
+	// global ambient light
+	float globAmb[] = { ambLight, ambLight, ambLight, 1.0 };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb); // Global ambient light.
 
 	// Light quadratic attenuation factor.
 	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, t);
@@ -453,27 +494,27 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			glutPostRedisplay();
 			break;
 		case 't':
-			ambX -= 5;
+			light0_x -= 5;
 			glutPostRedisplay();
 			break;
 		case 'g':
-			ambX += 5;
+			light0_x += 5;
 			glutPostRedisplay();
 			break;
 		case 'y':
-			ambY += 5;
+			light0_y += 5;
 			glutPostRedisplay();
 			break;
 		case 'h':
-			ambY -= 5;
+			light0_y -= 5;
 			glutPostRedisplay();
 			break;
 		case 'u':
-			ambZ -= 5;
+			light0_z -= 5;
 			glutPostRedisplay();
 			break;
 		case 'j':
-			ambZ += 5;
+			light0_z += 5;
 			glutPostRedisplay();
 			break;
 		case 'i':
@@ -510,6 +551,14 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			clickedFrontDoor = !clickedFrontDoor;
 			glutPostRedisplay();
 			break;
+		case 'b':
+			if(ambLight > 0) ambLight -= 0.05;
+			glutPostRedisplay();
+			break;
+		case 'B':
+			if (ambLight < 1) ambLight += 0.05;
+			glutPostRedisplay();
+			break;
 		default:
 			break;
 	}
@@ -519,8 +568,8 @@ void animate(int value)
 {
 	if (foundKey){
 		if (!keyAnimationStarted){
-			if (smallSphereY < 100) smallSphereY += 1;
-			else if (smallSphereZ > 5) smallSphereZ -= 5;
+			if (keyY < 100) keyY += 1;
+			else if (keyZ > 5) keyZ -= 5;
 		}
 		else{
 
@@ -544,18 +593,20 @@ void printInteraction()
 	cout << "Press e to decrease camZ" << endl;
 	cout << "Press d to decrease camZ" << endl;
 	cout << "Press r to turn on/off the ambient light" << endl;
-	cout << "Press t to decrease ambX" << endl;
-	cout << "Press g to increase ambX" << endl;
-	cout << "Press y to increase ambY" << endl;
-	cout << "Press h to decrease ambY" << endl;
-	cout << "Press u to decrease ambZ" << endl;
-	cout << "Press j to increase ambZ" << endl;
+	cout << "Press t to decrease light0_x" << endl;
+	cout << "Press g to increase light0_x" << endl;
+	cout << "Press y to increase light0_y" << endl;
+	cout << "Press h to decrease light0_y" << endl;
+	cout << "Press u to decrease light0_z" << endl;
+	cout << "Press j to increase light0_z" << endl;
 	cout << "Press i to increase phi" << endl;
 	cout << "Press k to decrease phi" << endl;
 	cout << "Press o to decrease theta" << endl;
 	cout << "Press l to increase theta" << endl;
 	cout << "Press Z to increase attenuation" << endl;
 	cout << "Press z to decrease attenuation" << endl;
+	cout << "Press B to increase ambLight" << endl;
+	cout << "Press b to decrease ambLight" << endl;
 
 	cout << "Press m to toggle foundKey" << endl;
 	cout << "Press n to toggle doorAngle" << endl;

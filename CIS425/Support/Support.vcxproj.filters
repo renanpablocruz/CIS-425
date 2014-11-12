@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Syracuse\2014-2\CIS 425-625\book-code\ballAndTorus.cpp">
+    <ClCompile Include="..\..\..\..\Syracuse\2014-2\CIS 425-625\book-code\lightAndMaterial1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
