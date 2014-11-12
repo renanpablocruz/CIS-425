@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <time.h>
 #include <cmath>
 
 float degToRad(int angInDeg){
@@ -24,4 +25,14 @@ float cosDiffAng(float u[], float v[], int length){
 	}
 	answer = answer / sqrt(norm_u_2*norm_v_2);
 	return answer;
+}
+
+void delay(int sec){
+	time_t start_time, cur_time;
+
+	time(&start_time);
+	do
+	{
+		time(&cur_time);
+	} while ((cur_time - start_time) < sec);
 }

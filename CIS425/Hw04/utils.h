@@ -12,5 +12,6 @@ float degToRad(int angInDeg);
 void incAng(int& angInDeg);
 void decAng(int& angInDeg);
 float cosDiffAng(float u[], float v[], int length);
+void delay(int sec);
 
 #endif

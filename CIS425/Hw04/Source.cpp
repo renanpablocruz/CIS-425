@@ -76,6 +76,11 @@ static bool gotFlashlight = false;
 static bool chooseSideToTurnKey = false;
 static bool gotAnswer = false;
 static bool clickedOnPumpkin = false;
+static int rightSide;
+
+	//writing
+static long font = (long)GLUT_BITMAP_8_BY_13; // Font selection.
+static double lockPos[] = {135, 35, 0};
 
 void drawWalls(){
 	if (isSelecting) glLoadName(1);
@@ -179,7 +184,7 @@ void drawBackDoor(){
 	if (gotAnswer){ glTranslatef(160, 0, 0); glRotatef(backDoorAngle, 0, 1, 0); glTranslatef(-160, 0, -0); }
 	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //white
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
-	glBegin(GL_QUADS);
+	glBegin(GL_QUADS); //door
 	for (int i = 0; i < 200; i++){
 		for (int j = 0; j < 200; j++){
 			if (i >= 130 && i < 160 && j <= 80){
@@ -191,6 +196,11 @@ void drawBackDoor(){
 		}
 	}
 	glEnd();
+	// lock
+	matAmbAndDif[0] = 0.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; //white
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	glTranslatef(lockPos[0], lockPos[1], lockPos[2]);
+	glutSolidSphere(2, 8, 8); 
 	glPopMatrix();
 }
 
@@ -200,7 +210,7 @@ void drawKey(){
 	else { matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; } //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glPushMatrix();
-
+	if (gotAnswer){ glTranslatef(160, 0, 0); glRotatef(backDoorAngle, 0, 1, 0); glTranslatef(-160, 0, -0); }
 	glTranslatef(keyX, keyY, keyZ);
 	glRotatef(180, 0, 1, 0);
 	glutSolidSphere(1, 8, 8);
@@ -323,8 +333,10 @@ void drawWindow(){
 }
 
 void drawScenario(){
-	if (gotKey && !chooseSideToTurnKey)
-		gluLookAt(camX, camY, camZ, keyX, keyY, keyZ, 0, 1, 0);
+	if (gotKey && !chooseSideToTurnKey){
+		if (!keyAnimationEnded) gluLookAt(camX, camY, camZ, keyX, keyY, keyZ, 0, 1, 0);
+		else gluLookAt(keyX, keyY, camR - keyZ, keyX, keyY, keyZ, 0, 1, 0);
+	}		
 	else
 		gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
 
@@ -352,8 +364,38 @@ void drawScenario(){
 	if (isSelecting) glPopName(); // Clear name stack.
 }
 
-void drawKeyOptions(){
+// Routine to draw a bitmap character string.
+void writeBitmapString(void *font, char *string)
+{
+	char *c;
 
+	for (c = string; *c != '\0'; c++) glutBitmapCharacter(font, *c);
+}
+
+// Routine to convert floating point to char string.
+void floatToString(char * destStr, int precision, float val)
+{
+	sprintf(destStr, "%f", val);
+	destStr[precision] = '\0';
+}
+
+void writeText(){
+	glDisable(GL_LIGHTING); // Disable lighting.
+	glColor3f(1.0, 1.0, 1.0);
+
+	
+	if (!chooseSideToTurnKey){
+		glRasterPos3f(keyX, keyY - 20, keyZ);
+		writeBitmapString((void*)font, "Press c to turn right or C to left");
+	}
+	else if (!gotAnswer){
+		glRasterPos3f(camX + camR/2*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR/2*sin(degToRad(phi)), camZ - camR/2*cos(degToRad(phi))*cos(degToRad(theta)));
+		writeBitmapString((void*)font, "Oh! Wait!!!");
+	}
+
+	srand(time(NULL));
+	rightSide = rand() % 2;
+	cout << "rightSide: " << rightSide << endl;
 }
 
 void drawScene()
@@ -410,11 +452,13 @@ void drawScene()
 	// Draw scenario in rendering mode.
 	isSelecting = false;
 	drawScenario();
-	if (keyAnimationEnded){
-		if(!chooseSideToTurnKey) drawKeyOptions();
-		else if (!gotAnswer); //spin around
-		else; // open door and finish it
-	}
+	if (keyAnimationEnded) writeText();
+
+	//if (keyAnimationEnded){
+	//	if (!chooseSideToTurnKey) writeText();
+	//	else if (!gotAnswer); //spin around
+	//	else; // open door and finish it
+	//}
 
 	glutSwapBuffers();
 }
@@ -636,6 +680,16 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			gotAnswer = !gotAnswer;
 			glutPostRedisplay();
 			break;
+		case 'c':
+			chooseSideToTurnKey = true;
+			if (rightSide == 0) gotAnswer = true;
+			glutPostRedisplay();
+			break;
+		case 'C':
+			chooseSideToTurnKey = true;
+			if (rightSide == 1) gotAnswer = true;
+			glutPostRedisplay();
+			break;
 		default:
 			break;
 	}
@@ -644,14 +698,18 @@ void keyInput(unsigned char key, int scrX, int scrY)
 void animate(int value)
 {
 	if (gotKey){
-		if (!keyAnimationEnded){
-			if (keyY < 20){
+		if (!keyAnimationEnded){ // suppose that the key is on front and below the lock; to fix, make the delta global
+			if (keyY < lockPos[1]){
 				keyY += 1;
 				camY += 1;
 			}
-			else if (keyZ > 5){
-				keyZ -= 5;
-				camZ -= 5;
+			else if (keyX < lockPos[0]){
+				keyX += 1;
+				camX += 1;
+			}
+			else if (keyZ > lockPos[2]+3){
+				keyZ -= 2;
+				camZ -= 2;
 			}
 			else keyAnimationEnded = true;
 		}
@@ -663,10 +721,18 @@ void animate(int value)
 		if (frontDoorAngle < 120) frontDoorAngle += 5;
 		else movFrontDoor = false;
 	}
-	if (gotAnswer){
-		if (backDoorAngle < 120) backDoorAngle += 5;
-		//else gotAnswer = false;
+	if (chooseSideToTurnKey){
+		if (gotAnswer){
+			if (backDoorAngle < 120) backDoorAngle += 5;
+			else exit(0);
+		}
+		else{
+			int coin = rand() % 2;
+			if (coin == 0) theta += rand() % 10;
+			if (coin == 1) phi += rand() % 10;
+		}
 	}
+	
 	glutTimerFunc(frameRate, animate, 1);
 	glutPostRedisplay();
 }
