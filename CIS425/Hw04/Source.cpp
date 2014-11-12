@@ -50,7 +50,8 @@ static int switchy1 = 15;
 	// Light
 static bool light0On = false; // White light on?
 static float t = 0.0005; // attenuation factor
-static float ambLight = 0.05;
+static float ambLight = 0.4;
+static float cutoffAng = 10;
 	// Material property vectors.
 static float matAmbAndDif[] = { 0.0, 0.0, 1.0, 1.0 };
 static float matSpec[] = { 1.0, 1.0, 1, 0, 1.0 };
@@ -62,13 +63,14 @@ static unsigned int buffer[1024]; // Hit buffer.
 static unsigned int closestName = 0; // Name of closest hit.
 	// animations
 static int frameRate = 100; //control speed of animations
-static bool foundKey = false;
-static bool keyAnimationStarted = false;
-static int keyZ = 120;
-static int keyY = 2.5;
+static bool gotKey = false;
+static bool keyAnimationEnded = false;
+static double keyX = 100;
+static double keyZ = 120;
+static double keyY = 2.5;
 static bool clickedFrontDoor = false;
 static int doorAngle = 0;
-static bool foundFlashlight = false;
+static bool gotFlashlight = false;
 
 float degToRad(int angInDeg){
 	return PI * angInDeg / 180;
@@ -177,16 +179,16 @@ void drawDoor(){
 
 void drawKey(){
 	if (isSelecting) glLoadName(4);
-	if (!foundKey) glColorMask(false, false, false, false);
+	if (!gotFlashlight) glColorMask(false, false, false, false);
 	else { matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; } //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glPushMatrix();
 
-	glTranslatef(100, keyY, keyZ);
+	glTranslatef(keyX, keyY, keyZ);
 	glRotatef(180, 0, 1, 0);
 	glutSolidSphere(1, 8, 8);
 	glutSolidCone(1, 3, 8, 8);
-	if (!foundKey) glColorMask(true, true, true, true);
+	if (!gotFlashlight) glColorMask(true, true, true, true);
 	glPopMatrix();
 }
 
@@ -204,14 +206,26 @@ void drawTable(){
 		}
 	}
 	glEnd();
-
 }
 
 void drawFlashlight(){
 	if (isSelecting) glLoadName(6);
-	if (!foundFlashlight){
-		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; // yellow
-
+	if (closestName == 6) gotFlashlight = true;
+	if (!gotFlashlight){
+		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.0; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; // red
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+		glColor3f(1.0, .0, .0);
+		glPushMatrix();//tube
+		GLUquadric* qobj = gluNewQuadric();
+		gluQuadricNormals(qobj, GLU_SMOOTH);
+		glTranslatef(110,10+1, 100);
+		gluCylinder(qobj, 1.0, 1.0, 6, 8, 8);
+		gluDeleteQuadric(qobj);
+		glPopMatrix();
+		glPushMatrix();//"head"
+		glTranslatef(110, 10 + 1, 100-2);
+		glutSolidCone(2, 4, 8, 8);
+		glPopMatrix();
 	}
 }
 
@@ -219,6 +233,8 @@ void drawPumpkin(){
 	if (isSelecting) glLoadName(3);
 	if (closestName == 3){
 		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.4; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; // orange
+		float matEmission[] = {1.0, 0.4, 0.0, 1.0 };
+		glMaterialfv(GL_FRONT, GL_EMISSION, matEmission);
 	}
 	else{
 		matAmbAndDif[0] = 0.6; matAmbAndDif[1] = 0.2; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; // brown
@@ -228,6 +244,8 @@ void drawPumpkin(){
 	glTranslatef(80, 14, 100);
 	glutSolidSphere(4, 8, 8);
 	glPopMatrix();
+	float matEmission[] = { 0.0, 0.0, 0.0, 1.0 };
+	glMaterialfv(GL_FRONT, GL_EMISSION, matEmission);
 }
 
 void drawBulb(){
@@ -299,6 +317,7 @@ void drawScenario(){
 	drawPumpkin();
 	drawKey();
 	drawSwitch();
+	drawFlashlight();
 
 	// Turn lights off to draw lamp
 	glDisable(GL_LIGHTING);
@@ -314,31 +333,36 @@ void drawScene()
 {
 	//Lighting
 
-		// Light property vectors.
-	float lightAmb[] = { 0.0, 0.0, 0.0, 1.0 };
+		// Light0 is the light bulb
+	float lightAmb0[] = { 0.0, 0.0, 0.0, 1.0 };
 	float lightDifAndSpec0[] = { 1.0, 1.0, 1.0, 1.0 };
 	float lightPos0[] = { light0_x, light0_y, light0_z, 1.0 };
-
-		// Light0 properties.
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb0);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDifAndSpec0);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightDifAndSpec0);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, t);
 
-	// make looks like a flashlight
-	float lightDir[] = { cos(degToRad(phi))*sin(degToRad(theta)), sin(degToRad(phi)), - cos(degToRad(phi))*cos(degToRad(theta)) };
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDir);
-	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.f);
+	// light1 is the flashlight
+	float lightAmb1[] = { 1.0, 1.0, 1.0, 1.0 };
+	float lightDifAndSpec1[] = { 1.0, 1.0, 1.0, 1.0 };
+	float lightPos1[] = { camX, camY, camZ, 1.0 };
+	float lightDir1[] = { cos(degToRad(phi))*sin(degToRad(theta)), sin(degToRad(phi)), -cos(degToRad(phi))*cos(degToRad(theta)) };
+	glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmb1);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDifAndSpec1);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, lightDifAndSpec1);
+	glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lightDir1);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, cutoffAng);
+	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, t);
 
 	// global ambient light
 	float globAmb[] = { ambLight, ambLight, ambLight, 1.0 };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb); // Global ambient light.
 
-	// Light quadratic attenuation factor.
-	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, t);
-
 		// Turn lights off/on.
 	if (light0On) glEnable(GL_LIGHT0); else glDisable(GL_LIGHT0);
+	if (gotFlashlight) glEnable(GL_LIGHT1); else glDisable(GL_LIGHT1);
 
 
 	// Draws
@@ -425,6 +449,25 @@ void pickFunction(int button, int state, int x, int y)
 	glutPostRedisplay();
 }
 
+float cosDiffAng(float u[], float v[], int length){
+	float answer = 0;
+	float norm_u_2 = 0;
+	float norm_v_2 = 0;
+	for (int i = 0; i < length; i++){
+		answer += u[i] * v[i];
+		norm_u_2 += u[i] * u[i];
+		norm_v_2 += v[i] * v[i];
+	}
+	answer = answer/sqrt(norm_u_2*norm_v_2);
+	return answer;
+}
+
+bool findKey(){
+	float sightDir[] = { cos(degToRad(phi))*sin(degToRad(theta)), sin(degToRad(phi)), -cos(degToRad(phi))*cos(degToRad(theta))};
+	float keyDir[] = { keyX - camX, keyY - camY, keyZ - camZ };
+	return cosDiffAng(sightDir, keyDir, 3) > cos(degToRad(cutoffAng));
+}
+
 void resize(int w, int h)
 {
 	scrW = w;
@@ -445,8 +488,6 @@ void setup()
 
 	// Turn on OpenGL lighting.
 	glEnable(GL_LIGHTING);
-
-	//todo ambient light setup
 
 	// Material properties of sphere.
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
@@ -544,7 +585,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			glutPostRedisplay();
 			break;
 		case 'm':
-			foundKey = !foundKey;
+			gotKey = !gotKey;
 			glutPostRedisplay();
 			break;
 		case 'n':
@@ -559,6 +600,10 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			if (ambLight < 1) ambLight += 0.05;
 			glutPostRedisplay();
 			break;
+		case 'v':
+			gotFlashlight = !gotFlashlight;
+			glutPostRedisplay();
+			break;
 		default:
 			break;
 	}
@@ -566,18 +611,19 @@ void keyInput(unsigned char key, int scrX, int scrY)
 
 void animate(int value)
 {
-	if (foundKey){
-		if (!keyAnimationStarted){
+	if (gotKey){
+		if (!keyAnimationEnded){
 			if (keyY < 100) keyY += 1;
 			else if (keyZ > 5) keyZ -= 5;
+			else keyAnimationEnded = true;
 		}
-		else{
-
-		}
+	}
+	else{
+		if(gotFlashlight) gotKey = findKey();
 	}
 	if (clickedFrontDoor){
 		if (doorAngle < 120) doorAngle += 5;
-		//else clickedFrontDoor = false;
+		else clickedFrontDoor = false;
 	}
 	glutTimerFunc(frameRate, animate, 1);
 	glutPostRedisplay();
@@ -608,8 +654,9 @@ void printInteraction()
 	cout << "Press B to increase ambLight" << endl;
 	cout << "Press b to decrease ambLight" << endl;
 
-	cout << "Press m to toggle foundKey" << endl;
+	cout << "Press m to toggle gotKey" << endl;
 	cout << "Press n to toggle doorAngle" << endl;
+	cout << "Press v to toggle gotFlashlightf" << endl;
 }
 
 // Main routine.
