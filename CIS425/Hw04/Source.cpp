@@ -70,8 +70,12 @@ static double keyX = 100;
 static double keyZ = 120;
 static double keyY = 2.5;
 static bool clickedFrontDoor = false;
-static int doorAngle = 0;
+static int frontDoorAngle = 0;
+static int backDoorAngle = 0;
 static bool gotFlashlight = false;
+static bool chooseSideToTurnKey = false;
+static bool gotAnswer = false;
+static bool clickedOnPumpkin = false;
 
 void drawWalls(){
 	if (isSelecting) glLoadName(1);
@@ -106,10 +110,12 @@ void drawWalls(){
 	glBegin(GL_QUADS);
 	for (int i = 0; i < 200; i++){
 		for (int j = 0; j < 200; j++){
-			glVertex3f(i, j, 0);
-			glVertex3f(i+1, j, 0);
-			glVertex3f(i+1, j+1, 0);
-			glVertex3f(i, j+1, 0);
+			if (i < 130 || i >= 160 || j>80){
+				glVertex3f(i, j, 0);
+				glVertex3f(i + 1, j, 0);
+				glVertex3f(i + 1, j + 1, 0);
+				glVertex3f(i, j + 1, 0);
+			}
 		}
 	}
 	glEnd();
@@ -145,10 +151,11 @@ void drawWalls(){
 	glEnd();
 }
 
-void drawDoor(){
+void drawFrontDoor(){
 	if (isSelecting) glLoadName(2);
 	if (closestName == 2) clickedFrontDoor = true;
-	if (clickedFrontDoor){ glTranslatef(160, 0, 200); glRotatef(-doorAngle, 0, 1, 0); glTranslatef(-160, 0, -200); }
+	glPushMatrix();
+	if (clickedFrontDoor){ glTranslatef(160, 0, 200); glRotatef(-frontDoorAngle, 0, 1, 0); glTranslatef(-160, 0, -200); }
 	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //yellow
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glBegin(GL_QUADS);
@@ -163,7 +170,28 @@ void drawDoor(){
 		}
 	}
 	glEnd();
-	if (clickedFrontDoor){ glTranslatef(160, 0, 200); glRotatef(doorAngle, 0, 1, 0); glTranslatef(-160, 0, -200); }
+	glPopMatrix();
+}
+
+void drawBackDoor(){
+	if (isSelecting) glLoadName(7);
+	glPushMatrix();
+	if (gotAnswer){ glTranslatef(160, 0, 0); glRotatef(backDoorAngle, 0, 1, 0); glTranslatef(-160, 0, -0); }
+	matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 1.0; matAmbAndDif[2] = 1.0; matAmbAndDif[3] = 1.0; //white
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
+	glBegin(GL_QUADS);
+	for (int i = 0; i < 200; i++){
+		for (int j = 0; j < 200; j++){
+			if (i >= 130 && i < 160 && j <= 80){
+				glVertex3f(i, j, 0);
+				glVertex3f(i + 1, j, 0);
+				glVertex3f(i + 1, j + 1, 0);
+				glVertex3f(i, j + 1, 0);
+			}
+		}
+	}
+	glEnd();
+	glPopMatrix();
 }
 
 void drawKey(){
@@ -220,7 +248,8 @@ void drawFlashlight(){
 
 void drawPumpkin(){
 	if (isSelecting) glLoadName(3);
-	if (closestName == 3){
+	if (closestName == 3) clickedOnPumpkin = true;
+	if (clickedOnPumpkin){
 		matAmbAndDif[0] = 1.0; matAmbAndDif[1] = 0.4; matAmbAndDif[2] = 0.0; matAmbAndDif[3] = 1.0; // orange
 		float matEmission[] = {1.0, 0.4, 0.0, 1.0 };
 		glMaterialfv(GL_FRONT, GL_EMISSION, matEmission);
@@ -294,8 +323,11 @@ void drawWindow(){
 }
 
 void drawScenario(){
-	if (gotKey && !keyAnimationEnded)
-		gluLookAt(camX, camY, camZ, keyX, keyY, keyZ, 0, 1, 0);
+	if (gotKey){
+		if (!keyAnimationEnded) gluLookAt(camX, camY, camZ, keyX, keyY, keyZ, 0, 1, 0);
+		else if (!chooseSideToTurnKey);
+		else;//animation
+	}
 	else
 		gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -303,7 +335,8 @@ void drawScenario(){
 	// Turn lights on again to draw the other objects
 	glEnable(GL_LIGHTING);
 	drawWalls();
-	drawDoor();
+	drawFrontDoor();
+	drawBackDoor();
 	drawTable();
 	drawFlashlight();
 	drawPumpkin();
@@ -319,6 +352,10 @@ void drawScenario(){
 	glEnable(GL_LIGHTING);
 
 	if (isSelecting) glPopName(); // Clear name stack.
+}
+
+void drawKeyOptions(){
+
 }
 
 void drawScene()
@@ -372,10 +409,12 @@ void drawScene()
 	glColor3f(0.0, 0.0, 0.0);
 	glLoadIdentity();
 
-	
-	// Draw ball and torus in rendering mode.
+	// Draw scenario in rendering mode.
 	isSelecting = false;
-	drawScenario();
+	if (!keyAnimationEnded) drawScenario();
+	else if (!chooseSideToTurnKey) drawKeyOptions();
+	else if (!gotAnswer);
+	else drawScenario();
 
 	glutSwapBuffers();
 }
@@ -593,6 +632,10 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			gotFlashlight = !gotFlashlight;
 			glutPostRedisplay();
 			break;
+		case 'x':
+			gotAnswer = !gotAnswer;
+			glutPostRedisplay();
+			break;
 		default:
 			break;
 	}
@@ -602,17 +645,31 @@ void animate(int value)
 {
 	if (gotKey){
 		if (!keyAnimationEnded){
-			if (keyY < 100) keyY += 1;
-			else if (keyZ > 5) keyZ -= 5;
-			else keyAnimationEnded = true;
+			if (keyY < 100){
+				keyY += 1;
+				camY += 1;
+			}
+			else if (keyZ > 5){
+				keyZ -= 5;
+				camZ -= 5;
+			}
+			else{
+				keyAnimationEnded = true;
+				//todo recalculate phi and theta
+
+			}
 		}
 	}
 	else{
 		if(gotFlashlight) gotKey = findKey();
 	}
 	if (clickedFrontDoor){
-		if (doorAngle < 120) doorAngle += 5;
+		if (frontDoorAngle < 120) frontDoorAngle += 5;
 		else clickedFrontDoor = false;
+	}
+	if (gotAnswer){
+		if (backDoorAngle < 120) backDoorAngle += 5;
+		//else clickedFrontDoor = false;
 	}
 	glutTimerFunc(frameRate, animate, 1);
 	glutPostRedisplay();
@@ -646,6 +703,7 @@ void printInteraction()
 	cout << "Press m to toggle gotKey" << endl;
 	cout << "Press n to toggle doorAngle" << endl;
 	cout << "Press v to toggle gotFlashlightf" << endl;
+	cout << "Press x to toggle gotAnswer" << endl;
 }
 
 // Main routine.
