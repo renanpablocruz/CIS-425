@@ -294,7 +294,10 @@ void drawWindow(){
 }
 
 void drawScenario(){
-	gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
+	if (gotKey && !keyAnimationEnded)
+		gluLookAt(camX, camY, camZ, keyX, keyY, keyZ, 0, 1, 0);
+	else
+		gluLookAt(camX, camY, camZ, camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), 0, 1, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Turn lights on again to draw the other objects
@@ -336,7 +339,17 @@ void drawScene()
 	float lightAmb1[] = { 1.0, 1.0, 1.0, 1.0 };
 	float lightDifAndSpec1[] = { 1.0, 1.0, 1.0, 1.0 };
 	float lightPos1[] = { camX, camY, camZ, 1.0 };
-	float lightDir1[] = { cos(degToRad(phi))*sin(degToRad(theta)), sin(degToRad(phi)), -cos(degToRad(phi))*cos(degToRad(theta)) };
+	float lightDir1[3];
+	if (gotKey && !keyAnimationEnded){
+		lightDir1[0] = keyX - camX;
+		lightDir1[1] = keyY - camY;
+		lightDir1[2] = keyZ - camZ;
+	}
+	else{
+		lightDir1[0] = cos(degToRad(phi))*sin(degToRad(theta)); 
+		lightDir1[1] = sin(degToRad(phi));
+		lightDir1[2] = -cos(degToRad(phi))*cos(degToRad(theta));
+	}
 	glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmb1);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDifAndSpec1);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, lightDifAndSpec1);
