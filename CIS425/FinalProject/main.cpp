@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+#include "Tank.h"
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
@@ -25,10 +26,10 @@
 using namespace std;
 
 // Globals
-	// screen
+// screen
 static float scrW;
 static float scrH;
-	// picking and selecting
+// picking and selecting
 static bool isSelecting = false; // In selection mode?
 static int hits; // Number of entries in hit buffer.
 static unsigned int buffer[1024]; // Hit buffer.
@@ -36,7 +37,7 @@ static unsigned int closestName = 0; // Name of closest hit.
 
 void drawScene()
 {
-	
+
 }
 
 void resize(int w, int h)
@@ -127,7 +128,7 @@ void pickFunction(int button, int state, int x, int y)
 	glPushName(0);
 
 	isSelecting = true;
-			// todo: function that draw objects but doesn't configure light
+	// todo: function that draw objects but doesn't configure light
 
 	hits = glRenderMode(GL_RENDER);
 

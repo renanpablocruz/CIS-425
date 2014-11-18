@@ -8,6 +8,7 @@
 #endif
 
 #define PI 3.14159265358979324
+
 float degToRad(double angInDeg);
 void incAng(double& angInDeg);
 void decAng(double& angInDeg);

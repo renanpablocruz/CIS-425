@@ -76,7 +76,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClInclude Include="Panther.h" />
+    <ClInclude Include="Panzer.h" />
+    <ClInclude Include="Tank.h" />
+    <ClInclude Include="Tiger.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Panther.cpp" />
+    <ClCompile Include="Panzer.cpp" />
+    <ClCompile Include="Tank.cpp" />
+    <ClCompile Include="Tiger.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
