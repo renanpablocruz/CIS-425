@@ -557,7 +557,7 @@ void setup()
 	// Turn on OpenGL lighting.
 	glEnable(GL_LIGHTING);
 
-	// Material properties of sphere.
+	// Material properties
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, matAmbAndDif);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpec);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShine);
