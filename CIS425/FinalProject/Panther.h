@@ -14,7 +14,7 @@ class Panther : public Tank
 public:
 	Panther();
 	Panther(elem t);
-	void draw(int pos[], double size);
+	void draw(int pos[]);
 	void shoot();
 };
 

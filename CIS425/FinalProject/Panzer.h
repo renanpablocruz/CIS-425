@@ -14,7 +14,7 @@ class Panzer : public Tank
 public:
 	Panzer();
 	Panzer(elem t);
-	void draw(int pos[], double size);
+	void draw(int pos[]);
 	void shoot();
 };
 

@@ -3,13 +3,12 @@
 
 Panzer::Panzer(elem t) : Tank(20, 2, 4, 2, 5, t){}
 
-void Panzer::draw(int pos[], double size)
+void Panzer::draw(int pos[])
 {
 	glColor3f(1, 0, 0);
 	glPushMatrix();
-	glScalef(0.1, 0.1, 0.1);
-	glTranslatef(pos[0], pos[1], pos[2]);
-	glutSolidCube(8);
+	glTranslatef(pos[0]+0.5, pos[1]+0.5, pos[2]+0.5);
+	glutSolidCube(1);
 	glPopMatrix();
 }
 

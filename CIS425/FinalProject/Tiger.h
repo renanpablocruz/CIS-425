@@ -14,7 +14,7 @@ class Tiger : public Tank
 public:
 	Tiger();
 	Tiger(elem t);
-	void draw(int pos[], double size);
+	void draw(int pos[]);
 	void shoot();
 };
 

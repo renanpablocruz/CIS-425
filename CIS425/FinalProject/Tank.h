@@ -20,7 +20,7 @@ public:
 	Tank(int ml, int r, int a, int ms, int d, elem t);
 	void modLife(int d);
 	void setType(elem t);
-	virtual void draw(int pos[], double size) = 0;
+	virtual void draw(int pos[]) = 0;
 	virtual void shoot() = 0;
 };
 
