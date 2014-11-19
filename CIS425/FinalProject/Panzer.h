@@ -1,5 +1,5 @@
-#ifndef PANZER_H,
-#define PANZER_H,
+#ifndef PANZER_H
+#define PANZER_H
 
 #include "Tank.h"
 
@@ -14,7 +14,7 @@ class Panzer : public Tank
 public:
 	Panzer();
 	Panzer(elem t);
-	void draw(double size);
+	void draw(int pos[], double size);
 	void shoot();
 };
 

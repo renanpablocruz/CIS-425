@@ -16,6 +16,10 @@
 #include <cmath>
 #include <iostream>
 #include "Tank.h"
+#include "Panther.h"
+#include "Panzer.h"
+#include "Tiger.h"
+#include <vector>
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
@@ -27,6 +31,7 @@ using namespace std;
 
 // Globals
 // screen
+static vector<Tank*> myTanks;
 static float scrW;
 static float scrH;
 // picking and selecting
@@ -35,9 +40,60 @@ static int hits; // Number of entries in hit buffer.
 static unsigned int buffer[1024]; // Hit buffer.
 static unsigned int closestName = 0; // Name of closest hit.
 
+void drawTanks()
+{
+	Panzer* firstTank = new Panzer(FIRE);
+	myTanks.push_back(firstTank);
+
+	for (int i = 0; i < myTanks.size(); i++)
+	{
+		int pos[3] = { i, i, 0 };
+		myTanks[i]->draw(pos, 10);
+	}
+}
+
+void drawTerrain()
+{
+	glColor3f(0, 0, 0);
+	int size = 20;
+	for (int i = -size; i < size; i++)
+	{
+		for (int j = -size; j < size; j++)
+		{
+			glColor3f(0, 0, 0);
+			glBegin(GL_LINE_STRIP);
+			glVertex3f(i - 0.5, 0, j - 0.5);
+			glVertex3f(i + 0.5, 0, j - 0.5);
+			glVertex3f(i + 0.5, 0, j + 0.5);
+			glVertex3f(i - 0.5, 0, j + 0.5);
+			glEnd();
+
+			if (i % 5 == 0 && j % 5 == 0) // markers
+			{
+				glColor3f(0.4, 0.4, 0.6);
+				glPushMatrix();
+				glTranslatef(0, 0.05, 0);
+				glScalef(1, 0.1, 1);
+				glTranslatef(i, 0, j);
+				glutSolidCube(1);
+				glPopMatrix();
+			}
+		}
+	}
+}
+
 void drawScene()
 {
+	glLoadIdentity();
+	gluLookAt(8, 8, 8, 0, 0, 0, 0, 1, 0);
+	
+	// Draws
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	drawTerrain();
+	//drawTanks();
+
+	glutSwapBuffers();
 }
 
 void resize(int w, int h)
@@ -47,17 +103,17 @@ void resize(int w, int h)
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0f, (double)w / h, 1.0, 1000.0);
+	gluPerspective(80.0f, (double)w / h, 1.0, 1000.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
 void setup()
 {
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearColor(1.0, 1.0, 1.0, 0.0);
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHTING);
 }
 
 void keyInput(unsigned char key, int scrX, int scrY)
