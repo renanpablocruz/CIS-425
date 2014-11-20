@@ -55,6 +55,7 @@ static unsigned int closestName = 0; // Name of closest hit.
 // Methods - Headers
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void animation(int dt);
 bool anyselectedTank();
 void defaultBullets();
 void defaultTanks();
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(keyInput);
 	//glutMouseFunc(pickFunction);
 	glutSpecialFunc(specialKeyInput);
-	// todo: glutTimerFunc(time, function, value); // wait time miliseconds and execute function with argument value
+	glutTimerFunc(DELTA_T_REAL, animation, DELTA_T_VIRTUAL); // wait time miliseconds and execute function with argument value
 
 	glutMainLoop();
 
@@ -102,6 +103,13 @@ int main(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Methods - Declarations
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void animation(int dt)
+{
+	for (unsigned int i = 0; i < tanksUser1.size(); i++) tanksUser1[i]->animate(dt);
+	glutPostRedisplay();
+	glutTimerFunc(DELTA_T_REAL, animation, DELTA_T_VIRTUAL);
+}
 
 bool anyselectedTank()
 {
@@ -134,10 +142,10 @@ void defaultTanks()
 	tanksUser1.push_back(firstTank);
 	selectedTankUser1.push_back(true);
 
-	firstTank = new Panzer(WATER);
+	/*firstTank = new Panzer(WATER);
 	firstTank->setPos(0, 0, 2);
 	tanksUser1.push_back(firstTank);
-	selectedTankUser1.push_back(false);
+	selectedTankUser1.push_back(false);*/
 
 	//firstTank = new Panzer(FIRE);
 	//firstTank->setPos(0, 0, 4);
@@ -159,11 +167,15 @@ void defaultTanks()
 
 void drawTanks()
 {
-	cout << "num of tanks: " << tanksUser1.size() << endl;
 	for (unsigned int i = 0; i < tanksUser1.size(); i++)
 	{
 		//if (isSelecting) glLoadName(i+2);
 		tanksUser1[i]->draw();
+		float _x, _y, _z;
+		tanksUser1[i]->getPos(_x, _y, _z);
+		cout << "((" << _x << ", " << _y << ", " << _z << "))" << endl;
+		tanksUser1[i]->getFinalPos(_x, _y, _z);
+		cout << " (" << _x << ", " << _y << ", " << _z << ")" << endl;
 	}
 	for (unsigned int i = 0; i < tanksUser2.size(); i++)
 	{
@@ -289,82 +301,22 @@ void keyInput(unsigned char key, int scrX, int scrY)
 	}
 }
 
-void moveUp(int value)
-{
-	if (anyselectedTank())
-	{
-		if (value == 5)
-		{
-			if (!tanksUser1[selectedTank()]->canMov()) return;
-		}
-		else if (value == 0) return;
-		tanksUser1[selectedTank()]->move(UP);
-		glutTimerFunc(50, moveUp, --value);
-		glutPostRedisplay();
-	}
-}
-
-void moveDown(int value)
-{
-	if (anyselectedTank())
-	{
-		if (value == 5)
-		{
-			if (!tanksUser1[selectedTank()]->canMov()) return;
-		}
-		else if (value == 0) return;
-		tanksUser1[selectedTank()]->move(DOWN);
-		glutTimerFunc(50, moveDown, --value);
-		glutPostRedisplay();
-	}
-}
-
-void moveRight(int value)
-{
-	if (anyselectedTank())
-	{
-		if (value == 5)
-		{
-			if (!tanksUser1[selectedTank()]->canMov()) return;
-		}
-		else if (value == 0) return;
-		tanksUser1[selectedTank()]->move(RIGHT);
-		glutTimerFunc(50, moveRight, --value);
-		glutPostRedisplay();
-	}
-}
-
-void moveLeft(int value)
-{
-	if (anyselectedTank())
-	{
-		if (value == 5)
-		{
-			if (!tanksUser1[selectedTank()]->canMov()) return;
-		}
-		else if (value == 0) return;
-		tanksUser1[selectedTank()]->move(LEFT);
-		glutTimerFunc(50, moveLeft, --value);
-		glutPostRedisplay();
-	}
-}
-
 void specialKeyInput(int key, int x, int y)
 {
 	int modifier = glutGetModifiers();
 	switch (key)
 	{
 		case GLUT_KEY_UP:
-			glutTimerFunc(50, moveUp, 5);
+			if (anyselectedTank()) tanksUser1[selectedTank()]->setMoveTo(UP);
 			break;
 		case GLUT_KEY_DOWN:
-			glutTimerFunc(50, moveDown, 5);
+			if (anyselectedTank()) tanksUser1[selectedTank()]->setMoveTo(DOWN);
 			break;
 		case GLUT_KEY_RIGHT:
-			glutTimerFunc(50, moveRight, 5);
+			if (anyselectedTank()) tanksUser1[selectedTank()]->setMoveTo(RIGHT);
 			break;
 		case GLUT_KEY_LEFT:
-			glutTimerFunc(50, moveLeft, 5);
+			if (anyselectedTank()) tanksUser1[selectedTank()]->setMoveTo(LEFT);
 			break;
 		default:
 			break;

@@ -1,4 +1,7 @@
+#include <math.h>
 #include "Utils.h"
 
-GLUquadric* qobj = gluNewQuadric();
-gluQuadricNormals(qobj, GLU_SMOOTH);
+float absValue(float a)
+{
+	return fabs(a);
+}

@@ -16,10 +16,11 @@ protected: // todo : do it protected
 	int max_mov;
 	int mov;
 	Bullet* bullet;
-	float x;
-	float y;
-	float z;
+	float x, y, z;
+	float xf, yf, zf;
 	dir direction;
+	bool inMotion;
+	dir moveTo;
 public:
 	Tank();
 	Tank(int ml, int r, int a, int ms, elem t);
@@ -27,11 +28,13 @@ public:
 	elem getType();
 	void setPos(float x, float y, float z);
 	void getPos(float &_x, float &_y, float &_z);
-	void move(dir direction);
+	void getFinalPos(float &_x, float &_y, float &_z);
 	bool canMov();
 	void passTurn();
 	virtual void draw() = 0;
 	virtual void shoot() = 0;
+	void animate(int value);
+	void setMoveTo(dir dr);
 };
 
 #endif

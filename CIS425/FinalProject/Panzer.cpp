@@ -20,3 +20,7 @@ void Panzer::shoot()
 	glBegin(GL_LINE_STRIP);
 	glEnd();
 }
+
+
+
+
