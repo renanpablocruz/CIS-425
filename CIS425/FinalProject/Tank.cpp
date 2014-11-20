@@ -53,8 +53,9 @@ void Tank::passTurn()
 
 void Tank::setMoveTo(dir dr)
 {
-	if (!inMotion)
+	if (!inMotion && mov > 0)
 	{
+		mov -= 1;
 		moveTo = dr;
 		if (dr == UP) { xf = x; yf = y; zf = z - 1; }
 		else if (dr == DOWN) { xf = x; yf = y; zf = z + 1; }
@@ -85,4 +86,5 @@ void Tank::animate(int dt)
 			else inMotion = false;
 		}
 	}
+	else if ()
 }

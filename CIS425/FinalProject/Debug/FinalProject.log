@@ -1,27 +1,21 @@
-﻿Build started 11/20/2014 5:41:05 AM.
+﻿Build started 11/20/2014 2:40:25 PM.
      1>Project "C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\FinalProject\FinalProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Main.cpp Panther.cpp Panzer.cpp Tank.cpp Tiger.cpp
-         Tiger.cpp
          Tank.cpp
          Panzer.cpp
-         Panther.cpp
-         Main.cpp
+     1>c:\users\renan cruz\documents\github\cis-425\cis425\finalproject\panzer.cpp(4): error C2661: 'Tank::Tank' : no overloaded function takes 5 arguments
          Generating Code...
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\FinalProject.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\FinalProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\FinalProject.lib" /MACHINE:X86 Debug\Bullet.obj
-         Debug\Main.obj
-         Debug\Panther.obj
-         Debug\PantherBullet.obj
-         Debug\Panzer.obj
-         Debug\PanzerBullet.obj
-         Debug\Tank.obj
-         Debug\Tiger.obj
-         Debug\TigerBulletcpp.obj
-         Debug\Utils.obj
-         FinalProject.vcxproj -> C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\FinalProject.exe
-     1>Done Building Project "C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\FinalProject\FinalProject.vcxproj" (Build target(s)).
+         Compiling...
+         Tiger.cpp
+     1>c:\users\renan cruz\documents\github\cis-425\cis425\finalproject\tiger.cpp(4): error C2661: 'Tank::Tank' : no overloaded function takes 5 arguments
+         Panther.cpp
+     1>c:\users\renan cruz\documents\github\cis-425\cis425\finalproject\panther.cpp(4): error C2661: 'Tank::Tank' : no overloaded function takes 5 arguments
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         Main.cpp
+     1>Done Building Project "C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\FinalProject\FinalProject.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:03.69
+Time Elapsed 00:00:00.93

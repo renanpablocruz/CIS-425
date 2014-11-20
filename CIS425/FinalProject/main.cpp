@@ -57,6 +57,7 @@ static unsigned int closestName = 0; // Name of closest hit.
 
 void animation(int dt);
 bool anyselectedTank();
+void changeCamera();
 void defaultBullets();
 void defaultTanks();
 void drawScenario();
@@ -120,6 +121,20 @@ bool anyselectedTank()
 	return false;
 }
 
+void changeCamera()
+{
+	if (tanksUser1.size() > 0)
+	{
+		if (anyselectedTank()){
+			int ind = selectedTank();
+			selectedTankUser1[ind] = false;
+			if (ind != selectedTankUser1.size() - 1) selectedTankUser1[ind + 1] = true;
+		}
+		else  selectedTankUser1[0] = true;
+		glutPostRedisplay();
+	}
+}
+
 int selectedTank() // only make sense to call if anyselectedTank returned true
 {
 	for (unsigned int i = 0; i < selectedTankUser1.size(); i++)
@@ -171,11 +186,6 @@ void drawTanks()
 	{
 		//if (isSelecting) glLoadName(i+2);
 		tanksUser1[i]->draw();
-		float _x, _y, _z;
-		tanksUser1[i]->getPos(_x, _y, _z);
-		cout << "((" << _x << ", " << _y << ", " << _z << "))" << endl;
-		tanksUser1[i]->getFinalPos(_x, _y, _z);
-		cout << " (" << _x << ", " << _y << ", " << _z << ")" << endl;
 	}
 	for (unsigned int i = 0; i < tanksUser2.size(); i++)
 	{
@@ -282,16 +292,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			glutPostRedisplay();
 			break;
 		case ' ':
-			if (tanksUser1.size() > 0)
-			{
-				if (anyselectedTank()){
-					int ind = selectedTank();
-					selectedTankUser1[ind] = false;
-					if (ind != selectedTankUser1.size() - 1) selectedTankUser1[ind + 1] = true;
-				}
-				else  selectedTankUser1[0] = true;
-				glutPostRedisplay();
-			}
+			changeCamera();
 			break;
 		case 'n':
 			newTurn();
@@ -330,5 +331,5 @@ void printInteraction()
 
 void newTurn()
 {
-	for (unsigned int i = 0; i < tanksUser1.size(); i++)	tanksUser1[i]->passTurn();
+	for (unsigned int i = 0; i < tanksUser1.size(); i++) tanksUser1[i]->passTurn();
 }

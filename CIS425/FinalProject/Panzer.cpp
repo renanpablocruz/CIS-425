@@ -1,5 +1,6 @@
 #include "Tank.h"
 #include "Panzer.h"
+#include "PanzerBullet.h"
 
 Panzer::Panzer(elem t) : Tank(20, 2, 4, 2, t){}
 
@@ -17,10 +18,5 @@ void Panzer::draw()
 
 void Panzer::shoot()
 {
-	glBegin(GL_LINE_STRIP);
-	glEnd();
+	bullet = new PanzerBullet(type, x, y, z);
 }
-
-
-
-
