@@ -62,7 +62,6 @@ void drawScenario();
 void drawScene();
 void drawTanks();
 void drawTerrain();
-void findClosestHit(int hits, unsigned int buffer[]);
 void keyInput(unsigned char key, int scrX, int scrY);
 void moveDown(int value);
 void moveLeft(int value);
@@ -140,22 +139,22 @@ void defaultTanks()
 	tanksUser1.push_back(firstTank);
 	selectedTankUser1.push_back(false);
 
-	firstTank = new Panzer(FIRE);
-	firstTank->setPos(0, 0, 4);
-	tanksUser1.push_back(firstTank);
-	selectedTankUser1.push_back(false);
+	//firstTank = new Panzer(FIRE);
+	//firstTank->setPos(0, 0, 4);
+	//tanksUser1.push_back(firstTank);
+	//selectedTankUser1.push_back(false);
 
-	firstTank = new Panzer(EARTH); // user2
-	firstTank->setPos(3, 0, 0);
-	tanksUser2.push_back(firstTank);
-	
-	firstTank = new Panzer(WATER);
-	firstTank->setPos(3, 0, 2);
-	tanksUser2.push_back(firstTank);
-	
-	firstTank = new Panzer(FIRE);
-	firstTank->setPos(3, 0, 4);
-	tanksUser2.push_back(firstTank);
+	//firstTank = new Panzer(EARTH); // user2
+	//firstTank->setPos(3, 0, 0);
+	//tanksUser2.push_back(firstTank);
+	//
+	//firstTank = new Panzer(WATER);
+	//firstTank->setPos(3, 0, 2);
+	//tanksUser2.push_back(firstTank);
+	//
+	//firstTank = new Panzer(FIRE);
+	//firstTank->setPos(3, 0, 4);
+	//tanksUser2.push_back(firstTank);
 }
 
 void drawTanks()
@@ -216,8 +215,8 @@ void drawScenario()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	drawTerrain();
-	//drawTanks();
-	defaultBullets();
+	drawTanks();
+	//defaultBullets();
 
 	if (isSelecting) glPopName(); // Clear name stack.
 }
@@ -292,13 +291,13 @@ void keyInput(unsigned char key, int scrX, int scrY)
 
 void moveUp(int value)
 {
-	if (value == 5)
-	{
-		if (!tanksUser1[selectedTank()]->canMov()) return;
-	}
-	else if (value == 0) return;
 	if (anyselectedTank())
 	{
+		if (value == 5)
+		{
+			if (!tanksUser1[selectedTank()]->canMov()) return;
+		}
+		else if (value == 0) return;
 		tanksUser1[selectedTank()]->move(UP);
 		glutTimerFunc(50, moveUp, --value);
 		glutPostRedisplay();
@@ -307,13 +306,13 @@ void moveUp(int value)
 
 void moveDown(int value)
 {
-	if (value == 5)
-	{
-		if (!tanksUser1[selectedTank()]->canMov()) return;
-	}
-	else if (value == 0) return;
 	if (anyselectedTank())
 	{
+		if (value == 5)
+		{
+			if (!tanksUser1[selectedTank()]->canMov()) return;
+		}
+		else if (value == 0) return;
 		tanksUser1[selectedTank()]->move(DOWN);
 		glutTimerFunc(50, moveDown, --value);
 		glutPostRedisplay();
@@ -322,13 +321,13 @@ void moveDown(int value)
 
 void moveRight(int value)
 {
-	if (value == 5)
-	{
-		if (!tanksUser1[selectedTank()]->canMov()) return;
-	}
-	else if (value == 0) return;
 	if (anyselectedTank())
 	{
+		if (value == 5)
+		{
+			if (!tanksUser1[selectedTank()]->canMov()) return;
+		}
+		else if (value == 0) return;
 		tanksUser1[selectedTank()]->move(RIGHT);
 		glutTimerFunc(50, moveRight, --value);
 		glutPostRedisplay();
@@ -337,13 +336,13 @@ void moveRight(int value)
 
 void moveLeft(int value)
 {
-	if (value == 5)
-	{
-		if (!tanksUser1[selectedTank()]->canMov()) return;
-	}
-	else if (value == 0) return;
 	if (anyselectedTank())
 	{
+		if (value == 5)
+		{
+			if (!tanksUser1[selectedTank()]->canMov()) return;
+		}
+		else if (value == 0) return;
 		tanksUser1[selectedTank()]->move(LEFT);
 		glutTimerFunc(50, moveLeft, --value);
 		glutPostRedisplay();
@@ -370,72 +369,6 @@ void specialKeyInput(int key, int x, int y)
 		default:
 			break;
 	}
-}
-
-void findClosestHit(int hits, unsigned int buffer[])
-{
-	unsigned int *ptr, minZ;
-
-	minZ = 0xffffffff; //minZ = 0xffffffff;
-	ptr = buffer;
-	closestName = 0;
-	for (int i = 0; i < hits; i++)
-	{
-		ptr++;
-			cout << "Z: " << *ptr << endl;
-			ptr += 2;
-			cout << "name of intersections: " << *ptr << endl;
-			ptr -= 2;
-		if (*ptr < minZ) //if (*ptr < minZ)
-		{
-			minZ = *ptr;
-			ptr += 2;
-			closestName = *ptr;
-			ptr++;
-		}
-		else ptr += 3;
-	}
-		cout << "hits: " << hits << endl;
-		cout << "clicked at " << closestName << endl << endl;
-}
-
-void pickFunction(int button, int state, int x, int y)
-{
-	int viewport[4];
-
-	if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
-
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	glSelectBuffer(1024, buffer);
-	(void)glRenderMode(GL_SELECT);
-
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-
-	glLoadIdentity();
-	gluPickMatrix((float)x, (float)(viewport[3] - y), 3.0, 3.0, viewport);
-	gluPerspective(80.0f, (double)scrW / scrH, 1.0, 1000.0); // same as in resize
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glInitNames();
-	glPushName(0);
-
-	isSelecting = true;
-	// todo: function that draw objects but doesn't configure light (change!!!)     
-	drawScenario();
-
-	hits = glRenderMode(GL_RENDER);
-
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-
-	findClosestHit(hits, buffer);
-
-	glutPostRedisplay();
 }
 
 void printInteraction()

@@ -6,7 +6,7 @@
 
 class Tank
 {
-private: // todo : do it protected
+protected: // todo : do it protected
 	elem type;
 	int range;
 	int max_life;

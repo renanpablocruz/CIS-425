@@ -10,9 +10,7 @@ void Panzer::draw()
 	else if (getType() == WATER) glColor3f(0, 0, 1);
 	else glColor3f(0, 0, 0);
 	glPushMatrix();
-	float _x, _y, _z;
-	getPos(_x, _y, _z);
-	glTranslatef(_x+0.5, _y+0.5, _z+0.5);
+	glTranslatef(x + 0.5, y + 0.5, z + 0.5);
 	glutSolidCube(1);
 	glPopMatrix();
 }
