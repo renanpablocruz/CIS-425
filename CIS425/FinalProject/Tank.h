@@ -6,7 +6,7 @@
 
 class Tank
 {
-private:
+private: // todo : do it protected
 	elem type;
 	int range;
 	int max_life;
@@ -15,10 +15,11 @@ private:
 	int ammo;
 	int max_mov;
 	int mov;
-	Bullet* bull;
+	Bullet* bullet;
 	float x;
 	float y;
 	float z;
+	dir direction;
 public:
 	Tank();
 	Tank(int ml, int r, int a, int ms, elem t);

@@ -5,13 +5,19 @@
 
 class Bullet
 {
-private:
+protected:
 	elem type;
-	int x;
-	int y;
-	int z;
+	float x;
+	float y;
+	float z;
 	int damage;
+	float radius;
+	float height;
+	dir direction;
 public:
+	Bullet();
+	Bullet(elem t, float _x, float _y, float _z, int dmg, float r, float h, dir dr);
+	~Bullet();
 	virtual void draw() = 0;
 };
 

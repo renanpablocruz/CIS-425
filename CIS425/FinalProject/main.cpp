@@ -56,7 +56,7 @@ static unsigned int closestName = 0; // Name of closest hit.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool anyselectedTank();
-
+void defaultBullets();
 void defaultTanks();
 void drawScenario();
 void drawScene();
@@ -120,6 +120,12 @@ int selectedTank() // only make sense to call if anyselectedTank returned true
 		if (selectedTankUser1[i]) return i;
 	}
 	return -1;
+}
+
+void defaultBullets()
+{
+	Bullet* testBullet = new PanzerBullet(EARTH, 0, 0, 0);
+	testBullet->draw();
 }
 
 void defaultTanks()
@@ -210,7 +216,8 @@ void drawScenario()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	drawTerrain();
-	drawTanks();
+	//drawTanks();
+	defaultBullets();
 
 	if (isSelecting) glPopName(); // Clear name stack.
 }
@@ -249,7 +256,7 @@ void setup()
 	//glEnable(GL_LIGHTING);
 	//glLoadIdentity();
 
-	defaultTanks();
+	//defaultTanks();
 }
 
 void keyInput(unsigned char key, int scrX, int scrY)
@@ -264,18 +271,16 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			glutPostRedisplay();
 			break;
 		case ' ':
-			//int aux = 0;
-			for (unsigned int i = 0; i < selectedTankUser1.size(); i++)
+			if (tanksUser1.size() > 0)
 			{
-				if (selectedTankUser1[i])
-				{
-					//aux = i;
-					selectedTankUser1[i] = false;
-					selectedTankUser1[(i + 1) % selectedTankUser1.size()] = true;
-					break;
+				if (anyselectedTank()){
+					int ind = selectedTank();
+					selectedTankUser1[ind] = false;
+					if (ind != selectedTankUser1.size() - 1) selectedTankUser1[ind + 1] = true;
 				}
+				else  selectedTankUser1[0] = true;
+				glutPostRedisplay();
 			}
-			glutPostRedisplay();
 			break;
 		case 'n':
 			newTurn();

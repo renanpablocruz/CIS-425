@@ -1,7 +1,7 @@
 #include "Tank.h"
 
 Tank::Tank(int ml, int r, int a, int ms, elem t) : max_life(ml), life(ml), range(r), max_ammo(a), ammo(a), max_mov(ms),
-			mov(ms), type(t), x(0), y(0), z(0) {}
+			mov(ms), type(t), x(0), y(0), z(0), direction(RIGHT) {} // todo: add bullet instanciation
 
 void Tank::modLife(int d){
 	int actual = life + d;
