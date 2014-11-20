@@ -29,35 +29,137 @@
 
 using namespace std;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Globals
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // screen
-static vector<Tank*> myTanks;
+static vector<Tank*> tanksUser1;
+static vector<Tank*> tanksUser2;
 static float scrW;
 static float scrH;
+// camera
+static float camX = 0, camY = 0, camZ = 0;
+static vector<bool> selectedTankUser1;
 // picking and selecting
 static bool isSelecting = false; // In selection mode?
 static int hits; // Number of entries in hit buffer.
 static unsigned int buffer[1024]; // Hit buffer.
 static unsigned int closestName = 0; // Name of closest hit.
 
-void addTank()
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Methods - Headers
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool anyselectedTank();
+
+void defaultTanks();
+void drawScenario();
+void drawScene();
+void drawTanks();
+void drawTerrain();
+void findClosestHit(int hits, unsigned int buffer[]);
+void keyInput(unsigned char key, int scrX, int scrY);
+void moveDown(int value);
+void moveLeft(int value);
+void moveRight(int value);
+void moveUp(int value);
+void newTurn();
+void printInteraction();
+void resize(int w, int h);
+int selectedTank();
+void setup();
+void specialKeyInput(int key, int x, int y);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Main
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+int main(int argc, char **argv)
 {
-	Panzer* firstTank = new Panzer(FIRE);
-	myTanks.push_back(firstTank);
+	printInteraction();
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitWindowSize(800, 600);
+	glutInitWindowPosition(100, 50);
+	glutCreateWindow("Final Project");
+	setup();
+	glutDisplayFunc(drawScene);
+	glutReshapeFunc(resize);
+	glutKeyboardFunc(keyInput);
+	//glutMouseFunc(pickFunction);
+	glutSpecialFunc(specialKeyInput);
+	// todo: glutTimerFunc(time, function, value); // wait time miliseconds and execute function with argument value
+
+	glutMainLoop();
+
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Methods - Declarations
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool anyselectedTank()
+{
+	for (int i = 0; i < selectedTankUser1.size(); i++)
+	{
+		if (selectedTankUser1[i]) return true;
+	}
+	return false;
+}
+
+int selectedTank() // only make sense to call if anyselectedTank returned true
+{
+	for (int i = 0; i < selectedTankUser1.size(); i++)
+	{
+		if (selectedTankUser1[i]) return i;
+	}
+	return -1;
+}
+
+void defaultTanks()
+{
+	Panzer* firstTank = new Panzer(EARTH); // user1
+	firstTank->setPos(0, 0, 0);
+	tanksUser1.push_back(firstTank);
+	selectedTankUser1.push_back(true);
+
+	firstTank = new Panzer(WATER);
+	firstTank->setPos(0, 0, 2);
+	tanksUser1.push_back(firstTank);
+	selectedTankUser1.push_back(false);
+
+	firstTank = new Panzer(FIRE);
+	firstTank->setPos(0, 0, 4);
+	tanksUser1.push_back(firstTank);
+	selectedTankUser1.push_back(false);
+
+	firstTank = new Panzer(EARTH); // user2
+	firstTank->setPos(3, 0, 0);
+	tanksUser2.push_back(firstTank);
+	
+	firstTank = new Panzer(WATER);
+	firstTank->setPos(3, 0, 2);
+	tanksUser2.push_back(firstTank);
+	
+	firstTank = new Panzer(FIRE);
+	firstTank->setPos(3, 0, 4);
+	tanksUser2.push_back(firstTank);
 }
 
 void drawTanks()
 {
-	cout << "num of tanks: " << myTanks.size() << endl;
-	for (int i = 0; i < myTanks.size(); i++)
+	cout << "num of tanks: " << tanksUser1.size() << endl;
+	for (int i = 0; i < tanksUser1.size(); i++)
 	{
-		if (isSelecting) glLoadName(i+2);
-		if (closestName == (i + 2))
-		{
-			cout << "tank " << i+2 << " was selected." << endl;
-		}
-		int pos[3] = { i, 0, i };
-		myTanks[i]->draw(pos);
+		//if (isSelecting) glLoadName(i+2);
+		tanksUser1[i]->draw();
+	}
+	for (int i = 0; i < tanksUser2.size(); i++)
+	{
+		//if (isSelecting) glLoadName(i+2);
+		tanksUser2[i]->draw();
 	}
 }
 
@@ -68,7 +170,7 @@ void drawTerrain()
 	int size = 20;
 	for (int i = -size; i < size; i++)
 	{
-		for (int j = -size; j < size; j++)
+		for (int j = -size; j < size; j++) //for (int j = -size; j < size; j++)
 		{
 			glColor3f(0, 0, 0);
 			glBegin(GL_LINE_STRIP);
@@ -78,23 +180,28 @@ void drawTerrain()
 			glVertex3f(i, 0, j + 1);
 			glEnd();
 
-			if (i % 5 == 0 && j % 5 == 0) // markers
-			{
-				glColor3f(0.4, 0.4, 0.6);
-				glPushMatrix();
-				glTranslatef(0, 0.05, 0);
-				glScalef(1, 0.1, 1);
-				glTranslatef(i+0.5, 0, j+0.5);
-				glutSolidCube(1);
-				glPopMatrix();
-			}
+			//if (i % 5 == 0 && j % 5 == 0) // markers
+			//{
+			//	glColor3f(0.4, 0.4, 0.6);
+			//	glPushMatrix();
+			//	//glTranslatef(0, 0.05, 0);
+			//	//glScalef(1, 0.1, 1);
+			//	glTranslatef(i+0.5, 0, j+0.5);
+			//	glutSolidCube(1);
+			//	glPopMatrix();
+			//}
 		}
 	}
 }
 
 void drawScenario()
 {
-	gluLookAt(5, 0, 5, 0, 0, 0, 0, 1, 0);
+	if (anyselectedTank())
+	{
+		tanksUser1[selectedTank()]->getPos(camX, camY, camZ);
+		gluLookAt(camX + 5, camY + 5, camZ + 5, camX, camY, camZ, 0, 1, 0);
+	}
+	else gluLookAt(10, 10, 10, 2, 0, 2, 0, 1, 0);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -136,7 +243,9 @@ void setup()
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_LIGHTING);
-	glLoadIdentity();
+	//glLoadIdentity();
+
+	defaultTanks();
 }
 
 void keyInput(unsigned char key, int scrX, int scrY)
@@ -147,11 +256,88 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			exit(0);
 			break;
 		case 't':
-			addTank();
+			defaultTanks();
 			glutPostRedisplay();
+			break;
+		case ' ':
+			//int aux = 0;
+			for (int i = 0; i < selectedTankUser1.size(); i++)
+			{
+				if (selectedTankUser1[i])
+				{
+					//aux = i;
+					selectedTankUser1[i] = false;
+					selectedTankUser1[(i + 1) % selectedTankUser1.size()] = true;
+					break;
+				}
+			}
+			glutPostRedisplay();
+			break;
+		case 'n':
+			newTurn();
 			break;
 		default:
 			break;
+	}
+}
+
+void moveUp(int value)
+{
+	if (value == 5)
+	{
+		if (!tanksUser1[selectedTank()]->canMov()) return;
+	}
+	else if (value == 0) return;
+	if (anyselectedTank())
+	{
+		tanksUser1[selectedTank()]->move(UP);
+		glutTimerFunc(50, moveUp, --value);
+		glutPostRedisplay();
+	}
+}
+
+void moveDown(int value)
+{
+	if (value == 5)
+	{
+		if (!tanksUser1[selectedTank()]->canMov()) return;
+	}
+	else if (value == 0) return;
+	if (anyselectedTank())
+	{
+		tanksUser1[selectedTank()]->move(DOWN);
+		glutTimerFunc(50, moveDown, --value);
+		glutPostRedisplay();
+	}
+}
+
+void moveRight(int value)
+{
+	if (value == 5)
+	{
+		if (!tanksUser1[selectedTank()]->canMov()) return;
+	}
+	else if (value == 0) return;
+	if (anyselectedTank())
+	{
+		tanksUser1[selectedTank()]->move(RIGHT);
+		glutTimerFunc(50, moveRight, --value);
+		glutPostRedisplay();
+	}
+}
+
+void moveLeft(int value)
+{
+	if (value == 5)
+	{
+		if (!tanksUser1[selectedTank()]->canMov()) return;
+	}
+	else if (value == 0) return;
+	if (anyselectedTank())
+	{
+		tanksUser1[selectedTank()]->move(LEFT);
+		glutTimerFunc(50, moveLeft, --value);
+		glutPostRedisplay();
 	}
 }
 
@@ -160,6 +346,18 @@ void specialKeyInput(int key, int x, int y)
 	int modifier = glutGetModifiers();
 	switch (key)
 	{
+		case GLUT_KEY_UP:
+			glutTimerFunc(50, moveUp, 5);
+			break;
+		case GLUT_KEY_DOWN:
+			glutTimerFunc(50, moveDown, 5);
+			break;
+		case GLUT_KEY_RIGHT:
+			glutTimerFunc(50, moveRight, 5);
+			break;
+		case GLUT_KEY_LEFT:
+			glutTimerFunc(50, moveLeft, 5);
+			break;
 		default:
 			break;
 	}
@@ -207,7 +405,7 @@ void pickFunction(int button, int state, int x, int y)
 	glPushMatrix();
 
 	glLoadIdentity();
-	gluPickMatrix((float)x, (float)(viewport[3] - y), 2.0, 2.0, viewport);
+	gluPickMatrix((float)x, (float)(viewport[3] - y), 3.0, 3.0, viewport);
 	gluPerspective(80.0f, (double)scrW / scrH, 1.0, 1000.0); // same as in resize
 
 	glMatrixMode(GL_MODELVIEW);
@@ -217,7 +415,7 @@ void pickFunction(int button, int state, int x, int y)
 	glPushName(0);
 
 	isSelecting = true;
-	// todo: function that draw objects but doesn't configure light (change!!!)
+	// todo: function that draw objects but doesn't configure light (change!!!)     
 	drawScenario();
 
 	hits = glRenderMode(GL_RENDER);
@@ -236,22 +434,7 @@ void printInteraction()
 
 }
 
-int main(int argc, char **argv)
+void newTurn()
 {
-	printInteraction();
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(800, 600);
-	glutInitWindowPosition(100, 50);
-	glutCreateWindow("Final Project");
-	setup();
-	glutDisplayFunc(drawScene);
-	glutReshapeFunc(resize);
-	glutKeyboardFunc(keyInput);
-	glutMouseFunc(pickFunction);
-	glutSpecialFunc(specialKeyInput);
-	// todo: glutTimerFunc(time, function, value); // wait time miliseconds and execute function with argument value
-	glutMainLoop();
-
-	return 0;
+	for (int i = 0; i < tanksUser1.size(); i++)	tanksUser1[i]->passTurn();
 }
