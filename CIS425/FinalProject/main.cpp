@@ -15,11 +15,15 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+#include <vector>
 #include "Tank.h"
 #include "Panther.h"
 #include "Panzer.h"
 #include "Tiger.h"
-#include <vector>
+#include "Bullet.h"
+#include "PantherBullet.h"
+#include "PanzerBullet.h"
+#include "TigerBullet.h"
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
@@ -102,7 +106,7 @@ int main(int argc, char **argv)
 
 bool anyselectedTank()
 {
-	for (int i = 0; i < selectedTankUser1.size(); i++)
+	for (unsigned int i = 0; i < selectedTankUser1.size(); i++)
 	{
 		if (selectedTankUser1[i]) return true;
 	}
@@ -111,7 +115,7 @@ bool anyselectedTank()
 
 int selectedTank() // only make sense to call if anyselectedTank returned true
 {
-	for (int i = 0; i < selectedTankUser1.size(); i++)
+	for (unsigned int i = 0; i < selectedTankUser1.size(); i++)
 	{
 		if (selectedTankUser1[i]) return i;
 	}
@@ -151,12 +155,12 @@ void defaultTanks()
 void drawTanks()
 {
 	cout << "num of tanks: " << tanksUser1.size() << endl;
-	for (int i = 0; i < tanksUser1.size(); i++)
+	for (unsigned int i = 0; i < tanksUser1.size(); i++)
 	{
 		//if (isSelecting) glLoadName(i+2);
 		tanksUser1[i]->draw();
 	}
-	for (int i = 0; i < tanksUser2.size(); i++)
+	for (unsigned int i = 0; i < tanksUser2.size(); i++)
 	{
 		//if (isSelecting) glLoadName(i+2);
 		tanksUser2[i]->draw();
@@ -180,16 +184,16 @@ void drawTerrain()
 			glVertex3f(i, 0, j + 1);
 			glEnd();
 
-			//if (i % 5 == 0 && j % 5 == 0) // markers
-			//{
-			//	glColor3f(0.4, 0.4, 0.6);
-			//	glPushMatrix();
-			//	//glTranslatef(0, 0.05, 0);
-			//	//glScalef(1, 0.1, 1);
-			//	glTranslatef(i+0.5, 0, j+0.5);
-			//	glutSolidCube(1);
-			//	glPopMatrix();
-			//}
+			if (i % 5 == 0 && j % 5 == 0) // markers
+			{
+				glColor3f(0.4, 0.4, 0.6);
+				glPushMatrix();
+				glTranslatef(0, 0.05, 0);
+				glScalef(1, 0.1, 1);
+				glTranslatef(i+0.5, 0, j+0.5);
+				glutSolidCube(1);
+				glPopMatrix();
+			}
 		}
 	}
 }
@@ -261,7 +265,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			break;
 		case ' ':
 			//int aux = 0;
-			for (int i = 0; i < selectedTankUser1.size(); i++)
+			for (unsigned int i = 0; i < selectedTankUser1.size(); i++)
 			{
 				if (selectedTankUser1[i])
 				{
@@ -436,5 +440,5 @@ void printInteraction()
 
 void newTurn()
 {
-	for (int i = 0; i < tanksUser1.size(); i++)	tanksUser1[i]->passTurn();
+	for (unsigned int i = 0; i < tanksUser1.size(); i++)	tanksUser1[i]->passTurn();
 }

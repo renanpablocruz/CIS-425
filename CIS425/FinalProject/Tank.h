@@ -1,10 +1,8 @@
 #ifndef TANK_H
 #define TANK_H
 
-#define PI 3.14159265358979324
-
-enum elem{ FIRE, WATER, EARTH};
-enum dir{UP, DOWN, LEFT, RIGHT};
+#include "Bullet.h"
+#include "Utils.h"
 
 class Tank
 {
@@ -17,13 +15,13 @@ private:
 	int ammo;
 	int max_mov;
 	int mov;
-	int damage;
+	Bullet* bull;
 	float x;
 	float y;
 	float z;
 public:
 	Tank();
-	Tank(int ml, int r, int a, int ms, int d, elem t);
+	Tank(int ml, int r, int a, int ms, elem t);
 	void modLife(int d);
 	elem getType();
 	void setPos(float x, float y, float z);

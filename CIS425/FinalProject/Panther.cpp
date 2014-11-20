@@ -1,7 +1,7 @@
 #include "Tank.h"
 #include "Panther.h"
 
-Panther::Panther(elem t) : Tank(12, 4, 10, 5, 2, t){}
+Panther::Panther(elem t) : Tank(12, 4, 10, 5, t){}
 
 void Panther::draw(int pos[])
 {

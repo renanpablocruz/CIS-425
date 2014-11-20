@@ -76,10 +76,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="PanzerBullet.h" />
+    <ClInclude Include="TigerBullet.h" />
     <ClInclude Include="Panther.h" />
     <ClInclude Include="Panzer.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="Tiger.h" />
+    <ClInclude Include="PantherBullet.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
