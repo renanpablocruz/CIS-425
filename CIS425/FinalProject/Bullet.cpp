@@ -5,37 +5,33 @@ Bullet::Bullet(elem t, float _x, float _y, float _z, float _xf, float _yf, float
 
 void Bullet::animate()
 {
+	bool hadMove = false;
 	switch (orientation)
 	{
 		case NE:
-			if (x < xf && abs(x - xf) > PRECISION)
-			{
-				x += STEP;
-				if (z > zf && abs(z - zf) > PRECISION) z -= STEP;
-			}
+			if (x < xf && abs(x - xf) > PRECISION){ x += STEP; hadMove = true; }
+			if (z > zf && abs(z - zf) > PRECISION){ z -= STEP; hadMove = true; }
 			break;
 		case SE:
-			if (x < xf && abs(x - xf) > PRECISION)
-			{
-				x += STEP;
-				if (z < zf && abs(z - zf) > PRECISION) z += STEP;
-			}
+			if (x < xf && abs(x - xf) > PRECISION){ x += STEP; hadMove = true; }
+			if (z < zf && abs(z - zf) > PRECISION){ z += STEP; hadMove = true; }
 			break;
 		case SO:
-			if (x > xf && abs(x - xf) > PRECISION)
-			{
-				x -= STEP;
-				if (z < zf && abs(z - zf) > PRECISION) z += STEP;
-			}
+			if (x > xf && abs(x - xf) > PRECISION){ x -= STEP; hadMove = true; }
+			if (z < zf && abs(z - zf) > PRECISION){ z += STEP; hadMove = true; }
 			break;
 		case NO:
-			if (x > xf && abs(x - xf) > PRECISION)
-			{
-				x -= STEP;
-				if (z > zf && abs(z - zf) > PRECISION) z -= STEP;
-			}
+			if (x > xf && abs(x - xf) > PRECISION){ x -= STEP; hadMove = true; }
+			if (z > zf && abs(z - zf) > PRECISION){ z -= STEP; hadMove = true; }
 			break;
 		default:
 			break;
 	}
+	if (!hadMove) state = DONE;
+}
+
+bulletState Bullet::getState()
+{
+	bulletState ans = state;
+	return ans;
 }

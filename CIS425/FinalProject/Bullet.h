@@ -22,6 +22,7 @@ public:
 	~Bullet(); // todo: need to implement?
 	void animate();
 	virtual void draw() = 0;
+	bulletState getState();
 };
 
 #endif

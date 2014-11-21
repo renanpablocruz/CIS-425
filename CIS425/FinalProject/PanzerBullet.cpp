@@ -10,7 +10,6 @@ void PanzerBullet::draw()
 	else glColor3f(0, 0, 0);
 	glPushMatrix();
 	glTranslatef(x + 0.5, y + 0.5, z + 0.5);
-	//glTranslatef(1, 0, 0);
 	if (orientation == RIGHT) glScalef(height, radius, radius);
 	else if (orientation == RIGHT || orientation == LEFT) glScalef(height, radius, radius);
 	else if (orientation == UP || orientation == DOWN) glScalef(radius, radius, height);

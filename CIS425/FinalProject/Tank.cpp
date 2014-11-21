@@ -101,7 +101,12 @@ void Tank::animate(int dt)
 			}
 			break;
 		case SHOOTING:
-			bullet->animate();
+			if (bullet->getState() == FLYING) bullet->animate();
+			else if (bullet->getState() == DONE)
+			{
+				bullet = NULL;
+				state = WAITING;
+			}
 			break;
 		default:
 			break;
