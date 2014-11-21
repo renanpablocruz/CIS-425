@@ -1,11 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include "glutInclude.h"
+
 
 #define PI 3.14159265358979324
 #define DELTA_T_REAL 50

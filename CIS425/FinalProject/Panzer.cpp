@@ -18,5 +18,7 @@ void Panzer::draw()
 
 void Panzer::shoot()
 {
-	bullet = new PanzerBullet(type, x, y, z);
+	// change orientation
+	bullet = new PanzerBullet(type, x, y, z, orientation);
+	state = SHOOTING;
 }

@@ -15,7 +15,6 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#include <vector>
 #include "Tank.h"
 #include "Panther.h"
 #include "Panzer.h"
@@ -24,12 +23,9 @@
 #include "PantherBullet.h"
 #include "PanzerBullet.h"
 #include "TigerBullet.h"
+#include "Battalion.h"
 
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include "glutInclude.h"
 
 using namespace std;
 
@@ -38,13 +34,12 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // screen
-static vector<Tank*> tanksUser1;
-static vector<Tank*> tanksUser2;
+static Battalion* tanksUser1 = new Battalion(1);
+static Battalion* tanksUser2 = new Battalion(2);
 static float scrW;
 static float scrH;
 // camera
 static float camX = 0, camY = 0, camZ = 0;
-static vector<bool> selectedTankUser1;
 // picking and selecting
 static bool isSelecting = false; // In selection mode?
 static int hits; // Number of entries in hit buffer.
@@ -56,23 +51,18 @@ static unsigned int closestName = 0; // Name of closest hit.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void animation(int dt);
-bool anyselectedTank();
 void changeCamera();
 void defaultBullets();
-void defaultTanks();
 void drawScenario();
 void drawScene();
-void drawTanks();
 void drawTerrain();
 void keyInput(unsigned char key, int scrX, int scrY);
 void moveDown(int value);
 void moveLeft(int value);
 void moveRight(int value);
 void moveUp(int value);
-void newTurn();
 void printInteraction();
 void resize(int w, int h);
-int selectedTank();
 void setup();
 void specialKeyInput(int key, int x, int y);
 
@@ -107,91 +97,38 @@ int main(int argc, char **argv)
 
 void animation(int dt)
 {
-	for (unsigned int i = 0; i < tanksUser1.size(); i++) tanksUser1[i]->animate(dt);
+	tanksUser1->animate(DELTA_T_VIRTUAL);
+	tanksUser2->animate(DELTA_T_VIRTUAL);
 	glutPostRedisplay();
 	glutTimerFunc(DELTA_T_REAL, animation, DELTA_T_VIRTUAL);
 }
 
-bool anyselectedTank()
-{
-	for (unsigned int i = 0; i < selectedTankUser1.size(); i++)
-	{
-		if (selectedTankUser1[i]) return true;
-	}
-	return false;
-}
+
+
 
 void changeCamera()
 {
-	if (tanksUser1.size() > 0)
+	if (tanksUser1->hasTanks())
 	{
-		if (anyselectedTank()){
-			int ind = selectedTank();
-			selectedTankUser1[ind] = false;
-			if (ind != selectedTankUser1.size() - 1) selectedTankUser1[ind + 1] = true;
+		if (tanksUser1->anySelectedTank()){
+			int ind = tanksUser1->selectedTank();
+			tanksUser1->deselectTank(ind);
+			if (ind != tanksUser1->numTanks() - 1) tanksUser1->selectTank(ind+1);
 		}
-		else  selectedTankUser1[0] = true;
+		else  tanksUser1->selectTank(0);
 		glutPostRedisplay();
 	}
 }
 
-int selectedTank() // only make sense to call if anyselectedTank returned true
-{
-	for (unsigned int i = 0; i < selectedTankUser1.size(); i++)
-	{
-		if (selectedTankUser1[i]) return i;
-	}
-	return -1;
-}
-
 void defaultBullets()
 {
-	Bullet* testBullet = new PanzerBullet(EARTH, 0, 0, 0);
+	Bullet* testBullet = new PanzerBullet(EARTH, 0, 0, 0, RIGHT);
 	testBullet->draw();
 }
 
 void defaultTanks()
 {
-	Panzer* firstTank = new Panzer(EARTH); // user1
-	firstTank->setPos(0, 0, 0);
-	tanksUser1.push_back(firstTank);
-	selectedTankUser1.push_back(true);
-
-	/*firstTank = new Panzer(WATER);
-	firstTank->setPos(0, 0, 2);
-	tanksUser1.push_back(firstTank);
-	selectedTankUser1.push_back(false);*/
-
-	//firstTank = new Panzer(FIRE);
-	//firstTank->setPos(0, 0, 4);
-	//tanksUser1.push_back(firstTank);
-	//selectedTankUser1.push_back(false);
-
-	//firstTank = new Panzer(EARTH); // user2
-	//firstTank->setPos(3, 0, 0);
-	//tanksUser2.push_back(firstTank);
-	//
-	//firstTank = new Panzer(WATER);
-	//firstTank->setPos(3, 0, 2);
-	//tanksUser2.push_back(firstTank);
-	//
-	//firstTank = new Panzer(FIRE);
-	//firstTank->setPos(3, 0, 4);
-	//tanksUser2.push_back(firstTank);
-}
-
-void drawTanks()
-{
-	for (unsigned int i = 0; i < tanksUser1.size(); i++)
-	{
-		//if (isSelecting) glLoadName(i+2);
-		tanksUser1[i]->draw();
-	}
-	for (unsigned int i = 0; i < tanksUser2.size(); i++)
-	{
-		//if (isSelecting) glLoadName(i+2);
-		tanksUser2[i]->draw();
-	}
+	
 }
 
 void drawTerrain()
@@ -227,9 +164,9 @@ void drawTerrain()
 
 void drawScenario()
 {
-	if (anyselectedTank())
+	if (tanksUser1->anySelectedTank())
 	{
-		tanksUser1[selectedTank()]->getPos(camX, camY, camZ);
+		tanksUser1->getPosOfTank(tanksUser1->selectedTank(), camX, camY, camZ);
 		gluLookAt(camX + 5, camY + 5, camZ + 5, camX, camY, camZ, 0, 1, 0);
 	}
 	else gluLookAt(10, 10, 10, 2, 0, 2, 0, 1, 0);
@@ -237,7 +174,8 @@ void drawScenario()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	drawTerrain();
-	drawTanks();
+	tanksUser1->draw();
+	tanksUser2->draw();
 	//defaultBullets();
 
 	if (isSelecting) glPopName(); // Clear name stack.
@@ -291,11 +229,28 @@ void keyInput(unsigned char key, int scrX, int scrY)
 			defaultTanks();
 			glutPostRedisplay();
 			break;
-		case ' ':
+		case 'c':
 			changeCamera();
 			break;
+		case ' ':
+			if (tanksUser1->anySelectedTank())
+			{
+				switch (tanksUser1->getStateOfTank())
+				{
+					case WAITING:
+						tanksUser1->setTargetModeOfSelectedTank();
+						break;
+					case SELECTING_TARGET:
+						tanksUser1->shoot();
+						break;
+					default:
+						break;
+				}
+				glutPostRedisplay();
+			}
+			break;
 		case 'n':
-			newTurn();
+			tanksUser1->newTurn();
 			break;
 		default:
 			break;
@@ -308,16 +263,29 @@ void specialKeyInput(int key, int x, int y)
 	switch (key)
 	{
 		case GLUT_KEY_UP:
-			if (anyselectedTank()) tanksUser1[selectedTank()]->setMoveTo(UP);
+			if (tanksUser1->anySelectedTank())
+			{
+				switch (tanksUser1->getStateOfTank())
+				{
+					case WAITING:
+						tanksUser1->moveTank(UP);
+						break;
+					case SELECTING_TARGET:
+
+						break;
+					default:
+						break;
+				}
+			}
 			break;
 		case GLUT_KEY_DOWN:
-			if (anyselectedTank()) tanksUser1[selectedTank()]->setMoveTo(DOWN);
+			if (tanksUser1->anySelectedTank()) tanksUser1->moveTank(DOWN);
 			break;
 		case GLUT_KEY_RIGHT:
-			if (anyselectedTank()) tanksUser1[selectedTank()]->setMoveTo(RIGHT);
+			if (tanksUser1->anySelectedTank()) tanksUser1->moveTank(RIGHT);
 			break;
 		case GLUT_KEY_LEFT:
-			if (anyselectedTank()) tanksUser1[selectedTank()]->setMoveTo(LEFT);
+			if (tanksUser1->anySelectedTank()) tanksUser1->moveTank(LEFT);
 			break;
 		default:
 			break;
@@ -329,7 +297,3 @@ void printInteraction()
 
 }
 
-void newTurn()
-{
-	for (unsigned int i = 0; i < tanksUser1.size(); i++) tanksUser1[i]->passTurn();
-}

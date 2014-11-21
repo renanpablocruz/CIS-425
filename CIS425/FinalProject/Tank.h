@@ -4,9 +4,11 @@
 #include "Bullet.h"
 #include "Utils.h"
 
+enum tankState {WAITING, MOVING, SELECTING_TARGET, SHOOTING};
+
 class Tank
 {
-protected: // todo : do it protected
+protected:
 	elem type;
 	int range;
 	int max_life;
@@ -18,9 +20,10 @@ protected: // todo : do it protected
 	Bullet* bullet;
 	float x, y, z;
 	float xf, yf, zf;
-	dir direction;
-	bool inMotion;
+	dir orientation;
+	tankState state;
 	dir moveTo;
+	bool selection;
 public:
 	Tank();
 	Tank(int ml, int r, int a, int ms, elem t);
@@ -35,6 +38,11 @@ public:
 	virtual void shoot() = 0;
 	void animate(int value);
 	void setMoveTo(dir dr);
+	tankState getState();
+	void setSelectTargetMode();
+	void select();
+	void deselect();
+	bool isSelected();
 };
 
 #endif

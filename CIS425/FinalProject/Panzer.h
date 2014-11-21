@@ -2,12 +2,7 @@
 #define PANZER_H
 
 #include "Tank.h"
-
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include "glutInclude.h"
 
 class Panzer : public Tank
 {

@@ -1,7 +1,7 @@
 #include "Tank.h"
 
 Tank::Tank(int ml, int r, int a, int ms, elem t) : max_life(ml), life(ml), range(r), max_ammo(a), ammo(a), max_mov(ms),
-			mov(ms), type(t), x(0), y(0), z(0), xf(0), yf(0), zf(0), direction(RIGHT), inMotion(false) {} // todo: add bullet instanciation
+			mov(ms), type(t), x(0), y(0), z(0), xf(0), yf(0), zf(0), orientation(RIGHT), state(WAITING), selection(false) {} // todo: add bullet instanciation
 
 void Tank::modLife(int d){
 	int actual = life + d;
@@ -53,7 +53,7 @@ void Tank::passTurn()
 
 void Tank::setMoveTo(dir dr)
 {
-	if (!inMotion && mov > 0)
+	if (state == WAITING && mov > 0)
 	{
 		mov -= 1;
 		moveTo = dr;
@@ -61,30 +61,68 @@ void Tank::setMoveTo(dir dr)
 		else if (dr == DOWN) { xf = x; yf = y; zf = z + 1; }
 		else if (dr == RIGHT) { xf = x + 1; yf = y; zf = z; }
 		else if (dr == LEFT) { xf = x - 1; yf = y; zf = z; }
-		inMotion = true;
+		state = MOVING;
+		// todo: change orientation
 	}
 }
 
 void Tank::animate(int dt)
 {
-	if (inMotion)
+	switch(state)
 	{
-		if (moveTo == UP){
-			if (z > zf && absValue(z - zf) > PRECISION) z -= STEP;
-			else inMotion = false;
-		}
-		else if (moveTo == DOWN){
-			if (z < zf && absValue(z - zf) > PRECISION) z += STEP;
-			else inMotion = false;
-		}
-		else if (moveTo == RIGHT){
-			if (x < xf && absValue(x - xf) > PRECISION) x += STEP;
-			else inMotion = false;
-		}
-		else if (moveTo == LEFT){
-			if (x > xf && absValue(x - xf) > PRECISION) x -= STEP;
-			else inMotion = false;
-		}
+		case MOVING:
+			switch (moveTo)
+			{
+				case UP:
+					if (z > zf && absValue(z - zf) > PRECISION) z -= STEP;
+					else state = WAITING;
+					break;
+				case DOWN:
+					if (z < zf && absValue(z - zf) > PRECISION) z += STEP;
+					else state = WAITING;
+					break;
+				case LEFT:
+					if (x > xf && absValue(x - xf) > PRECISION) x -= STEP;
+					else state = WAITING;
+					break;
+				case RIGHT:
+					if (x < xf && absValue(x - xf) > PRECISION) x += STEP;
+					else state = WAITING;
+					break;
+				default:
+					break;
+			}
+			break;
+		case SHOOTING:
+
+			break;
+		default:
+			break;
 	}
-	else if ()
+}
+
+tankState Tank::getState()
+{
+	return state;
+}
+
+void Tank::setSelectTargetMode()
+{
+	state = SELECTING_TARGET;
+}
+
+void Tank::select()
+{
+	selection = true;
+}
+
+void Tank::deselect()
+{
+	selection = false;
+}
+
+bool Tank::isSelected()
+{
+	bool ans = selection;
+	return ans;
 }
