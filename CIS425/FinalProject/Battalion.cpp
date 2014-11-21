@@ -10,13 +10,13 @@ Battalion::Battalion(int value)
 			tank->setPos(0, 0, 0); // user1
 			tanks.push_back(tank);
 
-			tank = new Panzer(WATER);
+			/*tank = new Panzer(WATER);
 			tank->setPos(0, 0, 2);
 			tanks.push_back(tank);
 
 			tank = new Panzer(FIRE);
 			tank->setPos(0, 0, 4);
-			tanks.push_back(tank);
+			tanks.push_back(tank);*/
 			break;
 		}
 		case 2:

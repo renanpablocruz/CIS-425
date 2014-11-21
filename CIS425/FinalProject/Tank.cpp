@@ -6,7 +6,7 @@ Tank::Tank(int ml, int r, int a, int ms, elem t) : max_life(ml), life(ml), range
 
 bool Tank::canShoot(float x2, float y2, float z2)
 {
-	bool ans ( abs(x - x2) + abs(y - y2) + abs(z - z2) < range );
+	bool ans = ( abs(abs(x - x2) + abs(y - y2) + abs(z - z2) - range) < 3*PRECISION ) && (ammo > 0);
 	return ans;
 }
 

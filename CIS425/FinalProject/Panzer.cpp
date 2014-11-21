@@ -23,6 +23,7 @@ void Panzer::shoot(float xf, float yf, float zf)
 {
 	if (canShoot(xf, yf, zf))
 	{
+		ammo -= 1;
 		orientation = getDirForTank(x, z, xf, zf);
 		bullet = new PanzerBullet(type, x, y, z, xf, yf, zf, getDirForBullet(x, y, xf, yf));
 		state = SHOOTING;

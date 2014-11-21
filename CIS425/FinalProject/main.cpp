@@ -245,8 +245,6 @@ void keyInput(unsigned char key, int scrX, int scrY)
 						float x, y, z;
 						tanksUser2->getPosOfTank(tanksUser2->selectedTank(), x, y, z);
 						tanksUser1->shoot(x, y, z);
-
-						cout << "shot" << endl;
 						break;
 					default:
 						break;
