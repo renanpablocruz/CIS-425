@@ -27,22 +27,24 @@ protected:
 public:
 	Tank();
 	Tank(int ml, int r, int a, int ms, elem t);
-	void modLife(int d);
-	elem getType();
-	void setPos(float x, float y, float z);
-	void getPos(float &_x, float &_y, float &_z);
-	void getFinalPos(float &_x, float &_y, float &_z);
-	bool canMov();
-	void passTurn();
-	virtual void draw() = 0;
-	virtual void shoot() = 0;
 	void animate(int value);
-	void setMoveTo(dir dr);
-	tankState getState();
-	void setSelectTargetMode();
-	void select();
+	bool canMov();
+	bool canShoot(float x2, float y2, float z2);
 	void deselect();
+	virtual void draw() = 0;
+	void getFinalPos(float &_x, float &_y, float &_z);
+	void getPos(float &_x, float &_y, float &_z);
+	tankState getState();
+	elem getType();
 	bool isSelected();
+	void modLife(int d);
+	void passTurn();
+	void select();
+	void setMoveTo(dir dr);
+	void setPos(float x, float y, float z);
+	void setSelectTargetMode();
+	void setWaitingMode();
+	virtual void shoot(float _x, float _y, float _z) = 0;	
 };
 
 #endif

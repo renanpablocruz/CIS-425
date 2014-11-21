@@ -1,7 +1,14 @@
 #include "Tank.h"
 
 Tank::Tank(int ml, int r, int a, int ms, elem t) : max_life(ml), life(ml), range(r), max_ammo(a), ammo(a), max_mov(ms),
-			mov(ms), type(t), x(0), y(0), z(0), xf(0), yf(0), zf(0), orientation(RIGHT), state(WAITING), selection(false) {} // todo: add bullet instanciation
+			mov(ms), type(t), x(0), y(0), z(0), xf(0), yf(0), zf(0), orientation(RIGHT), state(WAITING), selection(false),
+			bullet(NULL) {} // todo: add bullet instanciation
+
+bool Tank::canShoot(float x2, float y2, float z2)
+{
+	bool ans ( abs(x - x2) + abs(y - y2) + abs(z - z2) < range );
+	return ans;
+}
 
 void Tank::modLife(int d){
 	int actual = life + d;
@@ -74,19 +81,19 @@ void Tank::animate(int dt)
 			switch (moveTo)
 			{
 				case UP:
-					if (z > zf && absValue(z - zf) > PRECISION) z -= STEP;
+					if (z > zf && abs(z - zf) > PRECISION) z -= STEP;
 					else state = WAITING;
 					break;
 				case DOWN:
-					if (z < zf && absValue(z - zf) > PRECISION) z += STEP;
+					if (z < zf && abs(z - zf) > PRECISION) z += STEP;
 					else state = WAITING;
 					break;
 				case LEFT:
-					if (x > xf && absValue(x - xf) > PRECISION) x -= STEP;
+					if (x > xf && abs(x - xf) > PRECISION) x -= STEP;
 					else state = WAITING;
 					break;
 				case RIGHT:
-					if (x < xf && absValue(x - xf) > PRECISION) x += STEP;
+					if (x < xf && abs(x - xf) > PRECISION) x += STEP;
 					else state = WAITING;
 					break;
 				default:
@@ -94,7 +101,7 @@ void Tank::animate(int dt)
 			}
 			break;
 		case SHOOTING:
-
+			bullet->animate();
 			break;
 		default:
 			break;
@@ -103,7 +110,8 @@ void Tank::animate(int dt)
 
 tankState Tank::getState()
 {
-	return state;
+	tankState ans = state;
+	return ans;
 }
 
 void Tank::setSelectTargetMode()
@@ -125,4 +133,9 @@ bool Tank::isSelected()
 {
 	bool ans = selection;
 	return ans;
+}
+
+void Tank::setWaitingMode()
+{
+	state = WAITING;
 }

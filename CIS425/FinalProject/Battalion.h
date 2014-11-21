@@ -16,18 +16,20 @@ public:
 	Battalion(int value);
 	void animate(int dt);
 	bool anySelectedTank();
-	int selectedTank();
-	void draw();
-	bool hasTanks();
-	int numTanks();
-	void selectTank(int ind);
 	void deselectTank(int ind);
+	void draw();
 	void getPosOfTank(int ind, float &_x, float &_y, float &_z);
 	tankState getStateOfTank();
-	void setTargetModeOfSelectedTank();
-	void shoot();
+	bool hasTanks();
 	void moveTank(dir dr);
 	void newTurn();
+	int numTanks();
+	int selectedTank();
+	void selectFirstTank();
+	void selectTank(int ind);
+	void setTargetMode();
+	void setWaitingMode();
+	void shoot(float _x, float _y, float _z);
 };
 
 #endif

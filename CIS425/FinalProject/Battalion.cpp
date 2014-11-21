@@ -53,13 +53,9 @@ bool Battalion::anySelectedTank()
 	return false;
 }
 
-int Battalion::selectedTank() // only make sense to call if anyselectedTank returned true
+void Battalion::deselectTank(int ind)
 {
-	for (unsigned int i = 0; i < tanks.size(); i++)
-	{
-		if (tanks[i]->isSelected()) return i;
-	}
-	return -1;
+	tanks[ind]->deselect();
 }
 
 void Battalion::draw()
@@ -70,25 +66,13 @@ void Battalion::draw()
 	}
 }
 
-bool Battalion::hasTanks()
+int Battalion::selectedTank() // only make sense to call if anyselectedTank returned true
 {
-	bool ans = (tanks.size() > 0); // todo: ask Tarzan
-	return ans;
-}
-
-void Battalion::selectTank(int ind)
-{
-	tanks[ind]->select();
-}
-
-void Battalion::deselectTank(int ind)
-{
-	tanks[ind]->deselect();
-}
-
-int Battalion::numTanks()
-{
-	return tanks.size();
+	for (unsigned int i = 0; i < tanks.size(); i++)
+	{
+		if (tanks[i]->isSelected()) return i;
+	}
+	return -1;
 }
 
 void Battalion::getPosOfTank(int ind, float &x, float &y, float &z)
@@ -102,14 +86,10 @@ tankState Battalion::getStateOfTank()
 	return ans;
 }
 
-void Battalion::setTargetModeOfSelectedTank()
+bool Battalion::hasTanks()
 {
-	tanks[selectedTank()]->setSelectTargetMode();
-}
-
-void Battalion::shoot()
-{
-	tanks[selectedTank()]->shoot();
+	bool ans = (tanks.size() > 0); // todo: ask Tarzan
+	return ans;
 }
 
 void Battalion::moveTank(dir dr)
@@ -120,4 +100,34 @@ void Battalion::moveTank(dir dr)
 void Battalion::newTurn()
 {
 	for (unsigned int i = 0; i < tanks.size(); i++) tanks[i]->passTurn();
+}
+
+int Battalion::numTanks()
+{
+	return tanks.size();
+}
+
+void Battalion::selectFirstTank()
+{
+	if (hasTanks())	tanks[0]->select();
+}
+
+void Battalion::selectTank(int ind)
+{
+	tanks[ind]->select();
+}
+
+void Battalion::setTargetMode()
+{
+	tanks[selectedTank()]->setSelectTargetMode();
+}
+
+void Battalion::setWaitingMode()
+{
+	tanks[selectedTank()]->setWaitingMode();
+}
+
+void Battalion::shoot(float _x, float _y, float _z)
+{
+	tanks[selectedTank()]->shoot(_x, _y, _z);
 }

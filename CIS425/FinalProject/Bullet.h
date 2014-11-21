@@ -3,20 +3,24 @@
 
 #include "Utils.h"
 
+enum bulletState {FLYING, DONE};
+
 class Bullet
 {
 protected:
+	int damage;
 	elem type;
 	float x, y, z;
-	float max_x, max_y, max_z;
-	int damage;
-	float radius;
+	float xf, yf, zf;
 	float height;
 	dir orientation;
+	float radius;
+	bulletState state;
 public:
 	Bullet();
-	Bullet(elem t, float _x, float _y, float _z, int dmg, float r, float h, dir dr);
-	~Bullet();
+	Bullet(elem t, float _x, float _y, float _z, float _xf, float _yf, float _zf, int dmg, float r, float h, dir dr);
+	~Bullet(); // todo: need to implement?
+	void animate();
 	virtual void draw() = 0;
 };
 

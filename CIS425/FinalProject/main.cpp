@@ -103,17 +103,27 @@ void animation(int dt)
 	glutTimerFunc(DELTA_T_REAL, animation, DELTA_T_VIRTUAL);
 }
 
-
-
-
 void changeCamera()
 {
 	if (tanksUser1->hasTanks())
 	{
 		if (tanksUser1->anySelectedTank()){
-			int ind = tanksUser1->selectedTank();
-			tanksUser1->deselectTank(ind);
-			if (ind != tanksUser1->numTanks() - 1) tanksUser1->selectTank(ind+1);
+			if (tanksUser1->getStateOfTank() == WAITING)
+			{
+				int ind = tanksUser1->selectedTank();
+				tanksUser1->deselectTank(ind);
+				if (ind != tanksUser1->numTanks() - 1) tanksUser1->selectTank(ind + 1);
+			}
+			else if (tanksUser1->getStateOfTank() == SELECTING_TARGET)
+			{
+				if (tanksUser2->anySelectedTank())
+				{
+					int ind = tanksUser2->selectedTank();
+					tanksUser2->deselectTank(ind);
+					tanksUser2->selectTank((ind + 1) % tanksUser2->numTanks());
+				}
+				else if (tanksUser2->hasTanks()) tanksUser2->selectTank(0);
+			}
 		}
 		else  tanksUser1->selectTank(0);
 		glutPostRedisplay();
@@ -122,13 +132,8 @@ void changeCamera()
 
 void defaultBullets()
 {
-	Bullet* testBullet = new PanzerBullet(EARTH, 0, 0, 0, RIGHT);
+	Bullet* testBullet = new PanzerBullet(EARTH, 0, 0, 0, 5, 0, 5, RIGHT);
 	testBullet->draw();
-}
-
-void defaultTanks()
-{
-	
 }
 
 void drawTerrain()
@@ -154,7 +159,7 @@ void drawTerrain()
 				glPushMatrix();
 				glTranslatef(0, 0.05, 0);
 				glScalef(1, 0.1, 1);
-				glTranslatef(i+0.5, 0, j+0.5);
+				glTranslatef(i + 0.5, 0, j + 0.5);
 				glutSolidCube(1);
 				glPopMatrix();
 			}
@@ -166,10 +171,11 @@ void drawScenario()
 {
 	if (tanksUser1->anySelectedTank())
 	{
-		tanksUser1->getPosOfTank(tanksUser1->selectedTank(), camX, camY, camZ);
-		gluLookAt(camX + 5, camY + 5, camZ + 5, camX, camY, camZ, 0, 1, 0);
+		if (tanksUser1->getStateOfTank() == WAITING) tanksUser1->getPosOfTank(tanksUser1->selectedTank(), camX, camY, camZ);
+		else if (tanksUser1->getStateOfTank() == SELECTING_TARGET) tanksUser2->getPosOfTank(tanksUser2->selectedTank(), camX, camY, camZ);
+		gluLookAt(camX + 0.4, camY + 5, camZ + 5, camX, camY, camZ, 0, 1, 0);
 	}
-	else gluLookAt(10, 10, 10, 2, 0, 2, 0, 1, 0);
+	else gluLookAt(2, 10, 10, 2, 0, 2, 0, 1, 0);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -213,9 +219,6 @@ void setup()
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_LIGHTING);
-	//glLoadIdentity();
-
-	//defaultTanks();
 }
 
 void keyInput(unsigned char key, int scrX, int scrY)
@@ -223,11 +226,8 @@ void keyInput(unsigned char key, int scrX, int scrY)
 	switch (key)
 	{
 		case 27:
-			exit(0);
-			break;
-		case 't':
-			defaultTanks();
-			glutPostRedisplay();
+			if (tanksUser1->getStateOfTank() == WAITING) exit(0); // todo: open a menu
+			else if (tanksUser1->getStateOfTank() == SELECTING_TARGET) tanksUser1->setWaitingMode();
 			break;
 		case 'c':
 			changeCamera();
@@ -238,15 +238,19 @@ void keyInput(unsigned char key, int scrX, int scrY)
 				switch (tanksUser1->getStateOfTank())
 				{
 					case WAITING:
-						tanksUser1->setTargetModeOfSelectedTank();
+						tanksUser1->setTargetMode();
+						tanksUser2->selectFirstTank();
 						break;
 					case SELECTING_TARGET:
-						tanksUser1->shoot();
+						float x, y, z;
+						tanksUser2->getPosOfTank(tanksUser2->selectedTank(), x, y, z);
+						tanksUser1->shoot(x, y, z);
+
+						cout << "shot" << endl;
 						break;
 					default:
 						break;
 				}
-				glutPostRedisplay();
 			}
 			break;
 		case 'n':
@@ -255,6 +259,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		default:
 			break;
 	}
+	glutPostRedisplay();
 }
 
 void specialKeyInput(int key, int x, int y)

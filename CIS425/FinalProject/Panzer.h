@@ -10,7 +10,7 @@ public:
 	Panzer();
 	Panzer(elem t);
 	void draw();
-	void shoot();
+	void shoot(float _x, float _y, float _z);
 };
 
 #endif
