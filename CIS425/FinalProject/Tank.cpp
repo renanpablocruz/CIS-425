@@ -2,7 +2,7 @@
 
 Tank::Tank(int ml, int r, int a, int ms, elem t) : max_life(ml), life(ml), range(r), max_ammo(a), ammo(a), max_mov(ms),
 			mov(ms), type(t), x(0), y(0), z(0), xf(0), yf(0), zf(0), orientation(RIGHT), state(WAITING), selection(false),
-			bullet(NULL) {} // todo: add bullet instanciation
+			bullet(NULL) {}
 
 bool Tank::canShoot(float x2, float y2, float z2)
 {
@@ -64,12 +64,11 @@ void Tank::setMoveTo(dir dr)
 	{
 		mov -= 1;
 		moveTo = dr;
-		if (dr == UP) { xf = x; yf = y; zf = z - 1; }
-		else if (dr == DOWN) { xf = x; yf = y; zf = z + 1; }
-		else if (dr == RIGHT) { xf = x + 1; yf = y; zf = z; }
-		else if (dr == LEFT) { xf = x - 1; yf = y; zf = z; }
+		if (dr == UP) { xf = x; yf = y; zf = z - 1; orientation = UP; }
+		else if (dr == DOWN) { xf = x; yf = y; zf = z + 1; orientation = DOWN; }
+		else if (dr == RIGHT) { xf = x + 1; yf = y; zf = z; orientation = RIGHT; }
+		else if (dr == LEFT) { xf = x - 1; yf = y; zf = z; orientation = LEFT; }
 		state = MOVING;
-		// todo: change orientation
 	}
 }
 
