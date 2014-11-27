@@ -2,6 +2,7 @@
 
 Battalion::Battalion(int value)
 {
+	selectedTank = -1;
 	switch (value)
 	{
 		case 1:
@@ -46,43 +47,30 @@ void Battalion::animate(int dt)
 
 bool Battalion::anySelectedTank()
 {
-	for (unsigned int i = 0; i < tanks.size(); i++)
-	{
-		if (tanks[i]->isSelected()) return true;
-	}
-	return false;
-}
-
-void Battalion::deselectTank(int ind)
-{
-	tanks[ind]->deselect();
+	return selectedTank != -1;
 }
 
 void Battalion::draw()
 {
-	for (unsigned int i = 0; i < tanks.size(); i++)
-	{
-		tanks[i]->draw();
-	}
-}
-
-int Battalion::selectedTank() // only make sense to call if anyselectedTank returned true
-{
-	for (unsigned int i = 0; i < tanks.size(); i++)
-	{
-		if (tanks[i]->isSelected()) return i;
-	}
-	return -1;
+	for (unsigned int i = 0; i < tanks.size(); i++) tanks[i]->draw();
 }
 
 void Battalion::getPosOfTank(int ind, float &x, float &y, float &z)
 {
+	if (ind < 0 || ind >= tanks.size())
+		return;
+
 	tanks[ind]->getPos(x, y, z);
+}
+
+int Battalion::getSelectedTank()
+{
+	return selectedTank;
 }
 
 tankState Battalion::getStateOfTank()
 {
-	tankState ans = tanks[selectedTank()]->getState();
+	tankState ans = tanks[selectedTank]->getState();
 	return ans;
 }
 
@@ -94,7 +82,7 @@ bool Battalion::hasTanks()
 
 void Battalion::moveTank(dir dr)
 {
-	tanks[selectedTank()]->setMoveTo(dr);
+	tanks[selectedTank]->setMoveTo(dr);
 }
 
 void Battalion::newTurn()
@@ -107,27 +95,33 @@ int Battalion::numTanks()
 	return tanks.size();
 }
 
-void Battalion::selectFirstTank()
+void Battalion::selectDefaultTank()
 {
-	if (hasTanks())	tanks[0]->select();
-}
-
-void Battalion::selectTank(int ind)
-{
-	tanks[ind]->select();
+	selectedTank = hasTanks() ? 0 : -1;
 }
 
 void Battalion::setTargetMode()
 {
-	tanks[selectedTank()]->setSelectTargetMode();
+	tanks[selectedTank]->setSelectTargetMode();
+}
+
+void Battalion::selectNextTank()
+{
+	if (selectedTank != tanks.size() - 1) selectedTank += 1;
+	else selectedTank = 0;
+}
+
+void Battalion::selectNoTank()
+{
+	selectedTank = -1;
 }
 
 void Battalion::setWaitingMode()
 {
-	tanks[selectedTank()]->setWaitingMode();
+	tanks[selectedTank]->setWaitingMode();
 }
 
 void Battalion::shoot(float _x, float _y, float _z)
 {
-	tanks[selectedTank()]->shoot(_x, _y, _z);
+	tanks[selectedTank]->shoot(_x, _y, _z);
 }

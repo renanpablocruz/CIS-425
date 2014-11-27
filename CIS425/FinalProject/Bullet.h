@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 
-enum bulletState {FLYING, DONE};
+enum bulletState {FLYING, DONE, INVALID_BULLET};
 
 class Bullet
 {

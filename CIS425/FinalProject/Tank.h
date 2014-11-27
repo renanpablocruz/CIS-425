@@ -4,7 +4,7 @@
 #include "Bullet.h"
 #include "Utils.h"
 
-enum tankState {WAITING, MOVING, SELECTING_TARGET, SHOOTING};
+enum tankState {WAITING, MOVING, SELECTING_TARGET, SHOOTING, INVALID_TANK};
 
 class Tank
 {
@@ -23,23 +23,19 @@ protected:
 	dir orientation;
 	tankState state;
 	dir moveTo;
-	bool selection;
 public:
 	Tank();
 	Tank(int ml, int r, int a, int ms, elem t);
 	void animate(int value);
 	bool canMov();
 	bool canShoot(float x2, float y2, float z2);
-	void deselect();
 	virtual void draw() = 0;
 	void getFinalPos(float &_x, float &_y, float &_z);
 	void getPos(float &_x, float &_y, float &_z);
 	tankState getState();
 	elem getType();
-	bool isSelected();
 	void modLife(int d);
 	void passTurn();
-	void select();
 	void setMoveTo(dir dr);
 	void setPos(float x, float y, float z);
 	void setSelectTargetMode();

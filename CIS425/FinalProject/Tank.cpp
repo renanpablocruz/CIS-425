@@ -1,8 +1,7 @@
 #include "Tank.h"
 
 Tank::Tank(int ml, int r, int a, int ms, elem t) : max_life(ml), life(ml), range(r), max_ammo(a), ammo(a), max_mov(ms),
-			mov(ms), type(t), x(0), y(0), z(0), xf(0), yf(0), zf(0), orientation(RIGHT), state(WAITING), selection(false),
-			bullet(NULL) {}
+			mov(ms), type(t), x(0), y(0), z(0), xf(0), yf(0), zf(0), orientation(RIGHT), state(WAITING), bullet(NULL) {}
 
 bool Tank::canShoot(float x2, float y2, float z2)
 {
@@ -121,22 +120,6 @@ tankState Tank::getState()
 void Tank::setSelectTargetMode()
 {
 	state = SELECTING_TARGET;
-}
-
-void Tank::select()
-{
-	selection = true;
-}
-
-void Tank::deselect()
-{
-	selection = false;
-}
-
-bool Tank::isSelected()
-{
-	bool ans = selection;
-	return ans;
 }
 
 void Tank::setWaitingMode()
