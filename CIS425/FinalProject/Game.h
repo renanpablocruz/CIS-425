@@ -1,13 +1,15 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <vector>
 #include "Battalion.h"
 
 class Game
 {
 private:
-	Battalion* tanksUser1;
-	Battalion* tanksUser2;
+	std::vector<Battalion*> battalions;
+	int battalionShooting;
+	int battalionBeingTargeted;
 public:
 	Game();
 	void animate();

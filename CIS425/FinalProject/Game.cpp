@@ -1,17 +1,21 @@
 #include "Game.h"
 
-Game::Game() : tanksUser1(new Battalion(1)), tanksUser2(new Battalion(2)){}
+Game::Game()
+{
+	battalions.push_back(new Battalion(1));
+	battalions.push_back(new Battalion(2));
+	battalionShooting = 0;
+	battalionBeingTargeted = 1;
+}
 
 void Game::animate()
 {
-	tanksUser1->animate(DELTA_T_VIRTUAL);
-	tanksUser2->animate(DELTA_T_VIRTUAL);
+	for (int i = 0; i < battalions.size(); i++) battalions[i]->animate(DELTA_T_VIRTUAL);
 }
 
 void Game::draw()
 {
-	tanksUser1->draw();
-	tanksUser2->draw();
+	for (int i = 0; i < battalions.size(); i++) battalions[i]->draw();
 	drawTerrain();
 }
 
@@ -47,177 +51,79 @@ void Game::drawTerrain()
 
 void Game::getPosOfSelectedTank(int player, float &_x, float &_y, float &_z)
 {
-	switch (player)
-	{
-		case 1:
-			tanksUser1->getPosOfTank(tanksUser1->getSelectedTank(), _x, _y, _z);
-			break;
-		case 2:
-			tanksUser2->getPosOfTank(tanksUser2->getSelectedTank(), _x, _y, _z);
-			break;
-		default:
-			break;
-	}
+	battalions[player]->getPosOfTank(battalions[player]->getSelectedTank(), _x, _y, _z);
 }
 
 void Game::getPosOfTheCurrentTank(float &_x, float &_y, float &_z)
 {
-	if (getStateOfTank(1) == WAITING) tanksUser1->getPosOfTank(tanksUser1->getSelectedTank(), _x, _y, _z);
-	else if (tanksUser1->getStateOfTank() == SELECTING_TARGET) tanksUser2->getPosOfTank(tanksUser2->getSelectedTank(), _x, _y, _z);
-	
+	if (getStateOfTank(battalionShooting) == WAITING) battalions[battalionShooting]->getPosOfTank(battalions[battalionShooting]->getSelectedTank(), _x, _y, _z);
+	else if (getStateOfTank(battalionShooting) == SELECTING_TARGET) battalions[battalionBeingTargeted]->getPosOfTank(battalions[battalionBeingTargeted]->getSelectedTank(), _x, _y, _z);	
 }
 
 void Game::getPosOfTank(int player, int indOfTank, float &_x, float &_y, float &_z)
 {
-	switch (player)
-	{
-		case 1:
-			tanksUser1->getPosOfTank(indOfTank, _x, _y, _z);
-			break;
-		case 2:
-			tanksUser2->getPosOfTank(indOfTank, _x, _y, _z);
-			break;
-		default:
-			break;
-	}
-	
+	battalions[player]->getPosOfTank(indOfTank, _x, _y, _z);
 }
 
 tankState Game::getStateOfTank(int player)
 {
-	switch (player)
-	{
-		case 1:
-			return tanksUser1->getStateOfTank();
-		case 2:
-			return tanksUser2->getStateOfTank();
-		default:
-			return INVALID_TANK;
-			break;
-	}
+	return battalions[player]->getStateOfTank();
 }
 
 bool Game::hasAnySelectedTank(int player)
 {
-	switch (player)
-	{
-		case 1:
-			return tanksUser1->anySelectedTank();
-		case 2:
-			return tanksUser2->anySelectedTank();
-		default:
-			return false;
-	}
+	return battalions[player]->anySelectedTank();
 }
 
 bool Game::hasTanks(int player)
 {
-	switch (player)
-	{
-		case 1:
-			return tanksUser1->hasTanks();
-		case 2:
-			return tanksUser2->hasTanks();
-		default:
-			return false;
-			break;
-	}
+	return battalions[player]->hasTanks();
 }
 
 void Game::moveTank(int player, dir direction)
 {
-	switch (player)
-	{
-		case 1:
-			tanksUser1->moveTank(direction);
-			break;
-		case 2:
-			tanksUser2->moveTank(direction);
-			break;
-		default:
-			break;
-	}
+	battalions[player]->moveTank(direction);
 }
 
 void Game::newTurn()
 {
-	tanksUser1->newTurn();
-	tanksUser2->newTurn();
+	for (int i = 0; i < battalions.size(); i++) battalions[i]->newTurn();
 }
 
 void Game::selectDefaultTank(int player)
 {
-	switch (player)
-	{
-		case 1:
-			tanksUser1->selectDefaultTank();
-			break;
-		case 2:
-			tanksUser2->selectDefaultTank();
-			break;
-		default:
-			break;
-	}
+	battalions[player]->selectDefaultTank();
 }
 
 void Game::selectNextTank(int player)
 {
-	switch (player)
+	if (battalions[player]->getSelectedTank() != battalions[player]->numTanks() - 1)
 	{
-		case 1:
-			if (tanksUser1->getSelectedTank() != tanksUser1->numTanks() - 1) tanksUser1->selectNextTank();
-			else tanksUser1->selectNoTank();
-			break;
-		case 2:
-			tanksUser2->selectNextTank();
-			break;
-		default:
-			break;
+		battalions[player]->selectNextTank();
+		return;
 	}
+	if (player == battalionShooting) battalions[player]->selectNoTank();
+	else if (player == battalionBeingTargeted)
+	{
+		battalions[player]->selectNoTank();
 
+		int targetBattalion = player;
+		while (targetBattalion == battalionShooting) targetBattalion = (targetBattalion + 1) % battalions.size();
+		battalions[targetBattalion]->selectNextTank();
+	}
 }
 
 void Game::setTargetMode(int player)
 {
-	switch (player)
-	{
-		case 1:
-			tanksUser1->setTargetMode();
-			break;
-		case 2:
-			tanksUser2->setTargetMode();
-			break;
-		default:
-			break;
-	}
+	battalions[player]->setTargetMode();
 }
 
 void Game::setWaitingMode(int player)
 {
-	switch (player)
-	{
-		case 1:
-			tanksUser1->setWaitingMode();
-			break;
-		case 2:
-			tanksUser2->setWaitingMode();
-			break;
-		default:
-			break;
-	}
+	battalions[player]->setWaitingMode();
 }
 
 void Game::shoot(int player, int x, int y, int z)
 {
-	switch (player)
-	{
-		case 1:
-			tanksUser1->shoot(x, y, z);
-			break;
-		case 2:
-			tanksUser2->shoot(x, y, z);
-			break;
-		default:
-			break;
-	}
+	battalions[player]->shoot(x, y, z);
 }

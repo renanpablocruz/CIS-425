@@ -92,21 +92,25 @@ void animation(int dt)
 
 void changeCamera()
 {
-	if (game->hasAnySelectedTank(1)){ // player 1
-		if (game->getStateOfTank(1) == WAITING) game->selectNextTank(1);
-		else if (game->getStateOfTank(1) == SELECTING_TARGET)
+	if (game->hasAnySelectedTank(0)){ // player 1
+		cout << game->hasAnySelectedTank(0) << endl;
+		if (game->getStateOfTank(0) == WAITING)
+			game->selectNextTank(0);
+		else if (game->getStateOfTank(0) == SELECTING_TARGET)
 		{
-			if (game->hasAnySelectedTank(2)) game->selectNextTank(2);
-			else if (game->hasTanks(2)) game->selectDefaultTank(2);
+			if (game->hasAnySelectedTank(1))
+				game->selectNextTank(1);
+			else if (game->hasTanks(1)) 
+				game->selectDefaultTank(1);
 		}
 	}
-	else game->selectDefaultTank(1);
+	else game->selectDefaultTank(0);
 	glutPostRedisplay();
 }
 
 void drawScenario()
 {
-	if (game->hasAnySelectedTank(1))
+	if (game->hasAnySelectedTank(0))
 	{
 		game->getPosOfTheCurrentTank(camX, camY, camZ);
 		gluLookAt(camX + 0.4, camY + 5, camZ + 5, camX, camY, camZ, 0, 1, 0);
@@ -156,25 +160,25 @@ void keyInput(unsigned char key, int scrX, int scrY)
 	switch (key)
 	{
 		case 27:
-			if (game->getStateOfTank(1) == WAITING) exit(0); // todo: open a menu
-			else if (game->getStateOfTank(1) == SELECTING_TARGET) game->setWaitingMode(1);
+			if (game->getStateOfTank(0) == WAITING) exit(0); // todo: open a menu
+			else if (game->getStateOfTank(0) == SELECTING_TARGET) game->setWaitingMode(0);
 			break;
 		case 'c':
 			changeCamera();
 			break;
 		case ' ':
-			if (game->hasAnySelectedTank(1))
+			if (game->hasAnySelectedTank(0))
 			{
-				switch (game->getStateOfTank(1))
+				switch (game->getStateOfTank(0))
 				{
 					case WAITING:
-						game->setTargetMode(1);
-						game->selectDefaultTank(2);
+						game->setTargetMode(0);
+						game->selectDefaultTank(1);
 						break;
 					case SELECTING_TARGET:
 						float x, y, z;
-						game->getPosOfSelectedTank(2, x, y, z);
-						game->shoot(1, x, y, z);
+						game->getPosOfSelectedTank(1, x, y, z);
+						game->shoot(0, x, y, z);
 						break;
 					default:
 						break;
@@ -192,16 +196,16 @@ void keyInput(unsigned char key, int scrX, int scrY)
 
 void specialKeyInput(int key, int x, int y)
 {
-	int modifier = glutGetModifiers();
+	int modifiers = glutGetModifiers();
 	switch (key)
 	{
 		case GLUT_KEY_UP:
-			if (game->hasAnySelectedTank(1))
+			if (game->hasAnySelectedTank(0))
 			{
-				switch (game->getStateOfTank(1))
+				switch (game->getStateOfTank(0))
 				{
 					case WAITING:
-						game->moveTank(1, UP);
+						game->moveTank(0, UP);
 						break;
 					case SELECTING_TARGET:
 
@@ -212,13 +216,13 @@ void specialKeyInput(int key, int x, int y)
 			}
 			break;
 		case GLUT_KEY_DOWN:
-			if (game->hasAnySelectedTank(1)) game->moveTank(1, DOWN);
+			if (game->hasAnySelectedTank(0)) game->moveTank(0, DOWN);
 			break;
 		case GLUT_KEY_RIGHT:
-			if (game->hasAnySelectedTank(1)) game->moveTank(1, RIGHT);
+			if (game->hasAnySelectedTank(0)) game->moveTank(0, RIGHT);
 			break;
 		case GLUT_KEY_LEFT:
-			if (game->hasAnySelectedTank(1)) game->moveTank(1, LEFT);
+			if (game->hasAnySelectedTank(0)) game->moveTank(0, LEFT);
 			break;
 		default:
 			break;
