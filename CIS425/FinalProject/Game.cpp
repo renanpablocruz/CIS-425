@@ -4,8 +4,8 @@ Game::Game()
 {
 	battalions.push_back(new Battalion(1));
 	battalions.push_back(new Battalion(2));
-	battalionShooting = 0;
-	battalionBeingTargeted = 1;
+	activeBattalion = 0;
+	targetBattalion = 1;
 }
 
 void Game::animate()
@@ -56,8 +56,8 @@ void Game::getPosOfSelectedTank(int player, float &_x, float &_y, float &_z)
 
 void Game::getPosOfTheCurrentTank(float &_x, float &_y, float &_z)
 {
-	if (getStateOfTank(battalionShooting) == WAITING) battalions[battalionShooting]->getPosOfTank(battalions[battalionShooting]->getSelectedTank(), _x, _y, _z);
-	else if (getStateOfTank(battalionShooting) == SELECTING_TARGET) battalions[battalionBeingTargeted]->getPosOfTank(battalions[battalionBeingTargeted]->getSelectedTank(), _x, _y, _z);	
+	if (getStateOfTank(activeBattalion) == WAITING) battalions[activeBattalion]->getPosOfTank(battalions[activeBattalion]->getSelectedTank(), _x, _y, _z);
+	else if (getStateOfTank(activeBattalion) == SELECTING_TARGET) battalions[targetBattalion]->getPosOfTank(battalions[targetBattalion]->getSelectedTank(), _x, _y, _z);	
 }
 
 void Game::getPosOfTank(int player, int indOfTank, float &_x, float &_y, float &_z)
@@ -102,13 +102,13 @@ void Game::selectNextTank(int player)
 		battalions[player]->selectNextTank();
 		return;
 	}
-	if (player == battalionShooting) battalions[player]->selectNoTank();
-	else if (player == battalionBeingTargeted)
+	if (player == activeBattalion) battalions[player]->selectNoTank();
+	else if (player == targetBattalion)
 	{
 		battalions[player]->selectNoTank();
 
 		int targetBattalion = player;
-		while (targetBattalion == battalionShooting) targetBattalion = (targetBattalion + 1) % battalions.size();
+		while (targetBattalion == activeBattalion) targetBattalion = (targetBattalion + 1) % battalions.size();
 		battalions[targetBattalion]->selectNextTank();
 	}
 }
@@ -126,4 +126,10 @@ void Game::setWaitingMode(int player)
 void Game::shoot(int player, int x, int y, int z)
 {
 	battalions[player]->shoot(x, y, z);
+}
+
+void Game::shoot2(int tankAtt, int tankDef)
+{
+	battalions[activeBattalion]->shoot()
+		//battalions[targetBattalion][tankDef]
 }

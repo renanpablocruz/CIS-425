@@ -27,7 +27,7 @@ public:
 	Tank();
 	Tank(int ml, int r, int a, int ms, elem t);
 	void animate(int value);
-	bool canMov();
+	bool canMove();
 	bool canShoot(float x2, float y2, float z2);
 	virtual void draw() = 0;
 	void getFinalPos(float &_x, float &_y, float &_z);
@@ -40,7 +40,9 @@ public:
 	void setPos(float x, float y, float z);
 	void setSelectTargetMode();
 	void setWaitingMode();
-	virtual void shoot(float _x, float _y, float _z) = 0;	
+	virtual void shoot(float _x, float _y, float _z) = 0;
+	void spendAmmo();
+	void spendAMove();
 };
 
 #endif

@@ -8,8 +8,8 @@ class Game
 {
 private:
 	std::vector<Battalion*> battalions;
-	int battalionShooting;
-	int battalionBeingTargeted;
+	int activeBattalion;
+	int targetBattalion;
 public:
 	Game();
 	void animate();
@@ -28,6 +28,7 @@ public:
 	void setTargetMode(int player);
 	void setWaitingMode(int player);
 	void shoot(int player, int _x, int _y, int _z);
+	void shoot2(int tankAtt, int tankDef);
 };
 
 #endif

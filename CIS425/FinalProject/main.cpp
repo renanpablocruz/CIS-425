@@ -179,6 +179,8 @@ void keyInput(unsigned char key, int scrX, int scrY)
 						float x, y, z;
 						game->getPosOfSelectedTank(1, x, y, z);
 						game->shoot(0, x, y, z);
+
+						//game->shoot2();
 						break;
 					default:
 						break;
