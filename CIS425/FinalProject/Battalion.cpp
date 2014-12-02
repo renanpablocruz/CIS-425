@@ -7,7 +7,7 @@ Battalion::Battalion(int value)
 	{
 		case 1:
 		{
-			Panzer* tank = new Panzer(EARTH);
+			Panzer* tank = new Panzer(FIRE);
 			tank->setPos(0, 0, 0); // user1
 			tanks.push_back(tank);
 
@@ -26,13 +26,28 @@ Battalion::Battalion(int value)
 			tank->setPos(3, 0, 0); // user2
 			tanks.push_back(tank);
 
-			tank = new Panzer(WATER);
+			/*tank = new Panzer(WATER);
 			tank->setPos(3, 0, 2);
 			tanks.push_back(tank);
 
 			tank = new Panzer(FIRE);
 			tank->setPos(3, 0, 4);
+			tanks.push_back(tank);*/
+			break;
+		}
+		case 3:
+		{
+			Panzer* tank = new Panzer(WATER);
+			tank->setPos(0, 0, 3); // user2
 			tanks.push_back(tank);
+
+			/*tank = new Panzer(WATER);
+			tank->setPos(3, 0, 2);
+			tanks.push_back(tank);
+
+			tank = new Panzer(FIRE);
+			tank->setPos(3, 0, 4);
+			tanks.push_back(tank);*/
 			break;
 		}
 		default:
@@ -90,7 +105,7 @@ void Battalion::moveTank(dir dr)
 	tanks[selectedTank]->setMoveTo(dr);
 }
 
-void Battalion::newTurn()
+void Battalion::passTurn()
 {
 	for (unsigned int i = 0; i < tanks.size(); i++) tanks[i]->passTurn();
 }

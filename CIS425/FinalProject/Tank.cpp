@@ -8,46 +8,6 @@ Tank::~Tank()
 	if (bullet != NULL)	delete bullet;
 }
 
-void Tank::update(int dt)
-{
-	switch (state)
-	{
-		case MOVING:
-			switch (moveTo)
-			{
-				case UP:
-					if (z > zf && abs(z - zf) > PRECISION) z -= STEP;
-					else state = WAITING;
-					break;
-				case DOWN:
-					if (z < zf && abs(z - zf) > PRECISION) z += STEP;
-					else state = WAITING;
-					break;
-				case LEFT:
-					if (x > xf && abs(x - xf) > PRECISION) x -= STEP;
-					else state = WAITING;
-					break;
-				case RIGHT:
-					if (x < xf && abs(x - xf) > PRECISION) x += STEP;
-					else state = WAITING;
-					break;
-				default:
-					break;
-			}
-			break;
-		case SHOOTING:
-			if (bullet->getState() == FLYING) bullet->update();
-			else if (bullet->getState() == DONE)
-			{
-				bullet->reset();
-				state = WAITING;
-			}
-			break;
-		default:
-			break;
-	}
-}
-
 bool Tank::canShoot(float x2, float y2, float z2)
 {
 	bool ans = ( abs(abs(x - x2) + abs(y - y2) + abs(z - z2) - range) < 3*PRECISION ) && (ammo > 0);
@@ -152,4 +112,43 @@ void Tank::spendAMove()
 void Tank::spendAmmo()
 {
 	ammo -= 1;
+}
+void Tank::update(int dt)
+{
+	switch (state)
+	{
+		case MOVING:
+			switch (moveTo)
+			{
+				case UP:
+					if (z > zf && abs(z - zf) > PRECISION) z -= STEP;
+					else state = WAITING;
+					break;
+				case DOWN:
+					if (z < zf && abs(z - zf) > PRECISION) z += STEP;
+					else state = WAITING;
+					break;
+				case LEFT:
+					if (x > xf && abs(x - xf) > PRECISION) x -= STEP;
+					else state = WAITING;
+					break;
+				case RIGHT:
+					if (x < xf && abs(x - xf) > PRECISION) x += STEP;
+					else state = WAITING;
+					break;
+				default:
+					break;
+			}
+			break;
+		case SHOOTING:
+			if (bullet->getState() == FLYING) bullet->update();
+			else if (bullet->getState() == DONE)
+			{
+				bullet->reset();
+				state = WAITING;
+			}
+			break;
+		default:
+			break;
+	}
 }

@@ -4,6 +4,7 @@ Game::Game()
 {
 	battalions.push_back(new Battalion(1));
 	battalions.push_back(new Battalion(2));
+	battalions.push_back(new Battalion(3));
 	activeBattalion = 0;
 	targetBattalion = 1;
 	bullet = NULL;
@@ -116,7 +117,10 @@ void Game::moveTank(int player, dir direction)
 
 void Game::newTurn()
 {
-	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->newTurn();
+	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->passTurn();
+	activeBattalion = (activeBattalion + 1) % battalions.size();
+	//targetBattalion = (activeBattalion == 0) ? 1 : 0;
+	std::cout << std::endl;
 }
 
 void Game::selectDefaultTank(int player)

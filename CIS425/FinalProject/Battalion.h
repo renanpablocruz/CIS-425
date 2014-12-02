@@ -25,8 +25,8 @@ public:
 	tankState getStateOfTank();
 	bool hasTanks();
 	void moveTank(dir dr);
-	void newTurn();
 	int numTanks();
+	void passTurn();
 	void selectDefaultTank();
 	void selectNextTank();
 	void selectNoTank();
