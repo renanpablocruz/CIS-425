@@ -11,9 +11,19 @@ Game::Game()
 	createdBullet = false;
 }
 
+bool Game::activeBattalionHasAnySelectedTank()
+{
+	return hasAnySelectedTank(activeBattalion);
+}
+
 void Game::computeDamage(int damage)
 {
 	battalions[targetBattalion]->computeDamage(damage);
+}
+
+bool Game::currentPlayerHasAnySelectedTank()
+{
+	return battalions[activeBattalion]->hasAnySelectedTank();
 }
 
 void Game::draw()
@@ -64,14 +74,14 @@ void Game::getBullet()
 	bullet = battalions[activeBattalion]->getBullet();
 }
 
-void Game::getBullet2()
-{
-	bullet = battalions[activeBattalion]->getBullet();
-}
-
 void Game::getPosOfSelectedTank(int player, float &_x, float &_y, float &_z)
 {
 	battalions[player]->getPosOfTank(battalions[player]->getSelectedTank(), _x, _y, _z);
+}
+
+void Game::getPosOfTank(int player, int indOfTank, float &_x, float &_y, float &_z)
+{
+	battalions[player]->getPosOfTank(indOfTank, _x, _y, _z);
 }
 
 void Game::getPosOfTheCurrentTank(float &_x, float &_y, float &_z)
@@ -80,9 +90,9 @@ void Game::getPosOfTheCurrentTank(float &_x, float &_y, float &_z)
 	else if (getStateOfTank(activeBattalion) == SELECTING_TARGET) battalions[targetBattalion]->getPosOfTank(battalions[targetBattalion]->getSelectedTank(), _x, _y, _z);	
 }
 
-void Game::getPosOfTank(int player, int indOfTank, float &_x, float &_y, float &_z)
+tankState Game::getStateOfCurrentTank()
 {
-	battalions[player]->getPosOfTank(indOfTank, _x, _y, _z);
+	return battalions[activeBattalion]->getStateOfTank();
 }
 
 tankState Game::getStateOfTank(int player)
@@ -92,7 +102,7 @@ tankState Game::getStateOfTank(int player)
 
 bool Game::hasAnySelectedTank(int player)
 {
-	return battalions[player]->anySelectedTank();
+	return battalions[player]->hasAnySelectedTank();
 }
 
 bool Game::hasTanks(int player)
@@ -110,6 +120,11 @@ bool Game::isTheGameOver()
 	return count == 1;
 }
 
+void Game::moveCurrentTank(dir direction)
+{
+	battalions[activeBattalion]->moveTank(direction);
+}
+
 void Game::moveTank(int player, dir direction)
 {
 	battalions[player]->moveTank(direction);
@@ -119,13 +134,34 @@ void Game::newTurn()
 {
 	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->passTurn();
 	activeBattalion = (activeBattalion + 1) % battalions.size();
-	//targetBattalion = (activeBattalion == 0) ? 1 : 0;
+	targetBattalion = (activeBattalion == 0) ? 1 : 0;
 	std::cout << std::endl;
 }
 
 void Game::selectDefaultTank(int player)
 {
 	battalions[player]->selectDefaultTank();
+}
+
+void Game::selectDefaultTankForTheCurrentTargetPlayer()
+{
+	battalions[targetBattalion]->selectDefaultTank();
+}
+
+void Game::selectFocus()
+{
+	if (hasAnySelectedTank(activeBattalion)){ // player 1
+		if (getStateOfTank(activeBattalion) == WAITING)
+			selectNextTank(activeBattalion);
+		else if (getStateOfTank(activeBattalion) == SELECTING_TARGET)
+		{
+			if (hasAnySelectedTank(targetBattalion))
+				selectNextTank(targetBattalion);
+			else if (hasTanks(targetBattalion))
+				selectDefaultTank(targetBattalion);
+		}
+	}
+	else selectDefaultTank(activeBattalion);
 }
 
 void Game::selectNextTank(int player)
@@ -144,6 +180,16 @@ void Game::selectNextTank(int player)
 		while (targetBattalion == activeBattalion) targetBattalion = (targetBattalion + 1) % battalions.size();
 		battalions[targetBattalion]->selectNextTank();
 	}
+}
+
+void Game::setCurrentTankToTargetMode()
+{
+	battalions[activeBattalion]->setTargetMode();
+}
+
+void Game::setCurrentTankToWaitingMode()
+{
+	battalions[activeBattalion]->setWaitingMode();
 }
 
 void Game::setTargetMode(int player)

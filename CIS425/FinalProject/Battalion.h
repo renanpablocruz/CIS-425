@@ -15,14 +15,13 @@ private:
 public:
 	Battalion();
 	Battalion(int value);
-	void update(int dt);
-	bool anySelectedTank();
 	void computeDamage(int damage);
 	void draw();
 	Bullet* getBullet();
 	void getPosOfTank(int ind, float &_x, float &_y, float &_z);
 	int getSelectedTank();
 	tankState getStateOfTank();
+	bool hasAnySelectedTank();
 	bool hasTanks();
 	void moveTank(dir dr);
 	int numTanks();
@@ -33,6 +32,7 @@ public:
 	void setTargetMode();
 	void setWaitingMode();
 	void shoot(float _x, float _y, float _z);
+	void update(int dt);
 };
 
 #endif

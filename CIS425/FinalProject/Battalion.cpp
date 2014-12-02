@@ -55,11 +55,6 @@ Battalion::Battalion(int value)
 	}	
 }
 
-bool Battalion::anySelectedTank()
-{
-	return selectedTank != -1;
-}
-
 void Battalion::computeDamage(int damage)
 {
 	tanks[selectedTank]->computeDamage(damage);
@@ -92,6 +87,11 @@ tankState Battalion::getStateOfTank()
 {
 	tankState ans = tanks[selectedTank]->getState();
 	return ans;
+}
+
+bool Battalion::hasAnySelectedTank()
+{
+	return selectedTank != -1;
 }
 
 bool Battalion::hasTanks()
