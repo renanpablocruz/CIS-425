@@ -27,6 +27,7 @@ protected:
 	float xf, yf, zf;
 public:
 	Tank();
+	~Tank();
 	Tank(int ml, int r, int a, int ms, elem t);
 	bool canMove();
 	bool canShoot(float x2, float y2, float z2);

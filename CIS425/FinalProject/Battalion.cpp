@@ -141,8 +141,8 @@ void Battalion::update(int dt)
 		{
 			if (tanks[i]->getLife() == 0)
 			{
-				// remove tank
-				tankExcluded = false;
+				tanks.erase(tanks.begin()+i);
+				tankExcluded = true;
 				break;
 			}
 		}

@@ -146,7 +146,6 @@ void Game::shoot()
 	float x, y, z;
 	getPosOfSelectedTank(targetBattalion, x, y, z);
 	battalions[activeBattalion]->shoot(x, y, z);
-	// handle bullet
 	getBullet();
 	std::cout << std::endl;
 }
@@ -162,6 +161,7 @@ void Game::update()
 		{
 			computeDamage(bullet->getDamage());
 			createdBullet = false;
+			bullet = NULL;
 		}
 	}
 	std::cout << std::endl;

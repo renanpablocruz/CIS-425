@@ -3,6 +3,8 @@
 Bullet::Bullet(elem t, float _x, float _y, float _z, float _xf, float _yf, float _zf, int dmg, float r, float h, dir o) : type(t), x(_x), y(_y), z(_z),
 		xf(_xf), yf(_yf), zf(_zf), damage(dmg), radius(r), height(h), orientation(o), state(FLYING) {}
 
+Bullet::~Bullet() {}
+
 int Bullet::getDamage()
 {
 	return damage;
