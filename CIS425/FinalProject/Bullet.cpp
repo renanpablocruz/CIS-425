@@ -3,7 +3,23 @@
 Bullet::Bullet(elem t, float _x, float _y, float _z, float _xf, float _yf, float _zf, int dmg, float r, float h, dir o) : type(t), x(_x), y(_y), z(_z),
 		xf(_xf), yf(_yf), zf(_zf), damage(dmg), radius(r), height(h), orientation(o), state(FLYING) {}
 
-void Bullet::animate()
+int Bullet::getDamage()
+{
+	return damage;
+}
+
+bulletState Bullet::getState()
+{
+	bulletState ans = state;
+	return ans;
+}
+
+void Bullet::reset()
+{
+	state = READY;
+}
+
+void Bullet::update()
 {
 	bool hadMove = false;
 	switch (orientation)
@@ -28,10 +44,4 @@ void Bullet::animate()
 			break;
 	}
 	if (!hadMove) state = DONE;
-}
-
-bulletState Bullet::getState()
-{
-	bulletState ans = state;
-	return ans;
 }

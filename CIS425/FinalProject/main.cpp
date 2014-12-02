@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
 void animation(int dt)
 {
-	game->animate();
+	game->update();
 	glutPostRedisplay();
 	glutTimerFunc(DELTA_T_REAL, animation, DELTA_T_VIRTUAL);
 }
@@ -176,11 +176,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 						game->selectDefaultTank(1);
 						break;
 					case SELECTING_TARGET:
-						float x, y, z;
-						game->getPosOfSelectedTank(1, x, y, z);
-						game->shoot(0, x, y, z);
-
-						//game->shoot2();
+						game->shoot();
 						break;
 					default:
 						break;

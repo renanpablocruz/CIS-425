@@ -3,7 +3,7 @@
 Tank::Tank(int ml, int r, int a, int ms, elem t) : max_life(ml), life(ml), range(r), max_ammo(a), ammo(a), max_mov(ms),
 			mov(ms), type(t), x(0), y(0), z(0), xf(0), yf(0), zf(0), orientation(RIGHT), state(WAITING), bullet(NULL) {}
 
-void Tank::animate(int dt)
+void Tank::update(int dt)
 {
 	switch (state)
 	{
@@ -31,12 +31,11 @@ void Tank::animate(int dt)
 			}
 			break;
 		case SHOOTING:
-			if (bullet->getState() == FLYING) bullet->animate();
+			if (bullet->getState() == FLYING) bullet->update();
 			else if (bullet->getState() == DONE)
 			{
-				bullet = NULL;
+				bullet->reset();
 				state = WAITING;
-
 			}
 			break;
 		default:
@@ -55,11 +54,28 @@ bool Tank::canMove()
 	return mov > 0;
 }
 
+void Tank::computeDamage(int damage)
+{
+	life -= damage;
+	if (life < 0) life = 0;
+}
+
+Bullet* Tank::getBullet()
+{
+	Bullet* ans = bullet;
+	return bullet;
+}
+
 void Tank::getFinalPos(float &_x, float &_y, float &_z)
 {
 	_x = xf;
 	_y = yf;
 	_z = zf;
+}
+
+int Tank::getLife()
+{
+	return life;
 }
 
 void Tank::getPos(float &_x, float &_y, float &_z)

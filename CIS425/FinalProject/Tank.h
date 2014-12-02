@@ -5,32 +5,36 @@
 #include "Utils.h"
 
 enum tankState {WAITING, MOVING, SELECTING_TARGET, SHOOTING, INVALID_TANK};
+enum tankName {PANZER, TIGER, PANTHER};
 
 class Tank
 {
 protected:
-	elem type;
-	int range;
-	int max_life;
+	int ammo;
+	Bullet* bullet;
 	int life;
 	int max_ammo;
-	int ammo;
+	int max_life;
 	int max_mov;
 	int mov;
-	Bullet* bullet;
+	dir moveTo;
+	tankName name;
+	dir orientation;
+	int range;
+	tankState state;
+	elem type;
 	float x, y, z;
 	float xf, yf, zf;
-	dir orientation;
-	tankState state;
-	dir moveTo;
 public:
 	Tank();
 	Tank(int ml, int r, int a, int ms, elem t);
-	void animate(int value);
 	bool canMove();
 	bool canShoot(float x2, float y2, float z2);
+	void computeDamage(int damage);
 	virtual void draw() = 0;
+	Bullet* getBullet();
 	void getFinalPos(float &_x, float &_y, float &_z);
+	int getLife();
 	void getPos(float &_x, float &_y, float &_z);
 	tankState getState();
 	elem getType();
@@ -43,6 +47,7 @@ public:
 	virtual void shoot(float _x, float _y, float _z) = 0;
 	void spendAmmo();
 	void spendAMove();
+	void update(int value);
 };
 
 #endif

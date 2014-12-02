@@ -6,17 +6,25 @@ Game::Game()
 	battalions.push_back(new Battalion(2));
 	activeBattalion = 0;
 	targetBattalion = 1;
+	bullet = NULL;
+	createdBullet = false;
 }
 
-void Game::animate()
+void Game::computeDamage(int damage)
 {
-	for (int i = 0; i < battalions.size(); i++) battalions[i]->animate(DELTA_T_VIRTUAL);
+	battalions[targetBattalion]->computeDamage(damage);
 }
 
 void Game::draw()
 {
-	for (int i = 0; i < battalions.size(); i++) battalions[i]->draw();
+	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->draw();
 	drawTerrain();
+	drawBullet();
+}
+
+void Game::drawBullet()
+{
+	if (bullet != NULL) bullet->draw();
 }
 
 void Game::drawTerrain()
@@ -47,6 +55,16 @@ void Game::drawTerrain()
 			}
 		}
 	}
+}
+
+void Game::getBullet()
+{
+	bullet = battalions[activeBattalion]->getBullet();
+}
+
+void Game::getBullet2()
+{
+	bullet = battalions[activeBattalion]->getBullet();
 }
 
 void Game::getPosOfSelectedTank(int player, float &_x, float &_y, float &_z)
@@ -87,7 +105,7 @@ void Game::moveTank(int player, dir direction)
 
 void Game::newTurn()
 {
-	for (int i = 0; i < battalions.size(); i++) battalions[i]->newTurn();
+	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->newTurn();
 }
 
 void Game::selectDefaultTank(int player)
@@ -123,13 +141,28 @@ void Game::setWaitingMode(int player)
 	battalions[player]->setWaitingMode();
 }
 
-void Game::shoot(int player, int x, int y, int z)
+void Game::shoot()
 {
-	battalions[player]->shoot(x, y, z);
+	float x, y, z;
+	getPosOfSelectedTank(targetBattalion, x, y, z);
+	battalions[activeBattalion]->shoot(x, y, z);
+	// handle bullet
+	getBullet();
+	std::cout << std::endl;
 }
 
-void Game::shoot2(int tankAtt, int tankDef)
+void Game::update()
 {
-	battalions[activeBattalion]->shoot()
-		//battalions[targetBattalion][tankDef]
+	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->update(DELTA_T_VIRTUAL);
+	if (bullet != NULL)
+	{
+		if (bullet->getState() != READY && createdBullet == false)
+			createdBullet = true;
+		else if (bullet->getState() == READY && createdBullet == true)
+		{
+			computeDamage(bullet->getDamage());
+			createdBullet = false;
+		}
+	}
+	std::cout << std::endl;
 }

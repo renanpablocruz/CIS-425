@@ -40,19 +40,24 @@ Battalion::Battalion(int value)
 	}	
 }
 
-void Battalion::animate(int dt)
-{
-	for (unsigned int i = 0; i < tanks.size(); i++) tanks[i]->animate(dt);
-}
-
 bool Battalion::anySelectedTank()
 {
 	return selectedTank != -1;
 }
 
+void Battalion::computeDamage(int damage)
+{
+	tanks[selectedTank]->computeDamage(damage);
+}
+
 void Battalion::draw()
 {
 	for (unsigned int i = 0; i < tanks.size(); i++) tanks[i]->draw();
+}
+
+Bullet* Battalion::getBullet()
+{
+	return tanks[selectedTank]->getBullet();
 }
 
 void Battalion::getPosOfTank(int ind, float &x, float &y, float &z)
@@ -124,4 +129,23 @@ void Battalion::setWaitingMode()
 void Battalion::shoot(float _x, float _y, float _z)
 {
 	tanks[selectedTank]->shoot(_x, _y, _z);
+}
+
+void Battalion::update(int dt)
+{
+	bool tankExcluded = true;
+	while (tankExcluded)
+	{
+		tankExcluded = false;
+		for (unsigned int i = 0; i < tanks.size(); i++)
+		{
+			if (tanks[i]->getLife() == 0)
+			{
+				// remove tank
+				tankExcluded = false;
+				break;
+			}
+		}
+	}
+	for (unsigned int i = 0; i < tanks.size(); i++) tanks[i]->update(dt);
 }

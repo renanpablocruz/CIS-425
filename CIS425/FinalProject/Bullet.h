@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 
-enum bulletState {FLYING, DONE, INVALID_BULLET};
+enum bulletState {READY, FLYING, DONE, INVALID_BULLET};
 
 class Bullet
 {
@@ -20,9 +20,11 @@ public:
 	Bullet();
 	Bullet(elem t, float _x, float _y, float _z, float _xf, float _yf, float _zf, int dmg, float r, float h, dir dr);
 	~Bullet(); // todo: need to implement?
-	void animate();
 	virtual void draw() = 0;
+	int getDamage();
 	bulletState getState();
+	void reset();
+	void update();
 };
 
 #endif

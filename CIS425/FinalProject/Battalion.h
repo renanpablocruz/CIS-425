@@ -15,9 +15,11 @@ private:
 public:
 	Battalion();
 	Battalion(int value);
-	void animate(int dt);
+	void update(int dt);
 	bool anySelectedTank();
+	void computeDamage(int damage);
 	void draw();
+	Bullet* getBullet();
 	void getPosOfTank(int ind, float &_x, float &_y, float &_z);
 	int getSelectedTank();
 	tankState getStateOfTank();
