@@ -20,6 +20,7 @@ void Game::draw()
 	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->draw();
 	drawTerrain();
 	drawBullet();
+	if (isTheGameOver()) writeCongrats();
 }
 
 void Game::drawBullet()
@@ -98,6 +99,16 @@ bool Game::hasTanks(int player)
 	return battalions[player]->hasTanks();
 }
 
+bool Game::isTheGameOver()
+{
+	int count = 0;
+	for (unsigned int i = 0; i < battalions.size(); i++)
+	{
+		if (battalions[i]->numTanks() == 0) count += 1;
+	}
+	return count == 1;
+}
+
 void Game::moveTank(int player, dir direction)
 {
 	battalions[player]->moveTank(direction);
@@ -164,5 +175,9 @@ void Game::update()
 			bullet = NULL;
 		}
 	}
-	std::cout << std::endl;
+}
+
+void Game::writeCongrats()
+{
+	std::cout << "game is over" << std::endl;
 }

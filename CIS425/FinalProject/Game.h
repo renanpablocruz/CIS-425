@@ -29,6 +29,7 @@ public:
 	tankState getStateOfTank(int player);
 	bool hasAnySelectedTank(int player);
 	bool hasTanks(int player);
+	bool isTheGameOver();
 	void moveTank(int player, dir direction);
 	void newTurn();
 	void selectDefaultTank(int player);
@@ -37,6 +38,7 @@ public:
 	void setWaitingMode(int player);
 	void shoot();
 	void update();
+	void writeCongrats();
 };
 
 #endif
