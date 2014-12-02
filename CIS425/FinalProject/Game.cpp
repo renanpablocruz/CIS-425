@@ -155,10 +155,22 @@ void Game::selectFocus()
 			selectNextTank(activeBattalion);
 		else if (getStateOfTank(activeBattalion) == SELECTING_TARGET)
 		{
-			if (hasAnySelectedTank(targetBattalion))
+			// todo: pass through all enemy's tanks
+			if (battalions[targetBattalion]->getSelectedTank() != battalions[targetBattalion]->numTanks() - 1)
+				selectNextTank(targetBattalion);
+			else
+			{
+				battalions[targetBattalion]->selectNoTank();
+				targetBattalion = (targetBattalion + 1) % battalions.size();
+				if (targetBattalion == activeBattalion)
+					targetBattalion = (targetBattalion + 1) % battalions.size();
+				battalions[targetBattalion]->selectDefaultTank();
+			}
+
+			/*if (hasAnySelectedTank(targetBattalion))
 				selectNextTank(targetBattalion);
 			else if (hasTanks(targetBattalion))
-				selectDefaultTank(targetBattalion);
+				selectDefaultTank(targetBattalion);*/
 		}
 	}
 	else selectDefaultTank(activeBattalion);
