@@ -6,6 +6,9 @@
 #include "PantherBullet.h"
 #include "PanzerBullet.h"
 #include "TigerBullet.h"
+#include "Texture.h"
+
+#define GRID_SIZE 80
 
 class Game
 {
@@ -15,6 +18,7 @@ private:
 	int targetBattalion;
 	Bullet* bullet;
 	bool createdBullet;
+	Texture* myTextures;
 public:
 	Game();
 	bool activeBattalionHasAnySelectedTank();

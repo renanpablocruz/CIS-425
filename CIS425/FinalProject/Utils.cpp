@@ -26,3 +26,15 @@ dir getDirForBullet(float x1, float y1, float x2, float y2)
 
 	return ans;
 }
+
+float degToRad(double angInDeg){
+	return PI * angInDeg / 180;
+}
+
+void incAng(double& angInDeg){
+	angInDeg = (int)(angInDeg + 5) % 360;
+}
+
+void decAng(double& angInDeg){
+	angInDeg = (int)(angInDeg - 5) % 360;
+}

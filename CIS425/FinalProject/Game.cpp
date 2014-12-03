@@ -8,6 +8,8 @@ Game::Game()
 	activeBattalion = 0;
 	targetBattalion = 1;
 	bullet = NULL;
+	
+	myTextures = new Texture();
 	createdBullet = false;
 }
 
@@ -41,32 +43,22 @@ void Game::drawBullet()
 
 void Game::drawTerrain()
 {
-	glColor3f(0, 0, 0);
-	int size = 20;
-	for (int i = -size; i < size; i++)
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, GROUND + 1);
+	for (int i = -GRID_SIZE/2; i < GRID_SIZE/2; i++)
 	{
-		for (int j = -size; j < size; j++) //for (int j = -size; j < size; j++)
+		for (int j = -GRID_SIZE/2; j < GRID_SIZE/2; j++)
 		{
-			glColor3f(0, 0, 0);
-			glBegin(GL_LINE_STRIP);
-			glVertex3f(i, 0, j);
-			glVertex3f(i + 1, 0, j);
-			glVertex3f(i + 1, 0, j + 1);
-			glVertex3f(i, 0, j + 1);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glBegin(GL_QUADS);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(i, 0, j);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(i + 1, 0, j);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(i + 1, 0, j + 1);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(i, 0, j + 1);
 			glEnd();
-
-			if (i % 5 == 0 && j % 5 == 0) // markers
-			{
-				glColor3f(0.4, 0.4, 0.6);
-				glPushMatrix();
-				glTranslatef(0, 0.05, 0);
-				glScalef(1, 0.1, 1);
-				glTranslatef(i + 0.5, 0, j + 0.5);
-				glutSolidCube(1);
-				glPopMatrix();
-			}
 		}
 	}
+	glDisable(GL_TEXTURE_2D);
 }
 
 void Game::getBullet()
@@ -150,12 +142,11 @@ void Game::selectDefaultTankForTheCurrentTargetPlayer()
 
 void Game::selectFocus()
 {
-	if (hasAnySelectedTank(activeBattalion)){ // player 1
+	if (hasAnySelectedTank(activeBattalion)){
 		if (getStateOfTank(activeBattalion) == WAITING)
 			selectNextTank(activeBattalion);
 		else if (getStateOfTank(activeBattalion) == SELECTING_TARGET)
 		{
-			// todo: pass through all enemy's tanks
 			if (battalions[targetBattalion]->getSelectedTank() != battalions[targetBattalion]->numTanks() - 1)
 				selectNextTank(targetBattalion);
 			else
@@ -166,11 +157,6 @@ void Game::selectFocus()
 					targetBattalion = (targetBattalion + 1) % battalions.size();
 				battalions[targetBattalion]->selectDefaultTank();
 			}
-
-			/*if (hasAnySelectedTank(targetBattalion))
-				selectNextTank(targetBattalion);
-			else if (hasTanks(targetBattalion))
-				selectDefaultTank(targetBattalion);*/
 		}
 	}
 	else selectDefaultTank(activeBattalion);

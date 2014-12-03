@@ -3,6 +3,7 @@
 
 #include "Bullet.h"
 #include "Utils.h"
+#include "Texture.h"
 
 enum tankState {WAITING, MOVING, SELECTING_TARGET, SHOOTING, INVALID_TANK};
 enum tankName {PANZER, TIGER, PANTHER};

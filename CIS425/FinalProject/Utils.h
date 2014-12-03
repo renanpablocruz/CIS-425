@@ -15,4 +15,8 @@ enum dir{ UP, DOWN, LEFT, RIGHT, NE, SE, SO, NO };
 dir getDirForTank(float x1, float y1, float x2, float y2);
 dir getDirForBullet(float x1, float y1, float x2, float y2);
 
+float degToRad(double angInDeg);
+void incAng(double& angInDeg);
+void decAng(double& angInDeg);
+
 #endif

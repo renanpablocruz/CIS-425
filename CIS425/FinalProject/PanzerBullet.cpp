@@ -1,6 +1,6 @@
 #include "PanzerBullet.h"
 
-PanzerBullet::PanzerBullet(elem t, float _x, float _y, float _z, float _xf, float _yf, float _zf, dir o) : Bullet(t, _x, _y, _z, _xf, _yf, _zf, 5, 0.2, 0.4, o){};//todo: fix 50 to 5
+PanzerBullet::PanzerBullet(elem t, float _x, float _y, float _z, float _xf, float _yf, float _zf, dir o) : Bullet(t, _x, _y, _z, _xf, _yf, _zf, 50, 0.2, 0.4, o){};//todo: fix 50 to 5
 
 void PanzerBullet::draw()
 {
@@ -16,4 +16,5 @@ void PanzerBullet::draw()
 	else glScalef(0.1, 0.1, 0.1);
 	glutSolidCube(1);
 	glPopMatrix();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }

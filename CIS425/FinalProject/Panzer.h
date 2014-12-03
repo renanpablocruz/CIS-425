@@ -5,7 +5,6 @@
 #include "Tank.h"
 #include "glutInclude.h"
 #include "Utils.h"
-#include "Tank.h"
 #include "PanzerBullet.h"
 
 class Panzer : public Tank

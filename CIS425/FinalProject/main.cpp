@@ -33,12 +33,16 @@ using namespace std;
 // Globals
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define PI 3.14159265358979324
+
 // screen
-static Game* game = new Game();
+static Game* game = NULL;
 static float scrW;
 static float scrH;
 // camera
-static float camX = 0, camY = 0, camZ = 0;
+static float camX = 0, camY = 0, camZ = 0, camR = 5;
+static float camDirX = 0.4, camDirY = 5, camDirZ = 5;
+static double phi = 0, theta = 0;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Methods - Headers
@@ -88,7 +92,7 @@ void drawScenario()
 	if (game->activeBattalionHasAnySelectedTank())
 	{
 		game->getPosOfTheCurrentTank(camX, camY, camZ);
-		gluLookAt(camX + 0.4, camY + 5, camZ + 5, camX, camY, camZ, 0, 1, 0);
+		gluLookAt(camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), camX, camY, camZ, 0, 1, 0);
 	}
 	else gluLookAt(2, 10, 10, 2, 0, 2, 0, 1, 0);
 
@@ -99,10 +103,8 @@ void drawScenario()
 
 void drawScene()
 {
-	// todo: configure light
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glColor3f(0.0, 0.0, 0.0);
 	glLoadIdentity();
 
 	drawScenario();	
@@ -141,6 +143,18 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		case 'n':
 			game->newTurn();
 			break;
+		case 'w':
+			incAng(phi);
+			break;
+		case 'a':
+			decAng(theta);
+			break;
+		case 's':
+			decAng(phi);
+			break;
+		case 'd':
+			incAng(theta);
+			break;
 		default:
 			break;
 	}
@@ -172,10 +186,15 @@ void selectFocus()
 
 void setup()
 {
-	glClearColor(1.0, 1.0, 1.0, 0.0);
+	game = new Game();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_LIGHTING);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_NORMALIZE);  // normalize vectors for proper shading
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void specialKeyInput(int key, int x, int y)

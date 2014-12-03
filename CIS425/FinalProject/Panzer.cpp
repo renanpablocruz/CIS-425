@@ -4,15 +4,56 @@ Panzer::Panzer(elem t) : Tank(20, 2, 4, 2, t){}
 
 void Panzer::draw()
 {
-	if(getType() == FIRE) glColor3f(1, 0, 0);
-	else if (getType() == EARTH) glColor3f(0.6, 0.4, 0.2);
-	else if (getType() == WATER) glColor3f(0, 0, 1);
-	else glColor3f(0, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	if (getType() == FIRE)
+	{
+		glBindTexture(GL_TEXTURE_2D, RED + 1);
+		//glColor4f(1.0, 0.0, 0.0, 1.0);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	else if (getType() == EARTH)
+	{
+		glBindTexture(GL_TEXTURE_2D, BROWN + 1);
+		//glColor3f(0.6, 0.4, 0.2);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	else if (getType() == WATER)
+	{
+		glBindTexture(GL_TEXTURE_2D, BLUE + 1);
+		//glColor3f(0, 0, 1);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	//else glColor3f(0, 0, 0);
 	glPushMatrix();
 	glTranslatef(x + 0.5, y + 0.5, z + 0.5);
-	glutSolidCube(1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5, 0.5, -0.5); // top
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5, 0.5, -0.5);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.5, 0.5, 0.5);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5, 0.5, 0.5);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5, -0.5, -0.5); // down
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5, -0.5, -0.5);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.5, -0.5, 0.5);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5, -0.5, 0.5);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5, 0.5, 0.5); // front
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5, 0.5, 0.5);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.5, -0.5, 0.5);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5, -0.5, 0.5);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5, 0.5, -0.5); // back
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5, 0.5, -0.5);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.5, -0.5, -0.5);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5, -0.5, -0.5);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.5, 0.5, 0.5); // right
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5, 0.5, -0.5);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.5, -0.5, -0.5);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.5, -0.5, 0.5);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5, 0.5, 0.5); // left
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.5, 0.5, -0.5);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5, -0.5, -0.5);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5, -0.5, 0.5);
+	glEnd();
 	glPopMatrix();
-	std::cout << "life: " << life << std::endl;
+	glDisable(GL_TEXTURE_2D);
 }
 
 void Panzer::shoot(float xf, float yf, float zf)

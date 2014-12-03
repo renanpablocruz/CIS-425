@@ -38,7 +38,7 @@ Battalion::Battalion(int value)
 		case 3:
 		{
 			Panzer* tank = new Panzer(WATER);
-			tank->setPos(0, 0, 3); // user2
+			tank->setPos(0, 0, 3); // user3
 			tanks.push_back(tank);
 
 			/*tank = new Panzer(WATER);
@@ -70,6 +70,11 @@ Bullet* Battalion::getBullet()
 	return tanks[selectedTank]->getBullet();
 }
 
+void Battalion::getPosOfSelectedTank(float &_x, float &_y, float &_z)
+{
+	getPosOfTank(selectedTank, _x, _y, _z);
+}
+
 void Battalion::getPosOfTank(int ind, float &x, float &y, float &z)
 {
 	if (ind < 0 || ind >= tanks.size())
@@ -96,7 +101,7 @@ bool Battalion::hasAnySelectedTank()
 
 bool Battalion::hasTanks()
 {
-	bool ans = (tanks.size() > 0); // todo: ask Tarzan
+	bool ans = (tanks.size() > 0);
 	return ans;
 }
 

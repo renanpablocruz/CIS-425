@@ -19,6 +19,7 @@ public:
 	void draw();
 	Bullet* getBullet();
 	void getPosOfTank(int ind, float &_x, float &_y, float &_z);
+	void getPosOfSelectedTank(float &_x, float &_y, float &_z);
 	int getSelectedTank();
 	tankState getStateOfTank();
 	bool hasAnySelectedTank();
