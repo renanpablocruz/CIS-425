@@ -19,9 +19,9 @@ bool Tank::canMove()
 	return mov > 0;
 }
 
-void Tank::computeDamage(int damage)
+void Tank::computeDamage(int damage, elem bulletType)
 {
-	life -= damage;
+	life -= (int)damage*damageModifier(bulletType, type);
 	if (life < 0) life = 0;
 }
 

@@ -55,9 +55,9 @@ Battalion::Battalion(int value)
 	}	
 }
 
-void Battalion::computeDamage(int damage)
+void Battalion::computeDamage(int damage, elem bulletType)
 {
-	tanks[selectedTank]->computeDamage(damage);
+	tanks[selectedTank]->computeDamage(damage, bulletType);
 }
 
 void Battalion::draw()

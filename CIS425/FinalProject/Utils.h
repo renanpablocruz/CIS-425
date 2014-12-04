@@ -19,4 +19,6 @@ float degToRad(double angInDeg);
 void incAng(double& angInDeg);
 void decAng(double& angInDeg);
 
+float damageModifier(elem bulletType, elem tankType);
+
 #endif

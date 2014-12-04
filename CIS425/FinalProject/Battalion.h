@@ -15,7 +15,7 @@ private:
 public:
 	Battalion();
 	Battalion(int value);
-	void computeDamage(int damage);
+	void computeDamage(int damage, elem bulletType);
 	void draw();
 	Bullet* getBullet();
 	void getPosOfTank(int ind, float &_x, float &_y, float &_z);

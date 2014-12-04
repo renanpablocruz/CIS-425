@@ -18,9 +18,9 @@ bool Game::activeBattalionHasAnySelectedTank()
 	return hasAnySelectedTank(activeBattalion);
 }
 
-void Game::computeDamage(int damage)
+void Game::computeDamage(int damage, elem bulletType)
 {
-	battalions[targetBattalion]->computeDamage(damage);
+	battalions[targetBattalion]->computeDamage(damage, bulletType);
 }
 
 bool Game::currentPlayerHasAnySelectedTank()
@@ -31,7 +31,10 @@ bool Game::currentPlayerHasAnySelectedTank()
 void Game::draw()
 {
 	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->draw();
-	drawTerrain();
+	drawGrid();
+	drawWhitePlan();
+	//drawTerrain();
+	//drawSky();
 	drawBullet();
 	if (isTheGameOver()) writeCongrats();
 }
@@ -41,24 +44,67 @@ void Game::drawBullet()
 	if (bullet != NULL) bullet->draw();
 }
 
-void Game::drawTerrain()
+void Game::drawGrid()
+{
+	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+	for (int i = -GRID_SIZE / 2; i < GRID_SIZE / 2; i++)
+	{
+		for (int j = -GRID_SIZE / 2; j < GRID_SIZE / 2; j++)
+		{
+			glBegin(GL_LINE_STRIP);
+			glVertex3f(i, 0.1, j);
+			glVertex3f(i + 1, 0.1, j);
+			glVertex3f(i + 1, 0.1, j + 1);
+			glVertex3f(i, 0.1, j + 1);
+			glEnd();
+		}
+	}
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+void Game::drawSky()
 {
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, GROUND + 1);
-	for (int i = -GRID_SIZE/2; i < GRID_SIZE/2; i++)
+	glBindTexture(GL_TEXTURE_2D, LIGHT_SKY + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -15);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, -15);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -15);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -15);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+}
+
+void Game::drawTerrain()
+{
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glBindTexture(GL_TEXTURE_2D, LIGHT_GROUND + 1);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	for (int i = -GRID_SIZE/2; i < GRID_SIZE/2; i+=5)
 	{
-		for (int j = -GRID_SIZE/2; j < GRID_SIZE/2; j++)
-		{
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		for (int j = -GRID_SIZE/2; j < GRID_SIZE/2; j+=5)
+		{	
 			glBegin(GL_QUADS);
-			glTexCoord2f(1.0f, 0.0f); glVertex3f(i, 0, j);
-			glTexCoord2f(1.0f, 1.0f); glVertex3f(i + 1, 0, j);
-			glTexCoord2f(1.0f, 0.0f); glVertex3f(i + 1, 0, j + 1);
-			glTexCoord2f(0.0f, 0.0f); glVertex3f(i, 0, j + 1);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(i, 0, j);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(i + 5, 0, j);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(i + 5, 0, j + 5);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(i, 0, j + 5);
 			glEnd();
 		}
 	}
 	glDisable(GL_TEXTURE_2D);
+}
+
+void Game::drawWhitePlan()
+{
+	glBegin(GL_QUADS);
+	glVertex3f(-GRID_SIZE / 2, 0, -GRID_SIZE/2);
+	glVertex3f(GRID_SIZE / 2, 0, -GRID_SIZE / 2);
+	glVertex3f(GRID_SIZE / 2, 0, GRID_SIZE / 2);
+	glVertex3f(-GRID_SIZE / 2, 0, GRID_SIZE / 2);
+	glEnd();
 }
 
 void Game::getBullet()
@@ -104,10 +150,10 @@ bool Game::hasTanks(int player)
 
 bool Game::isTheGameOver()
 {
-	int count = 0;
+	int count = battalions.size();
 	for (unsigned int i = 0; i < battalions.size(); i++)
 	{
-		if (battalions[i]->numTanks() == 0) count += 1;
+		if (battalions[i]->numTanks() == 0) count -= 1;
 	}
 	return count == 1;
 }
@@ -124,6 +170,20 @@ void Game::moveTank(int player, dir direction)
 
 void Game::newTurn()
 {
+	bool aPlayerIsDead = true;
+	while (aPlayerIsDead)
+	{
+		aPlayerIsDead = false;
+		for (int i = 0; i < battalions.size(); i++)
+		{
+			if (battalions[i]->numTanks() == 0)
+			{
+				battalions.erase(battalions.begin() + i);
+				aPlayerIsDead = true;
+				break;
+			}
+		}
+	}
 	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->passTurn();
 	activeBattalion = (activeBattalion + 1) % battalions.size();
 	targetBattalion = (activeBattalion == 0) ? 1 : 0;
@@ -218,7 +278,7 @@ void Game::update()
 			createdBullet = true;
 		else if (bullet->getState() == READY && createdBullet == true)
 		{
-			computeDamage(bullet->getDamage());
+			computeDamage(bullet->getDamage(), bullet->getType());
 			createdBullet = false;
 			bullet = NULL;
 		}

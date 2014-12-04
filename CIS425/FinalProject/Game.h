@@ -22,11 +22,14 @@ private:
 public:
 	Game();
 	bool activeBattalionHasAnySelectedTank();
-	void computeDamage(int damage);
+	void computeDamage(int damage, elem bulletType);
 	bool currentPlayerHasAnySelectedTank();
 	void draw();
 	void drawBullet();
+	void drawGrid();
+	void drawSky();
 	void drawTerrain();
+	void drawWhitePlan();
 	void getBullet();
 	void getPosOfTheCurrentTank(float &x, float &y, float &z);
 	void getPosOfSelectedTank(int player, float &x, float &y, float &z);

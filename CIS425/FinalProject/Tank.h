@@ -32,7 +32,7 @@ public:
 	Tank(int ml, int r, int a, int ms, elem t);
 	bool canMove();
 	bool canShoot(float x2, float y2, float z2);
-	void computeDamage(int damage);
+	void computeDamage(int damage, elem bulletType);
 	virtual void draw() = 0;
 	Bullet* getBullet();
 	void getFinalPos(float &_x, float &_y, float &_z);

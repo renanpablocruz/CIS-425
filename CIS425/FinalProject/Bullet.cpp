@@ -10,6 +10,11 @@ int Bullet::getDamage()
 	return damage;
 }
 
+elem Bullet::getType()
+{
+	return type;
+}
+
 bulletState Bullet::getState()
 {
 	bulletState ans = state;

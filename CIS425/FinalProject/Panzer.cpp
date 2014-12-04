@@ -4,26 +4,11 @@ Panzer::Panzer(elem t) : Tank(20, 2, 4, 2, t){}
 
 void Panzer::draw()
 {
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
-	if (getType() == FIRE)
-	{
-		glBindTexture(GL_TEXTURE_2D, RED + 1);
-		//glColor4f(1.0, 0.0, 0.0, 1.0);
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-	else if (getType() == EARTH)
-	{
-		glBindTexture(GL_TEXTURE_2D, BROWN + 1);
-		//glColor3f(0.6, 0.4, 0.2);
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-	else if (getType() == WATER)
-	{
-		glBindTexture(GL_TEXTURE_2D, BLUE + 1);
-		//glColor3f(0, 0, 1);
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-	//else glColor3f(0, 0, 0);
+	if (getType() == FIRE) glBindTexture(GL_TEXTURE_2D, RED + 1);
+	else if (getType() == EARTH) glBindTexture(GL_TEXTURE_2D, BROWN + 1);
+	else if (getType() == WATER) glBindTexture(GL_TEXTURE_2D, BLUE + 1);
 	glPushMatrix();
 	glTranslatef(x + 0.5, y + 0.5, z + 0.5);
 	glBegin(GL_QUADS);

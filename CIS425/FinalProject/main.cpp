@@ -42,7 +42,7 @@ static float scrH;
 // camera
 static float camX = 0, camY = 0, camZ = 0, camR = 5;
 static float camDirX = 0.4, camDirY = 5, camDirZ = 5;
-static double phi = 0, theta = 0;
+static double phi = 30, theta = 180;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Methods - Headers
@@ -94,7 +94,7 @@ void drawScenario()
 		game->getPosOfTheCurrentTank(camX, camY, camZ);
 		gluLookAt(camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), camX, camY, camZ, 0, 1, 0);
 	}
-	else gluLookAt(2, 10, 10, 2, 0, 2, 0, 1, 0);
+	else gluLookAt(2, 6, 10, 2, 0, 2, 0, 1, 0);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

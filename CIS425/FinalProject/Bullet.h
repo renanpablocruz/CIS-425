@@ -22,6 +22,7 @@ public:
 	~Bullet(); // todo: need to implement?
 	virtual void draw() = 0;
 	int getDamage();
+	elem getType();
 	bulletState getState();
 	void reset();
 	void update();
