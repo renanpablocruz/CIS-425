@@ -25,6 +25,8 @@ private:
 	bool createdBullet;
 	Texture* myTextures;
 	gameState currentState;
+	float dayTime;
+	float alpha;
 public:
 	Game();
 	bool activeBattalionHasAnySelectedTank();

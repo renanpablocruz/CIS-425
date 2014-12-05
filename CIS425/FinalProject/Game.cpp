@@ -1,11 +1,11 @@
 #include "Game.h"
 
 Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()), currentState(INITIAL_MENU),
-			   activeBattalion(0), targetBattalion(1)
+		       activeBattalion(0), targetBattalion(1), dayTime(0.f), alpha(0)
 {
 	battalions.push_back(new Battalion(1));
 	battalions.push_back(new Battalion(2));
-	battalions.push_back(new Battalion(3));	
+	battalions.push_back(new Battalion(3));
 }
 
 bool Game::activeBattalionHasAnySelectedTank()
@@ -25,16 +25,16 @@ bool Game::currentPlayerHasAnySelectedTank()
 
 void Game::draw()
 {
+	drawTerrain();
+	drawSky();
 	drawGrid();
-	drawPlan();
 	for (unsigned int i = 0; i < battalions.size(); i++)
 	{
 		if (i==activeBattalion)	battalions[i]->draw(ATTACKING);
 		else if (i == targetBattalion) battalions[i]->draw(DEFENDING);
 		else battalions[i]->draw(INACTIVE);
 	}
-	//drawTerrain();
-	//drawSky();
+	
 	drawBullet();
 	drawStatus();
 	drawCurrentMenu();
@@ -90,6 +90,7 @@ void Game::drawPlan()
 void Game::drawSky()
 {
 	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 	glBindTexture(GL_TEXTURE_2D, LIGHT_SKY + 1);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -15);
@@ -97,7 +98,21 @@ void Game::drawSky()
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -15);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -15);
 	glEnd();
+
+	glColor4f(1.0, 1.0, 1.0, dayTime);
+
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, DARK_SKY + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -15);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, -15);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -15);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -15);
+	glEnd();
+	glEnable(GL_DEPTH_TEST);
+
 	glDisable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 }
 
 void Game::drawStatus()
@@ -126,9 +141,8 @@ void Game::drawTerrain()
 {
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
 	glBindTexture(GL_TEXTURE_2D, LIGHT_GROUND + 1);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	for (int i = -GRID_SIZE/2; i < GRID_SIZE/2; i+=5)
 	{
 		for (int j = -GRID_SIZE/2; j < GRID_SIZE/2; j+=5)
@@ -141,7 +155,26 @@ void Game::drawTerrain()
 			glEnd();
 		}
 	}
+
+	glColor4f(1.0f, 1.0f, 1.0f, dayTime);
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, DARK_GROUND + 1);
+	for (int i = -GRID_SIZE / 2; i < GRID_SIZE / 2; i += 5)
+	{
+		for (int j = -GRID_SIZE / 2; j < GRID_SIZE / 2; j += 5)
+		{
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(i, 0, j);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(i + 5, 0, j);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(i + 5, 0, j + 5);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(i, 0, j + 5);
+			glEnd();
+		}
+	}
+	glEnable(GL_DEPTH_TEST);
+
 	glDisable(GL_TEXTURE_2D);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void Game::getBullet()
@@ -320,6 +353,9 @@ void Game::update()
 			bullet = NULL;
 		}
 	}
+	alpha += 0.1;
+	dayTime = sin(degToRad(alpha));
+	if (alpha > 180) alpha = 0;
 }
 
 void Game::writeCongrats()
