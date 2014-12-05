@@ -2,13 +2,18 @@
 #define GAME_H
 
 #include <vector>
+#include <string>
+#include "Tank.h"
 #include "Battalion.h"
 #include "PantherBullet.h"
 #include "PanzerBullet.h"
 #include "TigerBullet.h"
 #include "Texture.h"
+#include "Utils.h"
 
 #define GRID_SIZE 80
+
+enum gameState{INITIAL_MENU};
 
 class Game
 {
@@ -19,6 +24,7 @@ private:
 	Bullet* bullet;
 	bool createdBullet;
 	Texture* myTextures;
+	gameState currentState;
 public:
 	Game();
 	bool activeBattalionHasAnySelectedTank();
@@ -27,9 +33,11 @@ public:
 	void draw();
 	void drawBullet();
 	void drawGrid();
+	void drawCurrentMenu();
 	void drawSky();
+	void drawStatus();
 	void drawTerrain();
-	void drawWhitePlan();
+	void drawPlan();
 	void getBullet();
 	void getPosOfTheCurrentTank(float &x, float &y, float &z);
 	void getPosOfSelectedTank(int player, float &x, float &y, float &z);

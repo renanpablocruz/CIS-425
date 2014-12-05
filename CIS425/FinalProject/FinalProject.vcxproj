@@ -81,6 +81,8 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="glutInclude.h" />
     <ClInclude Include="PanzerBullet.h" />
+    <ClInclude Include="Smoke.h" />
+    <ClInclude Include="SmokeParticle.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TigerBullet.h" />
     <ClInclude Include="Panther.h" />
@@ -99,6 +101,8 @@
     <ClCompile Include="PantherBullet.cpp" />
     <ClCompile Include="Panzer.cpp" />
     <ClCompile Include="PanzerBullet.cpp" />
+    <ClCompile Include="Smoke.cpp" />
+    <ClCompile Include="SmokeParticle.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tiger.cpp" />

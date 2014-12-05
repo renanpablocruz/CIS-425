@@ -38,12 +38,17 @@ void Tank::getFinalPos(float &_x, float &_y, float &_z)
 	_z = zf;
 }
 
-int Tank::getLife()
+int Tank::getLife() const
 {
 	return life;
 }
 
-void Tank::getPos(float &_x, float &_y, float &_z)
+int Tank::getMaxLife() const
+{
+	return max_life;
+}
+
+void Tank::getPos(float &_x, float &_y, float &_z) const
 {
 	_x = x;
 	_y = y;

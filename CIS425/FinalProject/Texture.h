@@ -7,7 +7,7 @@
 #include "glutInclude.h"
 
 #define NUM_TEXTURES 10
-enum typesOfTextures{ RED, BROWN, BLUE, DARK_GROUND, DARK_SKY, LIGHT_GROUND, LIGHT_SKY };
+enum typesOfTextures{ RED_CAMOUFLAGE, BROWN_CAMOUFLAGE, BLUE_CAMOUFLAGE, DARK_GROUND, DARK_SKY, LIGHT_GROUND, LIGHT_SKY };
 
 struct BitMapFile // Struct of bitmap file.
 {

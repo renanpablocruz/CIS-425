@@ -1,16 +1,11 @@
 #include "Game.h"
 
-Game::Game()
+Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()), currentState(INITIAL_MENU),
+			   activeBattalion(0), targetBattalion(1)
 {
 	battalions.push_back(new Battalion(1));
 	battalions.push_back(new Battalion(2));
-	battalions.push_back(new Battalion(3));
-	activeBattalion = 0;
-	targetBattalion = 1;
-	bullet = NULL;
-	
-	myTextures = new Texture();
-	createdBullet = false;
+	battalions.push_back(new Battalion(3));	
 }
 
 bool Game::activeBattalionHasAnySelectedTank()
@@ -30,18 +25,36 @@ bool Game::currentPlayerHasAnySelectedTank()
 
 void Game::draw()
 {
-	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->draw();
 	drawGrid();
-	drawWhitePlan();
+	drawPlan();
+	for (unsigned int i = 0; i < battalions.size(); i++)
+	{
+		if (i==activeBattalion)	battalions[i]->draw(ATTACKING);
+		else if (i == targetBattalion) battalions[i]->draw(DEFENDING);
+		else battalions[i]->draw(INACTIVE);
+	}
 	//drawTerrain();
 	//drawSky();
 	drawBullet();
+	drawStatus();
+	drawCurrentMenu();
 	if (isTheGameOver()) writeCongrats();
 }
 
 void Game::drawBullet()
 {
 	if (bullet != NULL) bullet->draw();
+}
+
+void Game::drawCurrentMenu() //todo: implement it
+{
+	switch (currentState)
+	{
+		case INITIAL_MENU:
+			break;
+		default:
+			break;
+	}
 }
 
 void Game::drawGrid()
@@ -52,14 +65,26 @@ void Game::drawGrid()
 		for (int j = -GRID_SIZE / 2; j < GRID_SIZE / 2; j++)
 		{
 			glBegin(GL_LINE_STRIP);
-			glVertex3f(i, 0.1, j);
-			glVertex3f(i + 1, 0.1, j);
-			glVertex3f(i + 1, 0.1, j + 1);
-			glVertex3f(i, 0.1, j + 1);
+			glVertex3f(i, 0.01, j);
+			glVertex3f(i + 1, 0.01, j);
+			glVertex3f(i + 1, 0.01, j + 1);
+			glVertex3f(i, 0.01, j + 1);
 			glEnd();
 		}
 	}
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+void Game::drawPlan()
+{
+	glColor4f(.5, .5, .5, 1.0);
+	glBegin(GL_QUADS);
+	glVertex3f(-GRID_SIZE / 2, 0, -GRID_SIZE / 2);
+	glVertex3f(GRID_SIZE / 2, 0, -GRID_SIZE / 2);
+	glVertex3f(GRID_SIZE / 2, 0, GRID_SIZE / 2);
+	glVertex3f(-GRID_SIZE / 2, 0, GRID_SIZE / 2);
+	glEnd();
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 }
 
 void Game::drawSky()
@@ -73,6 +98,28 @@ void Game::drawSky()
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -15);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
+}
+
+void Game::drawStatus()
+{
+	float x, y, z;
+
+	//black background
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+
+	for (std::vector<Battalion*>::iterator bt = battalions.begin(); bt != battalions.end(); bt++)
+	{
+		std::vector<const Tank*> tanks = (*bt)->getAllTanks();
+		for (unsigned int i = 0; i < tanks.size(); i++)
+		{
+			char buffer[256];
+			sprintf(buffer, "%d/%d", tanks[i]->getLife(), tanks[i]->getMaxLife());
+			std::string text = buffer;
+			tanks[i]->getPos(x, y, z);
+			writeText(text, x, y + 1.f, z, false);
+			y -= 24;
+		}
+	}
 }
 
 void Game::drawTerrain()
@@ -95,16 +142,6 @@ void Game::drawTerrain()
 		}
 	}
 	glDisable(GL_TEXTURE_2D);
-}
-
-void Game::drawWhitePlan()
-{
-	glBegin(GL_QUADS);
-	glVertex3f(-GRID_SIZE / 2, 0, -GRID_SIZE/2);
-	glVertex3f(GRID_SIZE / 2, 0, -GRID_SIZE / 2);
-	glVertex3f(GRID_SIZE / 2, 0, GRID_SIZE / 2);
-	glVertex3f(-GRID_SIZE / 2, 0, GRID_SIZE / 2);
-	glEnd();
 }
 
 void Game::getBullet()
@@ -174,7 +211,7 @@ void Game::newTurn()
 	while (aPlayerIsDead)
 	{
 		aPlayerIsDead = false;
-		for (int i = 0; i < battalions.size(); i++)
+		for (unsigned int i = 0; i < battalions.size(); i++)
 		{
 			if (battalions[i]->numTanks() == 0)
 			{

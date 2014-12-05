@@ -60,9 +60,15 @@ void Battalion::computeDamage(int damage, elem bulletType)
 	tanks[selectedTank]->computeDamage(damage, bulletType);
 }
 
-void Battalion::draw()
+void Battalion::draw(battalionState state)
 {
-	for (unsigned int i = 0; i < tanks.size(); i++) tanks[i]->draw();
+	for (unsigned int i = 0; i < tanks.size(); i++)
+	{
+		color selectionColor = NONE;
+		if (state == ATTACKING) selectionColor = BLUE;
+		else if (state == DEFENDING) selectionColor = RED;
+		tanks[i]->draw(i==selectedTank, selectionColor);
+	}
 }
 
 Bullet* Battalion::getBullet()
@@ -75,7 +81,7 @@ void Battalion::getPosOfSelectedTank(float &_x, float &_y, float &_z)
 	getPosOfTank(selectedTank, _x, _y, _z);
 }
 
-void Battalion::getPosOfTank(int ind, float &x, float &y, float &z)
+void Battalion::getPosOfTank(unsigned int ind, float &x, float &y, float &z)
 {
 	if (ind < 0 || ind >= tanks.size())
 		return;
@@ -92,6 +98,13 @@ tankState Battalion::getStateOfTank()
 {
 	tankState ans = tanks[selectedTank]->getState();
 	return ans;
+}
+
+std::vector<const Tank*> Battalion::getAllTanks()
+{
+	std::vector<const Tank*> answer;
+	for (unsigned int i = 0; i < tanks.size(); i++) answer.push_back(tanks[i]);
+	return answer;
 }
 
 bool Battalion::hasAnySelectedTank()

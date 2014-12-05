@@ -7,6 +7,8 @@
 #include "Tiger.h"
 #include <vector>
 
+enum battalionState{INACTIVE, ATTACKING, DEFENDING};
+
 class Battalion
 {
 private:
@@ -16,12 +18,13 @@ public:
 	Battalion();
 	Battalion(int value);
 	void computeDamage(int damage, elem bulletType);
-	void draw();
+	void draw(battalionState state);
 	Bullet* getBullet();
-	void getPosOfTank(int ind, float &_x, float &_y, float &_z);
+	void getPosOfTank(unsigned int ind, float &_x, float &_y, float &_z);
 	void getPosOfSelectedTank(float &_x, float &_y, float &_z);
 	int getSelectedTank();
 	tankState getStateOfTank();
+	std::vector<const Tank*> getAllTanks();
 	bool hasAnySelectedTank();
 	bool hasTanks();
 	void moveTank(dir dr);

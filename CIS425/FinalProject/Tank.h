@@ -1,9 +1,10 @@
 #ifndef TANK_H
 #define TANK_H
 
-#include "Bullet.h"
 #include "Utils.h"
 #include "Texture.h"
+#include "Bullet.h"
+#include "Smoke.h"
 
 enum tankState {WAITING, MOVING, SELECTING_TARGET, SHOOTING, INVALID_TANK};
 enum tankName {PANZER, TIGER, PANTHER};
@@ -33,11 +34,12 @@ public:
 	bool canMove();
 	bool canShoot(float x2, float y2, float z2);
 	void computeDamage(int damage, elem bulletType);
-	virtual void draw() = 0;
+	virtual void draw(bool selected, color selection) = 0;
 	Bullet* getBullet();
 	void getFinalPos(float &_x, float &_y, float &_z);
-	int getLife();
-	void getPos(float &_x, float &_y, float &_z);
+	int getLife() const;
+	int getMaxLife() const;
+	void getPos(float &_x, float &_y, float &_z) const;
 	tankState getState();
 	elem getType();
 	void modLife(int d);

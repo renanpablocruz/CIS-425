@@ -12,7 +12,8 @@ class Panzer : public Tank
 public:
 	Panzer();
 	Panzer(elem t);
-	void draw();
+	void draw(bool selected, color selection);
+	void drawBody();
 	Bullet* getBullet();
 	void shoot(float _x, float _y, float _z);
 };

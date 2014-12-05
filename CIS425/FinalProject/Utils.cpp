@@ -80,3 +80,30 @@ float damageModifier(elem bulletType, elem tankType)
 			return 1;
 	}
 }
+
+void writeText(std::string input, float x, float y, float z, bool centralize)
+{
+	/*glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();*/
+	glDisable(GL_DEPTH_TEST);
+	if (centralize)
+	{
+		x -= glutBitmapLength(GLUT_BITMAP_TIMES_ROMAN_24, (unsigned char*)input.c_str());
+	}
+	glRasterPos3f(x, y, z);
+	for (unsigned int i = 0; i < input.size(); i++)
+	{
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, input[i]);
+	}
+	/*glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);*/
+	glEnable(GL_DEPTH_TEST);
+
+}
