@@ -1,11 +1,11 @@
 #include "Game.h"
 
-Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()), currentState(INITIAL_MENU),
+Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()), currentMenu(NO_MENU),
 		       activeBattalion(0), targetBattalion(1), dayTime(0.f), alpha(0)
 {
 	battalions.push_back(new Battalion(1));
 	battalions.push_back(new Battalion(2));
-	battalions.push_back(new Battalion(3));
+	//battalions.push_back(new Battalion(3));
 }
 
 bool Game::activeBattalionHasAnySelectedTank()
@@ -34,7 +34,6 @@ void Game::draw()
 		else if (i == targetBattalion) battalions[i]->draw(DEFENDING);
 		else battalions[i]->draw(INACTIVE);
 	}
-	
 	drawBullet();
 	drawStatus();
 	drawCurrentMenu();
@@ -48,13 +47,24 @@ void Game::drawBullet()
 
 void Game::drawCurrentMenu() //todo: implement it
 {
-	switch (currentState)
+	switch (currentMenu)
 	{
 		case INITIAL_MENU:
+			drawInitialMenu();
+			break;
+		case GAME_MENU:
+			drawGameMenu();
 			break;
 		default:
 			break;
 	}
+}
+
+void Game::drawGameMenu()
+{
+	drawWindow(glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2, 300, 200);
+	drawBlackBackground();
+	writeText2d("PAUSED", glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2, true, GLUT_BITMAP_HELVETICA_18);
 }
 
 void Game::drawGrid()
@@ -73,6 +83,11 @@ void Game::drawGrid()
 		}
 	}
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+void Game::drawInitialMenu()
+{
+
 }
 
 void Game::drawPlan()
@@ -119,19 +134,23 @@ void Game::drawStatus()
 {
 	float x, y, z;
 
-	//black background
-	glColor4f(1.0, 1.0, 1.0, 1.0);
+	int j = 0;
 
 	for (std::vector<Battalion*>::iterator bt = battalions.begin(); bt != battalions.end(); bt++)
 	{
+		if (j == 0) glColor4f(1, 1, 1, 1.0);
+		else if (j == 1) glColor4f(0.75, .75, .75, 1.0);
+		else glColor4f(1, 0, 0, 1.0);
+		j++;
+
 		std::vector<const Tank*> tanks = (*bt)->getAllTanks();
 		for (unsigned int i = 0; i < tanks.size(); i++)
 		{
 			char buffer[256];
-			sprintf(buffer, "%d/%d", tanks[i]->getLife(), tanks[i]->getMaxLife());
+			sprintf_s(buffer, 256, "%d/%d", tanks[i]->getLife(), tanks[i]->getMaxLife());
 			std::string text = buffer;
 			tanks[i]->getPos(x, y, z);
-			writeText(text, x, y + 1.f, z, false);
+			writeText3d(text, x, y + 1.f, z, false, GLUT_BITMAP_HELVETICA_18);
 			y -= 24;
 		}
 	}
@@ -320,6 +339,11 @@ void Game::setCurrentTankToWaitingMode()
 	battalions[activeBattalion]->setWaitingMode();
 }
 
+void Game::setMenu(gameMenu menu)
+{
+	currentMenu = menu;
+}
+
 void Game::setTargetMode(int player)
 {
 	battalions[player]->setTargetMode();
@@ -339,6 +363,11 @@ void Game::shoot()
 	std::cout << std::endl;
 }
 
+void Game::toggleMenu(gameMenu menu)
+{
+	currentMenu = (currentMenu == menu) ? NO_MENU : menu;
+}
+
 void Game::update()
 {
 	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->update(DELTA_T_VIRTUAL);
@@ -353,12 +382,22 @@ void Game::update()
 			bullet = NULL;
 		}
 	}
-	alpha += 0.1;
-	dayTime = sin(degToRad(alpha));
-	if (alpha > 180) alpha = 0;
+	if (currentMenu == NO_MENU)
+	{
+		alpha += 0.1;
+		dayTime = sin(degToRad(alpha));
+		if (alpha > 180) alpha = 0;
+	}
 }
 
 void Game::writeCongrats()
 {
-	std::cout << "game is over" << std::endl;
+	float w = glutGet(GLUT_WINDOW_WIDTH);
+	float h = glutGet(GLUT_WINDOW_HEIGHT);
+	drawWindow(w/2, h/2, 150, 70);
+	char buffer[256];
+	//sprintf(buffer, "Player %d won", activeBattalion+1);
+	sprintf_s(buffer, 256, "Player %d won", activeBattalion + 1);
+	std::string text = buffer;
+	writeText2d(buffer, w/2, h/2, true, GLUT_BITMAP_HELVETICA_18);
 }

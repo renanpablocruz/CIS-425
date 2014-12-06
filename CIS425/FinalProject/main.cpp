@@ -117,8 +117,10 @@ void keyInput(unsigned char key, int scrX, int scrY)
 	switch (key)
 	{
 		case 27:
-			if (game->getStateOfCurrentTank() == WAITING) exit(0); // todo: open a menu
-			else if (game->getStateOfCurrentTank() == SELECTING_TARGET) game->setCurrentTankToWaitingMode();
+			if (game->getStateOfCurrentTank() == WAITING || game->getStateOfCurrentTank() == SELECTING_TARGET) game->toggleMenu(GAME_MENU); // todo: open a menu
+			break;
+		case 8:
+			if (game->getStateOfCurrentTank() == SELECTING_TARGET) game->setCurrentTankToWaitingMode();
 			break;
 		case 'c':
 			selectFocus();

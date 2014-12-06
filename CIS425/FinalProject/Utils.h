@@ -23,6 +23,10 @@ void decAng(double& angInDeg);
 
 float damageModifier(elem bulletType, elem tankType);
 
-void writeText(std::string input, float x, float y, float z, bool centralize);
+void drawBlackBackground();
+void drawWindow(int x, int y, int w, int h);
+
+void writeText2d(std::string input, float x, float y, bool centralize, void *font);
+void writeText3d(std::string input, float x, float y, float z, bool centralize, void *font);
 
 #endif

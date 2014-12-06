@@ -81,8 +81,83 @@ float damageModifier(elem bulletType, elem tankType)
 	}
 }
 
-void writeText(std::string input, float x, float y, float z, bool centralize)
+void drawBlackBackground()
 {
+	float w = glutGet(GLUT_WINDOW_WIDTH);
+	float h = glutGet(GLUT_WINDOW_HEIGHT);
+	glColor4f(0, 0, 0, 0.4);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, w, 0, h, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+	glBegin(GL_QUADS);
+	glVertex3f(0, 0, 0);
+	glVertex3f(w, 0, 0);
+	glVertex3f(w, h, 0);
+	glVertex3f(0, h, 0);
+	glEnd();
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_DEPTH_TEST);
+	glColor4f(1, 1, 1, 1);
+}
+
+void drawWindow(int xc, int yc, int w, int h)
+{
+	glColor4f(0,0,0,0.6);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+	glTranslatef(xc, yc, 0);
+	glBegin(GL_QUADS);
+	glVertex3f(-w/2, h/2, 0);
+	glVertex3f(w/2, h/2, 0);
+	glVertex3f(w/2, -h/2, 0);
+	glVertex3f(-w/2, -h/2, 0);
+	glEnd();
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_DEPTH_TEST);
+	glColor4f(1,1,1,1);
+}
+
+void writeText2d(std::string input, float x, float y, bool centralize, void *font)
+{
+	glColor4f(1, 1, 1, 1);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+	if (centralize) x -= glutBitmapLength(font, (unsigned char*)input.c_str())/2;
+	glRasterPos3f(x, y, 0);
+	for (unsigned int i = 0; i < input.size(); i++) glutBitmapCharacter(font, input[i]);
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_DEPTH_TEST);
+}
+
+void writeText3d(std::string input, float x, float y, float z, bool centralize, void *font)
+{
+	glColor4f(1,1,1,1);
 	/*glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -91,19 +166,12 @@ void writeText(std::string input, float x, float y, float z, bool centralize)
 	glPushMatrix();
 	glLoadIdentity();*/
 	glDisable(GL_DEPTH_TEST);
-	if (centralize)
-	{
-		x -= glutBitmapLength(GLUT_BITMAP_TIMES_ROMAN_24, (unsigned char*)input.c_str());
-	}
+	if (centralize) x -= glutBitmapLength(font, (unsigned char*)input.c_str());
 	glRasterPos3f(x, y, z);
-	for (unsigned int i = 0; i < input.size(); i++)
-	{
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, input[i]);
-	}
+	for (unsigned int i = 0; i < input.size(); i++) glutBitmapCharacter(font, input[i]);
 	/*glPopMatrix();
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);*/
 	glEnable(GL_DEPTH_TEST);
-
 }
