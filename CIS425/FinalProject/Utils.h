@@ -12,7 +12,7 @@
 
 enum elem{ FIRE, WATER, EARTH };
 enum dir{ UP, DOWN, LEFT, RIGHT, NE, SE, SO, NO };
-enum color{NONE, BLUE, RED};
+enum color{NONE, BLUE, RED, WHITE, BLACK};
 
 dir getDirForTank(float x1, float y1, float x2, float y2);
 dir getDirForBullet(float x1, float y1, float x2, float y2);
@@ -23,8 +23,8 @@ void decAng(double& angInDeg);
 
 float damageModifier(elem bulletType, elem tankType);
 
-void drawBlackBackground();
-void drawWindow(int x, int y, int w, int h);
+void drawBackground(color selColor = BLACK, float alpha = 1);
+void drawWindow(int x, int y, int w, int h, color selColor=NONE);
 
 void writeText2d(std::string input, float x, float y, bool centralize, void *font);
 void writeText3d(std::string input, float x, float y, float z, bool centralize, void *font);

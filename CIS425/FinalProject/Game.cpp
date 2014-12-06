@@ -63,7 +63,7 @@ void Game::drawCurrentMenu() //todo: implement it
 void Game::drawGameMenu()
 {
 	drawWindow(glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2, 300, 200);
-	drawBlackBackground();
+	drawBackground(BLACK, 0.4);
 	writeText2d("PAUSED", glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2, true, GLUT_BITMAP_HELVETICA_18);
 }
 
@@ -87,7 +87,7 @@ void Game::drawGrid()
 
 void Game::drawInitialMenu()
 {
-
+	
 }
 
 void Game::drawPlan()

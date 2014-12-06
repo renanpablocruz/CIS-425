@@ -81,11 +81,13 @@ float damageModifier(elem bulletType, elem tankType)
 	}
 }
 
-void drawBlackBackground()
+void drawBackground(color selColor, float alpha)
 {
 	float w = glutGet(GLUT_WINDOW_WIDTH);
 	float h = glutGet(GLUT_WINDOW_HEIGHT);
-	glColor4f(0, 0, 0, 0.4);
+	if (selColor == WHITE) glColor4f(1, 1, 1, alpha);
+	else if (selColor == BLACK) glColor4f(0, 0, 0, alpha);
+	else glColor4f(0, 0, 0, alpha);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -108,7 +110,7 @@ void drawBlackBackground()
 	glColor4f(1, 1, 1, 1);
 }
 
-void drawWindow(int xc, int yc, int w, int h)
+void drawWindow(int xc, int yc, int w, int h, color selColor)
 {
 	glColor4f(0,0,0,0.6);
 	glMatrixMode(GL_PROJECTION);
