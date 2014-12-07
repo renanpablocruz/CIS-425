@@ -116,14 +116,18 @@ void keyInput(unsigned char key, int scrX, int scrY)
 {
 	switch (key)
 	{
-		case 27:
+		case 27: // ESC
 			if (game->getStateOfCurrentTank() == WAITING || game->getStateOfCurrentTank() == SELECTING_TARGET) game->toggleMenu(GAME_MENU); // todo: open a menu
 			break;
-		case 8:
+		case 8: // BSP
 			if (game->getStateOfCurrentTank() == SELECTING_TARGET) game->setCurrentTankToWaitingMode();
 			break;
 		case 'c':
 			selectFocus();
+			break;
+		case 'x':
+			if(game->getMenu() == INITIAL_MENU) game->setMenu(NEW_GAME);
+			else if (game->getMenu() == NEW_GAME) game->setMenu(INITIAL_MENU);
 			break;
 		case ' ':
 			if (game->currentPlayerHasAnySelectedTank())
@@ -157,6 +161,16 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		case 'd':
 			incAng(theta);
 			break;
+		case 'k':
+			game->setNumPlayers(0);
+			game->setState(PLAYING);
+			game->setMenu(NO_MENU);
+			break;
+		/*case 'l':
+			game->setNumPlayers(1);
+			game->setState(PLAYING);
+			game->setMenu(NO_MENU);
+			break;*/
 		default:
 			break;
 	}

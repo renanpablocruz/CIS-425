@@ -1,16 +1,23 @@
 #include "Game.h"
 
-Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()), currentMenu(NO_MENU),
-		       activeBattalion(0), targetBattalion(1), dayTime(0.f), alpha(0)
-{
-	battalions.push_back(new Battalion(1));
-	battalions.push_back(new Battalion(2));
-	//battalions.push_back(new Battalion(3));
+Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()), currentMenu(INITIAL_MENU),
+activeBattalion(0), targetBattalion(1), dayTime(0.f), alpha(0), currentState(MENU), numPlayers(2){
+	setNumPlayers(2);
 }
 
 bool Game::activeBattalionHasAnySelectedTank()
 {
 	return hasAnySelectedTank(activeBattalion);
+}
+
+void Game::setNumPlayers(int numPlyrs)
+{
+	int num = numPlyrs;
+	while (num > 0)
+	{
+		battalions.push_back(new Battalion(num));
+		num -= 1;
+	}
 }
 
 void Game::computeDamage(int damage, elem bulletType)
@@ -25,19 +32,22 @@ bool Game::currentPlayerHasAnySelectedTank()
 
 void Game::draw()
 {
-	drawTerrain();
-	drawSky();
-	drawGrid();
-	for (unsigned int i = 0; i < battalions.size(); i++)
+	if (currentState == PLAYING)
 	{
-		if (i==activeBattalion)	battalions[i]->draw(ATTACKING);
-		else if (i == targetBattalion) battalions[i]->draw(DEFENDING);
-		else battalions[i]->draw(INACTIVE);
+		drawTerrain();
+		drawSky();
+		drawGrid();
+		for (unsigned int i = 0; i < battalions.size(); i++)
+		{
+			if (i == activeBattalion)	battalions[i]->draw(ATTACKING);
+			else if (i == targetBattalion) battalions[i]->draw(DEFENDING);
+			else battalions[i]->draw(INACTIVE);
+		}
+		drawBullet();
+		drawStatus();
 	}
-	drawBullet();
-	drawStatus();
 	drawCurrentMenu();
-	if (isTheGameOver()) writeCongrats();
+	if (currentState == PLAYING && isTheGameOver()) writeCongrats();
 }
 
 void Game::drawBullet()
@@ -49,7 +59,12 @@ void Game::drawCurrentMenu() //todo: implement it
 {
 	switch (currentMenu)
 	{
+		case NO_MENU:
+			break;
 		case INITIAL_MENU:
+			drawInitialMenu();
+			break;
+		case NEW_GAME:
 			drawInitialMenu();
 			break;
 		case GAME_MENU:
@@ -87,7 +102,23 @@ void Game::drawGrid()
 
 void Game::drawInitialMenu()
 {
-	
+	float w = glutGet(GLUT_WINDOW_WIDTH);
+	float h = glutGet(GLUT_WINDOW_HEIGHT);
+	drawBackground(GRAY);
+	drawImage(0.5*w, 0.5*h, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), TANK_DRAWING);
+	drawWindow(0.5*w, 0.7*h, 0.25*w, 0.3*h);
+	writeText2d("CLASH OF", w / 2, 0.75*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
+	writeText2d("TANKS", w / 2, 0.65*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
+	if (currentMenu == INITIAL_MENU)
+	{
+		drawButton(w / 2, 0.35*h, 0.2*w, 0.1*h, "NEW GAME", GLUT_BITMAP_HELVETICA_18);
+		drawButton(w / 2, 0.2*h, 0.2*w, 0.1*h, "QUIT", GLUT_BITMAP_HELVETICA_18);
+	}
+	else if (currentMenu == NEW_GAME)
+	{
+		drawButton(w / 2, 0.35*h, 0.2*w, 0.1*h, "2 PLAYERS", GLUT_BITMAP_HELVETICA_18);
+		drawButton(w / 2, 0.2*h, 0.2*w, 0.1*h, "3 PLAYERS", GLUT_BITMAP_HELVETICA_18);
+	}
 }
 
 void Game::drawPlan()
@@ -199,6 +230,11 @@ void Game::drawTerrain()
 void Game::getBullet()
 {
 	bullet = battalions[activeBattalion]->getBullet();
+}
+
+gameMenu Game::getMenu()
+{
+	return currentMenu;
 }
 
 void Game::getPosOfSelectedTank(int player, float &_x, float &_y, float &_z)
@@ -342,6 +378,11 @@ void Game::setCurrentTankToWaitingMode()
 void Game::setMenu(gameMenu menu)
 {
 	currentMenu = menu;
+}
+
+void Game::setState(gameState newState)
+{
+	currentState = newState;
 }
 
 void Game::setTargetMode(int player)

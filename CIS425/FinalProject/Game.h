@@ -13,7 +13,8 @@
 
 #define GRID_SIZE 80
 
-enum gameMenu{ NO_MENU, INITIAL_MENU, GAME_MENU };
+enum gameMenu{ NO_MENU, INITIAL_MENU, NEW_GAME, GAME_MENU };
+enum gameState{MENU, PLAYING, FINISH};
 
 class Game
 {
@@ -25,11 +26,14 @@ private:
 	bool createdBullet;
 	Texture* myTextures;
 	gameMenu currentMenu;
+	gameState currentState;
 	float dayTime;
 	float alpha;
+	int numPlayers;
 public:
 	Game();
 	bool activeBattalionHasAnySelectedTank();
+	void setNumPlayers(int numPlyrs);
 	void computeDamage(int damage, elem bulletType);
 	bool currentPlayerHasAnySelectedTank();
 	void draw();
@@ -43,6 +47,7 @@ public:
 	void drawTerrain();
 	void drawPlan();
 	void getBullet();
+	gameMenu getMenu();
 	void getPosOfTheCurrentTank(float &x, float &y, float &z);
 	void getPosOfSelectedTank(int player, float &x, float &y, float &z);
 	void getPosOfTank(int player, int indOfTank, float &x, float &y, float &z);
@@ -61,6 +66,7 @@ public:
 	void setCurrentTankToTargetMode();
 	void setCurrentTankToWaitingMode();
 	void setMenu(gameMenu menu);
+	void setState(gameState newState);
 	void setTargetMode(int player);
 	void setWaitingMode(int player);
 	void shoot();

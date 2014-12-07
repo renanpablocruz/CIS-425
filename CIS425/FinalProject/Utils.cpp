@@ -1,4 +1,3 @@
-#include <math.h>
 #include "Utils.h"
 
 dir getDirForTank(float x1, float y1, float x2, float y2)
@@ -83,11 +82,17 @@ float damageModifier(elem bulletType, elem tankType)
 
 void drawBackground(color selColor, float alpha)
 {
+	glDisable(GL_TEXTURE_2D);
 	float w = glutGet(GLUT_WINDOW_WIDTH);
 	float h = glutGet(GLUT_WINDOW_HEIGHT);
-	if (selColor == WHITE) glColor4f(1, 1, 1, alpha);
-	else if (selColor == BLACK) glColor4f(0, 0, 0, alpha);
-	else glColor4f(0, 0, 0, alpha);
+	if (selColor == WHITE)
+		glColor4f(1, 1, 1, alpha);
+	else if (selColor == BLACK)
+		glColor4f(0, 0, 0, alpha);
+	else if (selColor == GRAY)
+		glColor4f(0.5, 0.5, 0.5, alpha);
+	else
+		glColor4f(0, 0, 0, alpha);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -107,7 +112,40 @@ void drawBackground(color selColor, float alpha)
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
+}
+
+void drawButton(int xc, int yc, int w, int h, std::string input, void *font, color selColor)
+{
+	drawWindow(xc, yc, w, h, selColor);
+	writeText2d(input, xc, yc, true, font);
+}
+
+void drawImage(int xc, int yc, int w, int h, typesOfTextures texture)
+{
 	glColor4f(1, 1, 1, 1);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+	glTranslatef(xc, yc, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texture + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2d(0,1); glVertex3f(-w / 2, h / 2, 0);
+	glTexCoord2d(1,1); glVertex3f(w / 2, h / 2, 0);
+	glTexCoord2d(1,0); glVertex3f(w / 2, -h / 2, 0);
+	glTexCoord2d(0,0); glVertex3f(-w / 2, -h / 2, 0);
+	glEnd();
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_TEXTURE);
 }
 
 void drawWindow(int xc, int yc, int w, int h, color selColor)
@@ -136,9 +174,11 @@ void drawWindow(int xc, int yc, int w, int h, color selColor)
 	glColor4f(1,1,1,1);
 }
 
-void writeText2d(std::string input, float x, float y, bool centralize, void *font)
+void writeText2d(std::string input, float x, float y, bool centralize, void *font, color selColor)
 {
-	glColor4f(1, 1, 1, 1);
+	glDisable(GL_TEXTURE_2D);
+	if (selColor == BLACK) glColor4f(0, 0, 0, 1);
+	else glColor4f(1, 1, 1, 1);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
