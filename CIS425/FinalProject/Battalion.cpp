@@ -5,7 +5,7 @@ Battalion::Battalion(int value)
 	selectedTank = -1;
 	switch (value)
 	{
-		case 1:
+		case 0:
 		{
 			Panzer* tank = new Panzer(FIRE);
 			tank->setPos(0, 0, 0); // user1
@@ -20,7 +20,7 @@ Battalion::Battalion(int value)
 			tanks.push_back(tank);
 			break;
 		}
-		case 2:
+		case 1:
 		{
 			Panzer* tank = new Panzer(EARTH);
 			tank->setPos(3, 0, 0); // user2
@@ -35,7 +35,7 @@ Battalion::Battalion(int value)
 			tanks.push_back(tank);
 			break;
 		}
-		case 3:
+		case 2:
 		{
 			Panzer* tank = new Panzer(WATER);
 			tank->setPos(0, 0, 3); // user3
@@ -125,6 +125,7 @@ void Battalion::moveTank(dir dr)
 
 void Battalion::passTurn()
 {
+	selectNoTank();
 	for (unsigned int i = 0; i < tanks.size(); i++) tanks[i]->passTurn();
 }
 

@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(keyInput);
 	//glutMouseFunc(pickFunction);
 	glutSpecialFunc(specialKeyInput);
-	glutTimerFunc(DELTA_T_REAL, update, DELTA_T_VIRTUAL); // wait time miliseconds and execute function with argument value
+	glutTimerFunc(DELTA_T_REAL, update, DELTA_T_VIRTUAL);
 
 	glutMainLoop();
 
@@ -89,13 +89,16 @@ int main(int argc, char **argv)
 
 void drawScenario()
 {
-	if (game->activeBattalionHasAnySelectedTank())
+	if (game->getGameState() == PLAYING)
 	{
-		game->getPosOfTheCurrentTank(camX, camY, camZ);
-		gluLookAt(camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), camX, camY, camZ, 0, 1, 0);
+		if (game->activeBattalionHasAnySelectedTank())
+		{
+			game->getPosOfTheCurrentTank(camX, camY, camZ);
+			gluLookAt(camX + camR*cos(degToRad(phi))*sin(degToRad(theta)), camY + camR*sin(degToRad(phi)), camZ - camR*cos(degToRad(phi))*cos(degToRad(theta)), camX, camY, camZ, 0, 1, 0);
+		}
+		else gluLookAt(2, 6, 10, 2, 0, 2, 0, 1, 0);
 	}
-	else gluLookAt(2, 6, 10, 2, 0, 2, 0, 1, 0);
-
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	game->draw();
@@ -114,66 +117,91 @@ void drawScene()
 
 void keyInput(unsigned char key, int scrX, int scrY)
 {
-	switch (key)
+
+	if (game->getGameState() == PLAYING)
 	{
-		case 27: // ESC
-			if (game->getStateOfCurrentTank() == WAITING || game->getStateOfCurrentTank() == SELECTING_TARGET) game->toggleMenu(GAME_MENU); // todo: open a menu
-			break;
-		case 8: // BSP
-			if (game->getStateOfCurrentTank() == SELECTING_TARGET) game->setCurrentTankToWaitingMode();
-			break;
-		case 'c':
-			selectFocus();
-			break;
-		case 'x':
-			if(game->getMenu() == INITIAL_MENU) game->setMenu(NEW_GAME);
-			else if (game->getMenu() == NEW_GAME) game->setMenu(INITIAL_MENU);
-			break;
-		case ' ':
-			if (game->currentPlayerHasAnySelectedTank())
-			{
-				switch (game->getStateOfCurrentTank())
+		switch (key)
+		{
+			case 27: // ESC
+				game->toggleMenu(GAME_MENU); // todo: open a menu
+				break;
+			case 8: // BSP
+				if (game->getStateOfCurrentTank() == SELECTING_TARGET) game->targetToWaitingMode();
+				break;
+			case 'c':
+				selectFocus();
+				break;
+			case ' ':
+				if (game->currentPlayerHasAnySelectedTank())
 				{
-					case WAITING:
-						game->setCurrentTankToTargetMode();
-						game->selectDefaultTankForTheCurrentTargetPlayer();
-						break;
-					case SELECTING_TARGET:
-						game->shoot();
-						break;
-					default:
-						break;
+					switch (game->getStateOfCurrentTank())
+					{
+						case WAITING:
+							game->setCurrentTankToTargetMode();
+							game->selectDefaultTankForTheCurrentTargetPlayer();
+							break;
+						case SELECTING_TARGET:
+							game->shoot();
+							break;
+						default:
+							break;
+					}
 				}
-			}
-			break;
-		case 'n':
-			game->newTurn();
-			break;
-		case 'w':
-			incAng(phi);
-			break;
-		case 'a':
-			decAng(theta);
-			break;
-		case 's':
-			decAng(phi);
-			break;
-		case 'd':
-			incAng(theta);
-			break;
-		case 'k':
-			game->setNumPlayers(0);
-			game->setState(PLAYING);
-			game->setMenu(NO_MENU);
-			break;
-		/*case 'l':
-			game->setNumPlayers(1);
-			game->setState(PLAYING);
-			game->setMenu(NO_MENU);
-			break;*/
-		default:
-			break;
+				break;
+			case 'n':
+				game->newTurn();
+				break;
+			case 'w':
+				incAng(phi);
+				break;
+			case 'a':
+				decAng(theta);
+				break;
+			case 's':
+				decAng(phi);
+				break;
+			case 'd':
+				incAng(theta);
+				break;
+			default:
+				break;
+		}
 	}
+	else if (game->getGameState() == MENU)
+	{
+		if (game->getMenu() == INITIAL_MENU)
+		{
+			switch (key)
+			{
+				case 'x':
+					game->setMenu(NEW_GAME);
+				default:
+					break;
+			}
+		}
+		else if (game->getMenu() == NEW_GAME)
+		{
+			switch (key)
+			{
+				case 'x':
+					game->setMenu(INITIAL_MENU);
+					break;
+				case 'k':
+					game->setNumPlayers(2);
+					game->setState(PLAYING);
+					game->setMenu(NO_MENU);
+					break;
+				case 'l':
+					game->setNumPlayers(3);
+					game->setState(PLAYING);
+					game->setMenu(NO_MENU);
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
 	glutPostRedisplay();
 }
 

@@ -33,7 +33,6 @@ private:
 public:
 	Game();
 	bool activeBattalionHasAnySelectedTank();
-	void setNumPlayers(int numPlyrs);
 	void computeDamage(int damage, elem bulletType);
 	bool currentPlayerHasAnySelectedTank();
 	void draw();
@@ -42,11 +41,13 @@ public:
 	void drawGameMenu();
 	void drawGrid();
 	void drawInitialMenu();
+	void drawNewGameMenu();
 	void drawSky();
 	void drawStatus();
 	void drawTerrain();
 	void drawPlan();
 	void getBullet();
+	gameState getGameState();
 	gameMenu getMenu();
 	void getPosOfTheCurrentTank(float &x, float &y, float &z);
 	void getPosOfSelectedTank(int player, float &x, float &y, float &z);
@@ -63,13 +64,16 @@ public:
 	void selectDefaultTankForTheCurrentTargetPlayer();
 	void selectFocus();
 	void selectNextTank(int player);
+	void selectNoTank(int player);
 	void setCurrentTankToTargetMode();
 	void setCurrentTankToWaitingMode();
 	void setMenu(gameMenu menu);
+	void setNumPlayers(int numPlyrs);
 	void setState(gameState newState);
 	void setTargetMode(int player);
 	void setWaitingMode(int player);
 	void shoot();
+	void targetToWaitingMode();
 	void toggleMenu(gameMenu menu);
 	void update();
 	void writeCongrats();

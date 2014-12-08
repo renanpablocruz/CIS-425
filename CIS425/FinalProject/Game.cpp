@@ -1,23 +1,12 @@
 #include "Game.h"
 
 Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()), currentMenu(INITIAL_MENU),
-activeBattalion(0), targetBattalion(1), dayTime(0.f), alpha(0), currentState(MENU), numPlayers(2){
-	setNumPlayers(2);
+activeBattalion(-1), targetBattalion(-1), dayTime(0.f), alpha(0), currentState(MENU), numPlayers(0){
 }
 
 bool Game::activeBattalionHasAnySelectedTank()
 {
 	return hasAnySelectedTank(activeBattalion);
-}
-
-void Game::setNumPlayers(int numPlyrs)
-{
-	int num = numPlyrs;
-	while (num > 0)
-	{
-		battalions.push_back(new Battalion(num));
-		num -= 1;
-	}
 }
 
 void Game::computeDamage(int damage, elem bulletType)
@@ -65,7 +54,7 @@ void Game::drawCurrentMenu() //todo: implement it
 			drawInitialMenu();
 			break;
 		case NEW_GAME:
-			drawInitialMenu();
+			drawNewGameMenu();
 			break;
 		case GAME_MENU:
 			drawGameMenu();
@@ -77,9 +66,11 @@ void Game::drawCurrentMenu() //todo: implement it
 
 void Game::drawGameMenu()
 {
-	drawWindow(glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2, 300, 200);
+	float w = glutGet(GLUT_WINDOW_WIDTH);
+	float h = glutGet(GLUT_WINDOW_HEIGHT);
 	drawBackground(BLACK, 0.4);
-	writeText2d("PAUSED", glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2, true, GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.5*w, 0.60*h, 0.3*w, 0.1*h, "RESUME", GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.5*w, 0.40*h, 0.3*w, 0.1*h, "QUIT", GLUT_BITMAP_HELVETICA_18);
 }
 
 void Game::drawGrid()
@@ -109,16 +100,26 @@ void Game::drawInitialMenu()
 	drawWindow(0.5*w, 0.7*h, 0.25*w, 0.3*h);
 	writeText2d("CLASH OF", w / 2, 0.75*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
 	writeText2d("TANKS", w / 2, 0.65*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
-	if (currentMenu == INITIAL_MENU)
-	{
-		drawButton(w / 2, 0.35*h, 0.2*w, 0.1*h, "NEW GAME", GLUT_BITMAP_HELVETICA_18);
-		drawButton(w / 2, 0.2*h, 0.2*w, 0.1*h, "QUIT", GLUT_BITMAP_HELVETICA_18);
-	}
-	else if (currentMenu == NEW_GAME)
-	{
-		drawButton(w / 2, 0.35*h, 0.2*w, 0.1*h, "2 PLAYERS", GLUT_BITMAP_HELVETICA_18);
-		drawButton(w / 2, 0.2*h, 0.2*w, 0.1*h, "3 PLAYERS", GLUT_BITMAP_HELVETICA_18);
-	}
+
+
+
+	drawButton(w / 2, 0.35*h, 0.2*w, 0.1*h, "NEW GAME", GLUT_BITMAP_HELVETICA_18);
+	drawButton(w / 2, 0.2*h, 0.2*w, 0.1*h, "QUIT", GLUT_BITMAP_HELVETICA_18);
+}
+
+void Game::drawNewGameMenu()
+{
+	float w = glutGet(GLUT_WINDOW_WIDTH);
+	float h = glutGet(GLUT_WINDOW_HEIGHT);
+	drawBackground(GRAY);
+	drawImage(0.5*w, 0.5*h, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), TANK_DRAWING);
+	drawWindow(0.5*w, 0.7*h, 0.25*w, 0.3*h);
+	writeText2d("CLASH OF", w / 2, 0.75*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
+	writeText2d("TANKS", w / 2, 0.65*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
+
+	drawButton(0.25*w, 0.25*h, 0.2*w, 0.1*h, "2 PLAYERS", GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.5*w, 0.25*h, 0.2*w, 0.1*h, "3 PLAYERS", GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.75*w, 0.25*h, 0.2*w, 0.1*h, "BACK", GLUT_BITMAP_HELVETICA_18);
 }
 
 void Game::drawPlan()
@@ -232,6 +233,11 @@ void Game::getBullet()
 	bullet = battalions[activeBattalion]->getBullet();
 }
 
+gameState Game::getGameState()
+{
+	return currentState;
+}
+
 gameMenu Game::getMenu()
 {
 	return currentMenu;
@@ -329,7 +335,10 @@ void Game::selectFocus()
 {
 	if (hasAnySelectedTank(activeBattalion)){
 		if (getStateOfTank(activeBattalion) == WAITING)
+		{
 			selectNextTank(activeBattalion);
+			selectNoTank(targetBattalion);
+		}
 		else if (getStateOfTank(activeBattalion) == SELECTING_TARGET)
 		{
 			if (battalions[targetBattalion]->getSelectedTank() != battalions[targetBattalion]->numTanks() - 1)
@@ -365,6 +374,11 @@ void Game::selectNextTank(int player)
 	}
 }
 
+void Game::selectNoTank(int player)
+{
+	battalions[player]->selectNoTank();
+}
+
 void Game::setCurrentTankToTargetMode()
 {
 	battalions[activeBattalion]->setTargetMode();
@@ -378,6 +392,18 @@ void Game::setCurrentTankToWaitingMode()
 void Game::setMenu(gameMenu menu)
 {
 	currentMenu = menu;
+}
+
+void Game::setNumPlayers(int numPlyrs)
+{
+	int num = 0;
+	while (num < numPlyrs)
+	{
+		battalions.push_back(new Battalion(num));
+		num += 1;
+	}
+	activeBattalion = 0;
+	targetBattalion = 1;
 }
 
 void Game::setState(gameState newState)
@@ -404,6 +430,12 @@ void Game::shoot()
 	std::cout << std::endl;
 }
 
+void Game::targetToWaitingMode()
+{
+	setCurrentTankToWaitingMode();
+	selectNoTank(targetBattalion);
+}
+
 void Game::toggleMenu(gameMenu menu)
 {
 	currentMenu = (currentMenu == menu) ? NO_MENU : menu;
@@ -419,6 +451,7 @@ void Game::update()
 		else if (bullet->getState() == READY && createdBullet == true)
 		{
 			computeDamage(bullet->getDamage(), bullet->getType());
+			selectNoTank(targetBattalion);
 			createdBullet = false;
 			bullet = NULL;
 		}

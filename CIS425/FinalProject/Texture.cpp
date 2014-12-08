@@ -64,6 +64,7 @@ void Texture::loadExternalTextures()
 	loadSingleTexture("Textures/light_ground.bmp", 5);
 	loadSingleTexture("Textures/light_sky.bmp", 6);
 	loadSingleTexture("Textures/tank_drawing.bmp", 7);
+	loadSingleTexture("Textures/logo.bmp", 8);
 }
 
 void Texture::loadSingleTexture(std::string filename, int pos)
