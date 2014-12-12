@@ -33,4 +33,6 @@ void drawWindow(int x, int y, int w, int h, color selColor = NONE);
 void writeText2d(std::string input, float x, float y, bool centralize, void *font, color selColor = WHITE);
 void writeText3d(std::string input, float x, float y, float z, bool centralize, void *font);
 
+bool isInside(float x, float y, float xc, float yc, float w, float h);
+
 #endif

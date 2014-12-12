@@ -51,12 +51,15 @@ static double phi = 30, theta = 180;
 void drawScenario();
 void drawScene();
 void keyInput(unsigned char key, int scrX, int scrY);
+void mouseMotion(int x, int y);
 void printInteraction();
 void resize(int w, int h);
 void selectFocus();
 void setup();
 void specialKeyInput(int key, int x, int y);
 void update(int dt);
+
+void pickFunction(int button, int state, int x, int y);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Main
@@ -74,7 +77,8 @@ int main(int argc, char **argv)
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(resize);
 	glutKeyboardFunc(keyInput);
-	//glutMouseFunc(pickFunction);
+	glutMouseFunc(pickFunction);
+	//glutPassiveMotionFunc(mouseMotion);
 	glutSpecialFunc(specialKeyInput);
 	glutTimerFunc(DELTA_T_REAL, update, DELTA_T_VIRTUAL);
 
@@ -110,7 +114,7 @@ void drawScene()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	drawScenario();	
+	drawScenario();
 
 	glutSwapBuffers();
 }
@@ -123,7 +127,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		switch (key)
 		{
 			case 27: // ESC
-				game->toggleMenu(GAME_MENU); // todo: open a menu
+				game->togglePlayingAndState(GAME_MENU);
 				break;
 			case 8: // BSP
 				if (game->getStateOfCurrentTank() == SELECTING_TARGET) game->targetToWaitingMode();
@@ -167,42 +171,55 @@ void keyInput(unsigned char key, int scrX, int scrY)
 				break;
 		}
 	}
-	else if (game->getGameState() == MENU)
+	else if (game->getGameState() == INITIAL_MENU)
 	{
-		if (game->getMenu() == INITIAL_MENU)
+		switch (key)
 		{
-			switch (key)
-			{
-				case 'x':
-					game->setMenu(NEW_GAME);
-				default:
-					break;
-			}
+			case 'x':
+				game->setState(NEW_GAME);
+			default:
+				break;
 		}
-		else if (game->getMenu() == NEW_GAME)
+	}
+	else if (game->getGameState() == NEW_GAME)
+	{
+		switch (key)
 		{
-			switch (key)
-			{
-				case 'x':
-					game->setMenu(INITIAL_MENU);
-					break;
-				case 'k':
-					game->setNumPlayers(2);
-					game->setState(PLAYING);
-					game->setMenu(NO_MENU);
-					break;
-				case 'l':
-					game->setNumPlayers(3);
-					game->setState(PLAYING);
-					game->setMenu(NO_MENU);
-					break;
-				default:
-					break;
-			}
+			case 'x':
+				game->setState(INITIAL_MENU);
+				break;
+			case 'k':
+				game->setNumPlayers(2);
+				game->setState(PLAYING);
+				break;
+			case 'l':
+				game->setNumPlayers(3);
+				game->setState(PLAYING);
+				break;
+			default:
+				break;
+		}
+	}
+	else if (game->getGameState() == GAME_MENU)
+	{
+		switch (key)
+		{
+			case 27: // ESC
+				game->togglePlayingAndState(GAME_MENU);
+				break;
+			default:
+				break;
 		}
 	}
 
 	glutPostRedisplay();
+}
+
+void mouseMotion(int x, int y)
+{
+	int w = scrW;
+	int h = scrH;
+	game->update(0, x, y);
 }
 
 void printInteraction()
@@ -255,7 +272,6 @@ void specialKeyInput(int key, int x, int y)
 						game->moveCurrentTank(UP);
 						break;
 					case SELECTING_TARGET:
-
 						break;
 					default:
 						break;
@@ -279,6 +295,12 @@ void specialKeyInput(int key, int x, int y)
 void update(int dt)
 {
 	game->update();
-	glutPostRedisplay();
 	glutTimerFunc(DELTA_T_REAL, update, DELTA_T_VIRTUAL);
+	glutPostRedisplay();
 }
+
+void pickFunction(int button, int state, int x, int y)
+{
+	game->pickFunction(button, state, x, y);
+}
+

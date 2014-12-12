@@ -13,8 +13,10 @@
 
 #define GRID_SIZE 80
 
-enum gameMenu{ NO_MENU, INITIAL_MENU, NEW_GAME, GAME_MENU };
-enum gameState{MENU, PLAYING, FINISH};
+#define BUTTON_DEFAULT_WIDTH_PROP 0.2
+#define BUTTON_DEFAULT_HEIGHT_PROP 0.1
+
+enum gameState{ INITIAL_MENU, NEW_GAME, PLAYING, GAME_MENU, FINISH };
 
 class Game
 {
@@ -25,11 +27,14 @@ private:
 	Bullet* bullet;
 	bool createdBullet;
 	Texture* myTextures;
-	gameMenu currentMenu;
 	gameState currentState;
 	float dayTime;
 	float alpha;
 	int numPlayers;
+
+	bool mouseOverResumeButton;
+	bool mouseOverQuitButton;
+
 public:
 	Game();
 	bool activeBattalionHasAnySelectedTank();
@@ -48,7 +53,6 @@ public:
 	void drawPlan();
 	void getBullet();
 	gameState getGameState();
-	gameMenu getMenu();
 	void getPosOfTheCurrentTank(float &x, float &y, float &z);
 	void getPosOfSelectedTank(int player, float &x, float &y, float &z);
 	void getPosOfTank(int player, int indOfTank, float &x, float &y, float &z);
@@ -67,16 +71,18 @@ public:
 	void selectNoTank(int player);
 	void setCurrentTankToTargetMode();
 	void setCurrentTankToWaitingMode();
-	void setMenu(gameMenu menu);
+	void setMouseOverButtonsFalse();
 	void setNumPlayers(int numPlyrs);
 	void setState(gameState newState);
 	void setTargetMode(int player);
 	void setWaitingMode(int player);
 	void shoot();
 	void targetToWaitingMode();
-	void toggleMenu(gameMenu menu);
-	void update();
+	void togglePlayingAndState(gameState newState);
+	void update(int clsName = 0, int mx = 0, int my = 0);
 	void writeCongrats();
+
+	void pickFunction(int button, int state, int s_x, int s_y);
 };
 
 #endif

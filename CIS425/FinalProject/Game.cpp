@@ -1,7 +1,9 @@
 #include "Game.h"
 
-Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()), currentMenu(INITIAL_MENU),
-activeBattalion(-1), targetBattalion(-1), dayTime(0.f), alpha(0), currentState(MENU), numPlayers(0){
+Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()),activeBattalion(-1), targetBattalion(-1),
+				dayTime(0.f), alpha(0), currentState(INITIAL_MENU), numPlayers(0)
+{
+	setMouseOverButtonsFalse();
 }
 
 bool Game::activeBattalionHasAnySelectedTank()
@@ -21,7 +23,7 @@ bool Game::currentPlayerHasAnySelectedTank()
 
 void Game::draw()
 {
-	if (currentState == PLAYING)
+	if (currentState == PLAYING || currentState == GAME_MENU)
 	{
 		drawTerrain();
 		drawSky();
@@ -35,8 +37,8 @@ void Game::draw()
 		drawBullet();
 		drawStatus();
 	}
+	else if (currentState == FINISH) writeCongrats();
 	drawCurrentMenu();
-	if (currentState == PLAYING && isTheGameOver()) writeCongrats();
 }
 
 void Game::drawBullet()
@@ -46,10 +48,8 @@ void Game::drawBullet()
 
 void Game::drawCurrentMenu() //todo: implement it
 {
-	switch (currentMenu)
+	switch (currentState)
 	{
-		case NO_MENU:
-			break;
 		case INITIAL_MENU:
 			drawInitialMenu();
 			break;
@@ -69,8 +69,8 @@ void Game::drawGameMenu()
 	float w = glutGet(GLUT_WINDOW_WIDTH);
 	float h = glutGet(GLUT_WINDOW_HEIGHT);
 	drawBackground(BLACK, 0.4);
-	drawButton(0.5*w, 0.60*h, 0.3*w, 0.1*h, "RESUME", GLUT_BITMAP_HELVETICA_18);
-	drawButton(0.5*w, 0.40*h, 0.3*w, 0.1*h, "QUIT", GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.5*w, 0.60*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h, "RESUME", GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.5*w, 0.40*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h, "QUIT", GLUT_BITMAP_HELVETICA_18);
 }
 
 void Game::drawGrid()
@@ -100,11 +100,8 @@ void Game::drawInitialMenu()
 	drawWindow(0.5*w, 0.7*h, 0.25*w, 0.3*h);
 	writeText2d("CLASH OF", w / 2, 0.75*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
 	writeText2d("TANKS", w / 2, 0.65*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
-
-
-
-	drawButton(w / 2, 0.35*h, 0.2*w, 0.1*h, "NEW GAME", GLUT_BITMAP_HELVETICA_18);
-	drawButton(w / 2, 0.2*h, 0.2*w, 0.1*h, "QUIT", GLUT_BITMAP_HELVETICA_18);
+	drawButton(w / 2, 0.35*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h, "NEW GAME", GLUT_BITMAP_HELVETICA_18);
+	drawButton(w / 2, 0.2*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h, "QUIT", GLUT_BITMAP_HELVETICA_18);
 }
 
 void Game::drawNewGameMenu()
@@ -116,10 +113,9 @@ void Game::drawNewGameMenu()
 	drawWindow(0.5*w, 0.7*h, 0.25*w, 0.3*h);
 	writeText2d("CLASH OF", w / 2, 0.75*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
 	writeText2d("TANKS", w / 2, 0.65*h, true, GLUT_BITMAP_TIMES_ROMAN_24);
-
-	drawButton(0.25*w, 0.25*h, 0.2*w, 0.1*h, "2 PLAYERS", GLUT_BITMAP_HELVETICA_18);
-	drawButton(0.5*w, 0.25*h, 0.2*w, 0.1*h, "3 PLAYERS", GLUT_BITMAP_HELVETICA_18);
-	drawButton(0.75*w, 0.25*h, 0.2*w, 0.1*h, "BACK", GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.25*w, 0.25*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h, "2 PLAYERS", GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.5*w, 0.25*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h, "3 PLAYERS", GLUT_BITMAP_HELVETICA_18);
+	drawButton(0.75*w, 0.25*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h, "BACK", GLUT_BITMAP_HELVETICA_18);
 }
 
 void Game::drawPlan()
@@ -236,11 +232,6 @@ void Game::getBullet()
 gameState Game::getGameState()
 {
 	return currentState;
-}
-
-gameMenu Game::getMenu()
-{
-	return currentMenu;
 }
 
 void Game::getPosOfSelectedTank(int player, float &_x, float &_y, float &_z)
@@ -389,9 +380,10 @@ void Game::setCurrentTankToWaitingMode()
 	battalions[activeBattalion]->setWaitingMode();
 }
 
-void Game::setMenu(gameMenu menu)
+void Game::setMouseOverButtonsFalse()
 {
-	currentMenu = menu;
+	mouseOverResumeButton = false;
+	mouseOverQuitButton = false;
 }
 
 void Game::setNumPlayers(int numPlyrs)
@@ -436,13 +428,14 @@ void Game::targetToWaitingMode()
 	selectNoTank(targetBattalion);
 }
 
-void Game::toggleMenu(gameMenu menu)
+void Game::update(int clsName, int mx, int my)
 {
-	currentMenu = (currentMenu == menu) ? NO_MENU : menu;
-}
 
-void Game::update()
-{
+	if (currentState == PLAYING && isTheGameOver())
+	{
+		currentState = FINISH;
+		return;
+	}
 	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->update(DELTA_T_VIRTUAL);
 	if (bullet != NULL)
 	{
@@ -456,12 +449,32 @@ void Game::update()
 			bullet = NULL;
 		}
 	}
-	if (currentMenu == NO_MENU)
+
+	switch (currentState)
 	{
-		alpha += 0.1;
-		dayTime = sin(degToRad(alpha));
-		if (alpha > 180) alpha = 0;
+		case INITIAL_MENU:
+			break;
+		case NEW_GAME:
+			break;
+		case PLAYING:
+			alpha += 0.1;
+			dayTime = sin(degToRad(alpha));
+			if (alpha > 180) alpha = 0;
+			break;
+		case GAME_MENU:
+			// relative to respective menu
+			/*int w = glutGet(GLUT_WINDOW_WIDTH);
+			int h = glutGet(GLUT_WINDOW_HEIGHT);
+			if (isInside(mx, my, 0.5*w, 0.60*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h)) */
+			break;
+		default:
+			break;
 	}
+}
+
+void Game::togglePlayingAndState(gameState newState)
+{
+	currentState = (currentState == newState) ? PLAYING : newState;
 }
 
 void Game::writeCongrats()
@@ -474,4 +487,52 @@ void Game::writeCongrats()
 	sprintf_s(buffer, 256, "Player %d won", activeBattalion + 1);
 	std::string text = buffer;
 	writeText2d(buffer, w/2, h/2, true, GLUT_BITMAP_HELVETICA_18);
+}
+
+void Game::pickFunction(int button, int state, int s_x, int s_y)
+{
+	
+	float w = glutGet(GLUT_WINDOW_WIDTH);
+	float h = glutGet(GLUT_WINDOW_HEIGHT);
+
+	std::cout << "x: " << s_x << ", y: " << s_y << std::endl;
+	std::cout << "inf_x: " << 0.4*w << ", sup_x: " << 0.6*w << std::endl;
+	std::cout << "inf_y: " << 0.4*h << ", sup_y: " << 0.5*h << std::endl;
+
+	if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
+
+	switch (currentState)
+	{
+		case INITIAL_MENU:
+			if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.75*h && s_y > 0.55*h) // new game button
+				setState(NEW_GAME);
+			else if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.85*h && s_y > 0.75*h) // quit button
+				exit(0);
+			break;
+		case NEW_GAME:
+			//std::cout << "catch it" << std::endl;
+			if (s_x > 0.15*w && s_x < 0.35*w && s_y < 0.8*h && s_y > 0.7*h) // new game button
+			{
+				setNumPlayers(2);
+				setState(PLAYING);
+			}
+			else if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.8*h && s_y > 0.7*h) // quit button
+			{
+				setNumPlayers(3);
+				setState(PLAYING);
+			}
+			else if (s_x > 0.65*w && s_x < 0.85*w && s_y < 0.8*h && s_y > 0.7*h) // quit button
+				setState(INITIAL_MENU);
+			break;
+		case GAME_MENU:
+			if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.45*h && s_y > 0.25*h) // new game button
+				setState(PLAYING);
+			else if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.75*h && s_y > 0.55*h) // quit button
+				exit(0);
+			break;
+		default:
+			break;
+	}
+
+	glutPostRedisplay();
 }

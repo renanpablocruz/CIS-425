@@ -150,7 +150,8 @@ void drawImage(int xc, int yc, int w, int h, typesOfTextures texture)
 
 void drawWindow(int xc, int yc, int w, int h, color selColor)
 {
-	glColor4f(0,0,0,0.6);
+	if (selColor == WHITE) glColor4f(1, 1, 1, 0.6);
+	else glColor4f(0,0,0,0.6);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -216,4 +217,9 @@ void writeText3d(std::string input, float x, float y, float z, bool centralize, 
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);*/
 	glEnable(GL_DEPTH_TEST);
+}
+
+bool isInside(float x, float y, float xc, float yc, float w, float h)
+{
+	return (x > xc - w / 2 && x < xc + w / 2 && y > yc - h / 2 && y < yc + h / 2);
 }
