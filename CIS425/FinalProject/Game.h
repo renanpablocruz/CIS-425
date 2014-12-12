@@ -11,7 +11,7 @@
 #include "Texture.h"
 #include "Utils.h"
 
-#define GRID_SIZE 80
+#define GRID_SIZE 40
 
 #define BUTTON_DEFAULT_WIDTH_PROP 0.2
 #define BUTTON_DEFAULT_HEIGHT_PROP 0.1
@@ -31,7 +31,7 @@ private:
 	float dayTime;
 	float alpha;
 	int numPlayers;
-
+	bool fog;
 	bool mouseOverResumeButton;
 	bool mouseOverQuitButton;
 
@@ -47,7 +47,7 @@ public:
 	void drawGrid();
 	void drawInitialMenu();
 	void drawNewGameMenu();
-	void drawSky();
+	void drawHorizon();
 	void drawStatus();
 	void drawTerrain();
 	void drawPlan();
@@ -60,6 +60,7 @@ public:
 	tankState getStateOfTank(int player);
 	bool hasAnySelectedTank(int player);
 	bool hasTanks(int player);
+	bool isFogActive();
 	bool isTheGameOver();
 	void moveCurrentTank(dir direction);
 	void moveTank(int player, dir direction);
@@ -79,6 +80,7 @@ public:
 	void shoot();
 	void targetToWaitingMode();
 	void toggleBetweenStates(gameState stateA, gameState stateB);
+	void toggleFog();
 	void update(int clsName = 0, int mx = 0, int my = 0);
 	void writeCongrats();
 

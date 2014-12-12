@@ -40,9 +40,9 @@ static Game* game = NULL;
 static float scrW;
 static float scrH;
 // camera
-static float camX = 0, camY = 0, camZ = 0, camR = 5;
+static float camX = 0, camY = 0, camZ = 0, camR = 10;
 static float camDirX = 0.4, camDirY = 5, camDirZ = 5;
-static double phi = 30, theta = 180;
+static double phi = 30, theta = 150;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Methods - Headers
@@ -116,6 +116,9 @@ void drawScene()
 
 	drawScenario();
 
+	if (game->isFogActive()) glEnable(GL_FOG);
+	else glDisable(GL_FOG);
+
 	glutSwapBuffers();
 }
 
@@ -166,6 +169,9 @@ void keyInput(unsigned char key, int scrX, int scrY)
 				break;
 			case 'd':
 				incAng(theta);
+				break;
+			case 'f':
+				game->toggleFog();
 				break;
 			default:
 				break;
@@ -256,6 +262,19 @@ void setup()
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	float fogColor[4] = { 0.5, 0.5, 0.5, 1.0 };
+	// Fog controls.
+	if(game->isFogActive()) glEnable(GL_FOG);
+	glHint(GL_FOG_HINT, GL_NICEST);
+	glFogfv(GL_FOG_COLOR, fogColor);
+	glFogi(GL_FOG_MODE, GL_EXP);
+	glFogf(GL_FOG_DENSITY, 0.05);
+	glFogf(GL_FOG_START, 1.0f);
+	glFogf(GL_FOG_END, 30.0f);
+
+	// Specify how texture values combine with current surface color values.
+	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 
 void specialKeyInput(int key, int x, int y)
@@ -286,6 +305,12 @@ void specialKeyInput(int key, int x, int y)
 			break;
 		case GLUT_KEY_LEFT:
 			if (game->currentPlayerHasAnySelectedTank()) game->moveCurrentTank(LEFT);
+			break;
+		case GLUT_KEY_PAGE_UP:
+			camR -= 1;
+			break;
+		case GLUT_KEY_PAGE_DOWN:
+			camR += 1;
 			break;
 		default:
 			break;

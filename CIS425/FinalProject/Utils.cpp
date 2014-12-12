@@ -223,3 +223,16 @@ bool isInside(float x, float y, float xc, float yc, float w, float h)
 {
 	return (x > xc - w / 2 && x < xc + w / 2 && y > yc - h / 2 && y < yc + h / 2);
 }
+
+void drawPyramid(float xb, float yb, float zb, float l, float h, bool upsideDown)
+{
+	glBegin(GL_TRIANGLE_FAN);
+	if(!upsideDown) glVertex3f(xb, yb + h, zb);
+	else glVertex3f(xb, yb - h, zb);
+	glVertex3f(xb - l / 2, yb, zb - l / 2);
+	glVertex3f(xb + l / 2, yb, zb - l / 2);
+	glVertex3f(xb + l / 2, yb, zb + l / 2);
+	glVertex3f(xb - l / 2, yb, zb + l / 2);
+	glVertex3f(xb - l / 2, yb, zb - l / 2);
+	glEnd();
+}

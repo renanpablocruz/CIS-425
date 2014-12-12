@@ -1,7 +1,7 @@
 #include "Game.h"
 
 Game::Game() : bullet(NULL), createdBullet(false), myTextures(new Texture()),activeBattalion(-1), targetBattalion(-1),
-				dayTime(0.f), alpha(0), currentState(INITIAL_MENU), numPlayers(0)
+			dayTime(0.f), alpha(0), currentState(INITIAL_MENU), numPlayers(0), fog(false)
 {
 	setMouseOverButtonsFalse();
 }
@@ -26,7 +26,7 @@ void Game::draw()
 	if (currentState == PLAYING || currentState == GAME_MENU)
 	{
 		drawTerrain();
-		drawSky();
+		drawHorizon();
 		drawGrid();
 		for (unsigned int i = 0; i < battalions.size(); i++)
 		{
@@ -36,6 +36,7 @@ void Game::draw()
 		}
 		drawBullet();
 		drawStatus();
+		drawPyramid(0.5, 1.5, 0.5, 0.5, 0.5, true);
 	}
 	else if (currentState == FINISH) writeCongrats();
 	drawCurrentMenu();
@@ -46,7 +47,7 @@ void Game::drawBullet()
 	if (bullet != NULL) bullet->draw();
 }
 
-void Game::drawCurrentMenu() //todo: implement it
+void Game::drawCurrentMenu()
 {
 	switch (currentState)
 	{
@@ -76,7 +77,7 @@ void Game::drawGameMenu()
 void Game::drawGrid()
 {
 	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-	for (int i = -GRID_SIZE / 2; i < GRID_SIZE / 2; i++)
+	for (int i = -GRID_SIZE; i < GRID_SIZE; i++)
 	{
 		for (int j = -GRID_SIZE / 2; j < GRID_SIZE / 2; j++)
 		{
@@ -130,16 +131,17 @@ void Game::drawPlan()
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 }
 
-void Game::drawSky()
+void Game::drawHorizon()
 {
+	// north
 	glEnable(GL_TEXTURE_2D);
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 	glBindTexture(GL_TEXTURE_2D, LIGHT_SKY + 1);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -15);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, -15);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -15);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -15);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, -GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -GRID_SIZE / 2);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -GRID_SIZE / 2);
 	glEnd();
 
 	glColor4f(1.0, 1.0, 1.0, dayTime);
@@ -147,10 +149,88 @@ void Game::drawSky()
 	glDisable(GL_DEPTH_TEST);
 	glBindTexture(GL_TEXTURE_2D, DARK_SKY + 1);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -15);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, -15);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -15);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -15);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, -GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -GRID_SIZE / 2);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -GRID_SIZE / 2);
+	glEnd();
+	glEnable(GL_DEPTH_TEST);
+
+	glDisable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+
+	// south
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, LIGHT_SKY + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, GRID_SIZE / 2);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, GRID_SIZE / 2);
+	glEnd();
+
+	glColor4f(1.0, 1.0, 1.0, dayTime);
+
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, DARK_SKY + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, GRID_SIZE / 2);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, GRID_SIZE / 2);
+	glEnd();
+	glEnable(GL_DEPTH_TEST);
+
+	glDisable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+
+	// east
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, LIGHT_SKY + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, -GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, GRID_SIZE / 2);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -GRID_SIZE / 2);
+	glEnd();
+
+	glColor4f(1.0, 1.0, 1.0, dayTime);
+
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, DARK_SKY + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, -GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(GRID_SIZE, GRID_SIZE, GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(GRID_SIZE, 0, GRID_SIZE / 2);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(GRID_SIZE, 0, -GRID_SIZE / 2);
+	glEnd();
+	glEnable(GL_DEPTH_TEST);
+
+	glDisable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+
+	// west
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, LIGHT_SKY + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, GRID_SIZE / 2);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -GRID_SIZE / 2);
+	glEnd();
+
+	glColor4f(1.0, 1.0, 1.0, dayTime);
+
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, DARK_SKY + 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, -GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-GRID_SIZE, GRID_SIZE, GRID_SIZE / 2);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, GRID_SIZE / 2);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-GRID_SIZE, 0, -GRID_SIZE / 2);
 	glEnd();
 	glEnable(GL_DEPTH_TEST);
 
@@ -186,12 +266,11 @@ void Game::drawStatus()
 
 void Game::drawTerrain()
 {
-	//glEnable(GL_DEPTH_TEST);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
 
 	glBindTexture(GL_TEXTURE_2D, LIGHT_GROUND + 1);
-	for (int i = -GRID_SIZE/2; i < GRID_SIZE/2; i+=5)
+	for (int i = -GRID_SIZE; i < GRID_SIZE; i+=5)
 	{
 		for (int j = -GRID_SIZE/2; j < GRID_SIZE/2; j+=5)
 		{	
@@ -207,7 +286,7 @@ void Game::drawTerrain()
 	glColor4f(1.0f, 1.0f, 1.0f, dayTime);
 	glDisable(GL_DEPTH_TEST);
 	glBindTexture(GL_TEXTURE_2D, DARK_GROUND + 1);
-	for (int i = -GRID_SIZE / 2; i < GRID_SIZE / 2; i += 5)
+	for (int i = -GRID_SIZE; i < GRID_SIZE; i += 5)
 	{
 		for (int j = -GRID_SIZE / 2; j < GRID_SIZE / 2; j += 5)
 		{
@@ -310,7 +389,6 @@ void Game::newTurn()
 	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->passTurn();
 	activeBattalion = (activeBattalion + 1) % battalions.size();
 	targetBattalion = (activeBattalion == 0) ? 1 : 0;
-	std::cout << std::endl;
 }
 
 void Game::selectDefaultTank(int player)
@@ -420,7 +498,6 @@ void Game::shoot()
 	getPosOfSelectedTank(targetBattalion, x, y, z);
 	battalions[activeBattalion]->shoot(x, y, z);
 	getBullet();
-	std::cout << std::endl;
 }
 
 void Game::targetToWaitingMode()
@@ -475,7 +552,16 @@ void Game::toggleBetweenStates(gameState stateA, gameState stateB)
 {
 	if (currentState == stateA) currentState = stateB;
 	else if (currentState == stateB) currentState = stateA;
-	//throw std::string("My exception");
+}
+
+bool Game::isFogActive()
+{
+	return fog;
+}
+
+void Game::toggleFog()
+{
+	fog = !fog;
 }
 
 void Game::writeCongrats()
@@ -484,7 +570,6 @@ void Game::writeCongrats()
 	float h = glutGet(GLUT_WINDOW_HEIGHT);
 	drawWindow(w/2, h/2, 150, 70);
 	char buffer[256];
-	//sprintf(buffer, "Player %d won", activeBattalion+1);
 	sprintf_s(buffer, 256, "Player %d won", activeBattalion + 1);
 	std::string text = buffer;
 	writeText2d(buffer, w/2, h/2, true, GLUT_BITMAP_HELVETICA_18);
@@ -496,11 +581,10 @@ void Game::pickFunction(int button, int state, int s_x, int s_y)
 	float w = glutGet(GLUT_WINDOW_WIDTH);
 	float h = glutGet(GLUT_WINDOW_HEIGHT);
 
-	std::cout << "x: " << s_x << ", y: " << s_y << std::endl;
-	std::cout << "inf_x: " << 0.4*w << ", sup_x: " << 0.6*w << std::endl;
-	std::cout << "inf_y: " << 0.4*h << ", sup_y: " << 0.5*h << std::endl;
-
 	if (button != GLUT_LEFT_BUTTON || state != GLUT_DOWN) return;
+
+	if (button == 3)
+		std::cout << "rolled" << std::endl;
 
 	switch (currentState)
 	{
@@ -511,7 +595,6 @@ void Game::pickFunction(int button, int state, int s_x, int s_y)
 				exit(0);
 			break;
 		case NEW_GAME:
-			//std::cout << "catch it" << std::endl;
 			if (s_x > 0.15*w && s_x < 0.35*w && s_y < 0.8*h && s_y > 0.7*h) // 2 player button
 			{
 				setNumPlayers(2);

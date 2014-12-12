@@ -28,6 +28,7 @@ float damageModifier(elem bulletType, elem tankType);
 void drawBackground(color selColor = BLACK, float alpha = 1);
 void drawButton(int xc, int yc, int w, int h, std::string input, void *font, color selColor = NONE);
 void drawImage(int xc, int yc, int w, int h, typesOfTextures texture);
+void drawPyramid(float xb, float yb, float zb, float l, float h, bool upsideDown); // base parallel to xz plane
 void drawWindow(int x, int y, int w, int h, color selColor = NONE);
 
 void writeText2d(std::string input, float x, float y, bool centralize, void *font, color selColor = WHITE);
