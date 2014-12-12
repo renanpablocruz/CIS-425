@@ -105,7 +105,6 @@
     <ClCompile Include="SmokeParticle.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Tiger.cpp" />
     <ClCompile Include="TigerBulletcpp.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>

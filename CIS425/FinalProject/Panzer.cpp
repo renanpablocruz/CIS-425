@@ -1,6 +1,6 @@
 #include "Panzer.h"
 
-Panzer::Panzer(elem t) : Tank(20, 2, 4, 2, t){}
+Panzer::Panzer(elem t) : Tank(20, 2, 4, 6, t){}
 
 void Panzer::draw(bool selected, color selectionColor)
 {

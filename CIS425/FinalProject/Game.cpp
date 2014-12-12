@@ -36,7 +36,7 @@ void Game::draw()
 		}
 		drawBullet();
 		drawStatus();
-		drawPyramid(0.5, 1.5, 0.5, 0.5, 0.5, true);
+		//drawPyramid(0.5, 1.5, 0.5, 0.5, 0.5, true);
 	}
 	else if (currentState == FINISH) writeCongrats();
 	drawCurrentMenu();
@@ -537,7 +537,7 @@ void Game::update(int clsName, int mx, int my)
 		case NEW_GAME:
 			break;
 		case PLAYING:
-			alpha += 0.1;
+			alpha += 0.5;
 			dayTime = sin(degToRad(alpha));
 			if (alpha > 180) alpha = 0;
 			break;

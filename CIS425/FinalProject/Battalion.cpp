@@ -38,7 +38,7 @@ Battalion::Battalion(int value)
 		case 2:
 		{
 			Panzer* tank = new Panzer(WATER);
-			tank->setPos(0, 0, 3); // user3
+			tank->setPos(2, 0, 5); // user3
 			tanks.push_back(tank);
 
 			/*tank = new Panzer(WATER);

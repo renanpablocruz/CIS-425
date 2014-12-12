@@ -1,9 +1,6 @@
-﻿Build started 12/12/2014 7:28:59 AM.
+﻿Build started 12/12/2014 12:25:05 PM.
      1>Project "C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\FinalProject\FinalProject.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Game.cpp
-         Game.cpp
-       Link:
+     1>Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\FinalProject.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\FinalProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\FinalProject.lib" /MACHINE:X86 Debug\Battalion.obj
          Debug\Bullet.obj
          Debug\Game.obj
@@ -16,12 +13,15 @@
          Debug\SmokeParticle.obj
          Debug\Tank.obj
          Debug\Texture.obj
-         Debug\Tiger.obj
          Debug\TigerBulletcpp.obj
          Debug\Utils.obj
+     1>TigerBulletcpp.obj : warning LNK4099: PDB 'vc120.pdb' was not found with 'TigerBulletcpp.obj' or at 'C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\vc120.pdb'; linking object as if no debug info
+     1>SmokeParticle.obj : warning LNK4099: PDB 'vc120.pdb' was not found with 'SmokeParticle.obj' or at 'C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\vc120.pdb'; linking object as if no debug info
+     1>Smoke.obj : warning LNK4099: PDB 'vc120.pdb' was not found with 'Smoke.obj' or at 'C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\vc120.pdb'; linking object as if no debug info
+     1>PantherBullet.obj : warning LNK4099: PDB 'vc120.pdb' was not found with 'PantherBullet.obj' or at 'C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\vc120.pdb'; linking object as if no debug info
          FinalProject.vcxproj -> C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\Debug\FinalProject.exe
      1>Done Building Project "C:\Users\Renan Cruz\Documents\GitHub\CIS-425\CIS425\FinalProject\FinalProject.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:03.04
+Time Elapsed 00:00:01.22
