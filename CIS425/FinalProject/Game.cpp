@@ -186,6 +186,7 @@ void Game::drawStatus()
 
 void Game::drawTerrain()
 {
+	//glEnable(GL_DEPTH_TEST);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
 
@@ -436,7 +437,9 @@ void Game::update(int clsName, int mx, int my)
 		currentState = FINISH;
 		return;
 	}
+
 	for (unsigned int i = 0; i < battalions.size(); i++) battalions[i]->update(DELTA_T_VIRTUAL);
+
 	if (bullet != NULL)
 	{
 		if (bullet->getState() != READY && createdBullet == false)
@@ -462,19 +465,17 @@ void Game::update(int clsName, int mx, int my)
 			if (alpha > 180) alpha = 0;
 			break;
 		case GAME_MENU:
-			// relative to respective menu
-			/*int w = glutGet(GLUT_WINDOW_WIDTH);
-			int h = glutGet(GLUT_WINDOW_HEIGHT);
-			if (isInside(mx, my, 0.5*w, 0.60*h, BUTTON_DEFAULT_WIDTH_PROP*w, BUTTON_DEFAULT_HEIGHT_PROP*h)) */
 			break;
 		default:
 			break;
 	}
 }
 
-void Game::togglePlayingAndState(gameState newState)
+void Game::toggleBetweenStates(gameState stateA, gameState stateB)
 {
-	currentState = (currentState == newState) ? PLAYING : newState;
+	if (currentState == stateA) currentState = stateB;
+	else if (currentState == stateB) currentState = stateA;
+	//throw std::string("My exception");
 }
 
 void Game::writeCongrats()
@@ -511,21 +512,21 @@ void Game::pickFunction(int button, int state, int s_x, int s_y)
 			break;
 		case NEW_GAME:
 			//std::cout << "catch it" << std::endl;
-			if (s_x > 0.15*w && s_x < 0.35*w && s_y < 0.8*h && s_y > 0.7*h) // new game button
+			if (s_x > 0.15*w && s_x < 0.35*w && s_y < 0.8*h && s_y > 0.7*h) // 2 player button
 			{
 				setNumPlayers(2);
 				setState(PLAYING);
 			}
-			else if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.8*h && s_y > 0.7*h) // quit button
+			else if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.8*h && s_y > 0.7*h) // 3 players button
 			{
 				setNumPlayers(3);
 				setState(PLAYING);
 			}
-			else if (s_x > 0.65*w && s_x < 0.85*w && s_y < 0.8*h && s_y > 0.7*h) // quit button
+			else if (s_x > 0.65*w && s_x < 0.85*w && s_y < 0.8*h && s_y > 0.7*h) // back button
 				setState(INITIAL_MENU);
 			break;
 		case GAME_MENU:
-			if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.45*h && s_y > 0.25*h) // new game button
+			if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.45*h && s_y > 0.25*h) // resume button
 				setState(PLAYING);
 			else if (s_x > 0.4*w && s_x < 0.6*w && s_y < 0.75*h && s_y > 0.55*h) // quit button
 				exit(0);

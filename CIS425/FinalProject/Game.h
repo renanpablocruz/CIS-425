@@ -78,7 +78,7 @@ public:
 	void setWaitingMode(int player);
 	void shoot();
 	void targetToWaitingMode();
-	void togglePlayingAndState(gameState newState);
+	void toggleBetweenStates(gameState stateA, gameState stateB);
 	void update(int clsName = 0, int mx = 0, int my = 0);
 	void writeCongrats();
 

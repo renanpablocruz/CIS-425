@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 void drawScenario()
 {
-	if (game->getGameState() == PLAYING)
+	if (game->getGameState() == PLAYING || game->getGameState() == GAME_MENU)
 	{
 		if (game->activeBattalionHasAnySelectedTank())
 		{
@@ -127,7 +127,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		switch (key)
 		{
 			case 27: // ESC
-				game->togglePlayingAndState(GAME_MENU);
+				game->setState(GAME_MENU);
 				break;
 			case 8: // BSP
 				if (game->getStateOfCurrentTank() == SELECTING_TARGET) game->targetToWaitingMode();
@@ -205,7 +205,7 @@ void keyInput(unsigned char key, int scrX, int scrY)
 		switch (key)
 		{
 			case 27: // ESC
-				game->togglePlayingAndState(GAME_MENU);
+				game->setState(PLAYING);
 				break;
 			default:
 				break;
